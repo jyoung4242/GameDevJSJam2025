@@ -8,7 +8,7 @@ on:
 
 env:
   ITCH_USERNAME: Mookie4242
-  ITCH_GAME_ID: myproject-name
+  ITCH_GAME_ID: gamedevjsjam2025
 
 jobs:
   deploy:
