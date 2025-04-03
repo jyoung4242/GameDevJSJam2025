@@ -1,0 +1,26 @@
+{
+  "name": "gamedevjsjam2025",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@peasy-lib/peasy-assets": "^0.2.6",
+    "@peasy-lib/peasy-input": "^0.2.0",
+    "@peasy-lib/peasy-ui": "^0.9.58",
+    "excalibur": "^0.30.3"
+  },
+  "devDependencies": {
+    "json": "^11.0.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.5"
+  }
+}
