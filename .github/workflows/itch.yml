@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: write # 🔑 This gives GITHUB_TOKEN permission to push changes
+
 env:
   ITCH_USERNAME: Mookie4242
   ITCH_GAME_ID: gamedevjsjam2025
