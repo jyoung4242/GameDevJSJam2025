@@ -1,14 +1,21 @@
-import { Actor, Color, Engine, IsometricMap, vec, Vector } from "excalibur";
+import { Actor, CollisionType, Color, Engine, vec, Vector } from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
-import { GameScene } from "../Scenes/game";
-import { getCenterOfTileMap } from "../Tilemap/tilemapDay1";
+import { playerCollisionGroup } from "../Lib/colliderGroups";
+import { HealthBar } from "../UI/healthbar";
+import { DarkWeapon } from "./darkWeapon";
 
 export class DarkPlayer extends Actor {
+  currentHP: number = 20;
+  maxHP: number = 20;
   isPlayerActive: boolean = true;
   partner: Actor | undefined;
   jc: JoystickComponent = new JoystickComponent();
-
+  HealthBar: HealthBar | undefined;
   speed: number = 100;
+
+  fireIntervalHandler: any;
+  fireInterval: number = 2000; // Time between shots in milliseconds
+  fireDamage: number = 3;
 
   constructor() {
     super({
@@ -17,8 +24,13 @@ export class DarkPlayer extends Actor {
       pos: vec(0, 0),
       anchor: Vector.Half,
       z: 1000,
+      collisionType: CollisionType.Passive,
+      collisionGroup: playerCollisionGroup,
     });
     this.addComponent(this.jc);
+    this.HealthBar = new HealthBar(new Vector(20, 2), new Vector(-10, -15), 20);
+    this.addChild(this.HealthBar);
+    this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
   }
 
   onInitialize(engine: Engine): void {
@@ -48,5 +60,16 @@ export class DarkPlayer extends Actor {
     this.partner = partner;
   }
 
-  onPreUpdate(engine: Engine, elapsed: number): void {}
+  fire() {
+    let newWeapon = new DarkWeapon(this.pos);
+    this.addChild(newWeapon);
+  }
+
+  onPreUpdate(engine: Engine, elapsed: number): void {
+    this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
+
+    if (this.currentHP <= 0) {
+      this.kill();
+    }
+  }
 }

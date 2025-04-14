@@ -52,6 +52,9 @@ class GameUI {
   startbutton = () => {
     this.owner?.enemyWaveManager?.startWave();
   };
+  stopbutton = () => {
+    this.owner?.enemyWaveManager?.endWave();
+  };
 
   register = (owner: GameScene) => {
     this.owner = owner;
@@ -76,5 +79,6 @@ class GameUI {
     </style> 
     <div id='gameUI'> 
         <button style="margin: 10px" \${click@=>startbutton}>Start</button>
+        <button style="margin: 10px" \${click@=>stopbutton}>Stop</button>
     </div>`;
 }
