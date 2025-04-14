@@ -44,10 +44,6 @@ export class LightPlayer extends Actor {
         }
       }
     );
-
-    if (!this.scene) return;
-    this.scene.camera.strategy.lockToActor(this);
-    this.scene.camera.zoom = 1.5;
   }
 
   registerPartner(partner: Actor) {

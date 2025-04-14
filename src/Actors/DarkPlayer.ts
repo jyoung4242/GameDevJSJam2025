@@ -30,15 +30,9 @@ export class DarkPlayer extends Actor {
       data => {
         if (!this.isPlayerActive) return;
         if (data.state === "active") {
-          // Handle active joystick
-          console.log(`Joystick active: direction (${data.direction.x}, ${data.direction.y}), distance: ${data.distance}`);
-          // Move your character or object
           this.vel.x = data.direction.x * 100;
           this.vel.y = data.direction.y * 100;
         } else {
-          // Handle idle joystick
-          console.log("Joystick idle");
-          // Stop your character or object
           this.vel.x = 0;
           this.vel.y = 0;
         }
