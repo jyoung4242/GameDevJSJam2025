@@ -24,7 +24,9 @@ export class DarkWeapon extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       // Handle collision with enemy
-      other.owner.kill();
+      let enemy = other.owner as Enemy;
+      enemy.checkDrop();
+      enemy.kill();
     }
   }
 

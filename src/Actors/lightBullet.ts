@@ -23,6 +23,7 @@ export class LightBullet extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
+      enemy.checkDrop();
       enemy.kill();
       this.kill(); // Kill the bullet if it collides with an enemy
     }

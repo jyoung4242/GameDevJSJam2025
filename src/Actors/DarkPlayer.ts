@@ -3,6 +3,7 @@ import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
 import { DarkWeapon } from "./darkWeapon";
+import { SoulDrop } from "./drops";
 
 export class DarkPlayer extends Actor {
   currentHP: number = 20;
@@ -12,7 +13,7 @@ export class DarkPlayer extends Actor {
   jc: JoystickComponent = new JoystickComponent();
   HealthBar: HealthBar | undefined;
   speed: number = 100;
-
+  exp: number = 0;
   fireIntervalHandler: any;
   fireInterval: number = 2000; // Time between shots in milliseconds
   fireDamage: number = 3;
@@ -57,7 +58,10 @@ export class DarkPlayer extends Actor {
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
-    console.log(`Collision started between ${self.owner} and ${other.owner} on side ${side}`);
+    if (other.owner instanceof SoulDrop) {
+      this.exp += 1; // Increase the player's experience
+      other.owner.kill();
+    }
   }
 
   registerPartner(partner: Actor) {

@@ -1,13 +1,15 @@
-import { Actor, CollisionType, Color, Engine, Follow, vec, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, vec, Vector } from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
 import { Enemy } from "./Enemy";
 import { LightBullet } from "./lightBullet";
+import { BlessingDrop } from "./drops";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
   maxHP: number = 20;
+  exp: number = 0;
   isPlayerActive: boolean = false;
   jc: JoystickComponent = new JoystickComponent();
   partner: Actor | undefined;
@@ -59,6 +61,13 @@ export class LightPlayer extends Actor {
         }
       }
     );
+  }
+
+  onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
+    if (other.owner instanceof BlessingDrop) {
+      other.owner.kill(); // Remove the blessing drop from the scene
+      this.exp += 1; // Increase the player's experience
+    }
   }
 
   registerPartner(partner: Actor) {
