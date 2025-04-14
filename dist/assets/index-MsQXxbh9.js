@@ -1142,6 +1142,12 @@ Read https://excaliburjs.com/docs/imagesource for more information.`)}_initializ
         width: 100%;
         height: 100%;
         pointer-events: none;
+         user-select: none;
+         -webkit-user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+
+        -webkit-touch-callout: none; /* disables long-press context menu on iOS Safari */
         }
 
         #gameUI button{
