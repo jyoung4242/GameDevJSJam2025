@@ -4,6 +4,7 @@ import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
 import { DarkWeapon } from "./darkWeapon";
 import { SoulDrop } from "./drops";
+import { KeyBoardControlComponent } from "../Components/KeyboardInputComponent";
 
 export class DarkPlayer extends Actor {
   currentHP: number = 20;
@@ -11,8 +12,9 @@ export class DarkPlayer extends Actor {
   isPlayerActive: boolean = true;
   partner: Actor | undefined;
   jc: JoystickComponent = new JoystickComponent();
+  kc: KeyBoardControlComponent = new KeyBoardControlComponent();
   HealthBar: HealthBar | undefined;
-  speed: number = 100;
+  speed: number = 80;
   exp: number = 0;
   fireIntervalHandler: any;
   fireInterval: number = 2000; // Time between shots in milliseconds
@@ -51,6 +53,7 @@ export class DarkPlayer extends Actor {
         }
       }
     );
+    this.kc.init();
 
     if (!this.scene) return;
     this.scene.camera.strategy.lockToActor(this);
@@ -84,6 +87,29 @@ export class DarkPlayer extends Actor {
       this.actions.clearActions();
     }
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
+
+    if (this.isPlayerActive) {
+      let keys = this.kc.keys;
+
+      if (keys.includes("ArrowLeft")) {
+        this.vel.x = -this.speed;
+      } else if (keys.includes("ArrowRight")) {
+        this.vel.x = this.speed;
+      }
+
+      if (keys.includes("ArrowUp")) {
+        this.vel.y = -this.speed;
+      } else if (keys.includes("ArrowDown")) {
+        this.vel.y = this.speed;
+      }
+
+      if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {
+        this.vel.x = 0;
+      }
+      if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
+        this.vel.y = 0;
+      }
+    }
 
     if (this.currentHP <= 0) {
       this.kill();

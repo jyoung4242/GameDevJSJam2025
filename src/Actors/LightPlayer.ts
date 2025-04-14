@@ -5,6 +5,7 @@ import { HealthBar } from "../UI/healthbar";
 import { Enemy } from "./Enemy";
 import { LightBullet } from "./lightBullet";
 import { BlessingDrop } from "./drops";
+import { KeyBoardControlComponent } from "../Components/KeyboardInputComponent";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
@@ -12,6 +13,7 @@ export class LightPlayer extends Actor {
   exp: number = 0;
   isPlayerActive: boolean = false;
   jc: JoystickComponent = new JoystickComponent();
+  kc: KeyBoardControlComponent = new KeyBoardControlComponent();
   partner: Actor | undefined;
   HealthBar: HealthBar | undefined;
   fireIntervalHandler: any;
@@ -61,6 +63,8 @@ export class LightPlayer extends Actor {
         }
       }
     );
+
+    this.kc.init();
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
@@ -107,6 +111,28 @@ export class LightPlayer extends Actor {
       this.actions.clearActions();
     }
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
+    if (this.isPlayerActive) {
+      let keys = this.kc.keys;
+
+      if (keys.includes("ArrowLeft")) {
+        this.vel.x = -this.speed;
+      } else if (keys.includes("ArrowRight")) {
+        this.vel.x = this.speed;
+      }
+
+      if (keys.includes("ArrowUp")) {
+        this.vel.y = -this.speed;
+      } else if (keys.includes("ArrowDown")) {
+        this.vel.y = this.speed;
+      }
+
+      if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {
+        this.vel.x = 0;
+      }
+      if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
+        this.vel.y = 0;
+      }
+    }
 
     if (this.currentHP <= 0) {
       this.kill();
