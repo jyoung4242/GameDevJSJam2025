@@ -1,5 +1,6 @@
 import { IsometricMap, Shape, vec, Vector } from "excalibur";
 import { tilesetD1SS } from "../resources";
+import { isEdgeTile } from "../Lib/Util";
 
 export const day1Tilemap = new IsometricMap({
   pos: vec(0, 0),
@@ -24,8 +25,4 @@ export function getCenterOfTileMap(tilemap: IsometricMap): Vector {
   return vec(0, (tilemap.rows * tilemap.tileHeight) / 2);
 }
 
-function isEdgeTile(index: number, width: number, height: number): boolean {
-  const x = index % width;
-  const y = Math.floor(index / width);
-  return x === 0 || x === width - 1 || y === 0 || y === height - 1;
-}
+day1Tilemap.updateColliders();

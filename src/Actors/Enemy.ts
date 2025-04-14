@@ -29,11 +29,10 @@ export class Enemy extends Actor {
   constructor(pos: Vector, lightPlayer: LightPlayer, darkPlayer: DarkPlayer) {
     super({
       radius: 7.5,
-
       pos,
       anchor: Vector.Half,
       z: 1000,
-      collisionType: CollisionType.Passive,
+      collisionType: CollisionType.Active,
       collisionGroup: EnemyCollisionGroup,
     });
     this.lightTarget = lightPlayer;

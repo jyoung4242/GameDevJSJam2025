@@ -1,11 +1,13 @@
 import { Actor, Collider, CollisionContact, CollisionType, Color, Side, vec, Vector } from "excalibur";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
+import { Signal } from "../Lib/Signals";
 
 const BULLET_SPEED = 300; // Speed of the bullet
 
 export class LightBullet extends Actor {
   damage: number;
+  UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   constructor(startingpos: Vector, target: Enemy, damage: number) {
     super({
       radius: 2,
@@ -23,6 +25,7 @@ export class LightBullet extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
+      this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.checkDrop();
       enemy.kill();
       this.kill(); // Kill the bullet if it collides with an enemy

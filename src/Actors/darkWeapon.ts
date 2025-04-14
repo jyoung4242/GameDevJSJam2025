@@ -1,6 +1,7 @@
 import { Color, Vector, Actor, vec, Engine, toRadians, Collider, CollisionContact, Side, CollisionType } from "excalibur";
 import { Enemy } from "./Enemy";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
+import { Signal } from "../Lib/Signals";
 
 let angularVelocity = 0.15; // Adjust this value to control the rotation speed
 
@@ -8,6 +9,7 @@ export class DarkWeapon extends Actor {
   angle: number = 0; // Angle in radians
   radius: number = 20; // Radius of the circular path
   angVel: number = angularVelocity; // Angular velocity in radians per second
+  UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
 
   constructor(pos: Vector) {
     super({
@@ -25,6 +27,7 @@ export class DarkWeapon extends Actor {
     if (other.owner instanceof Enemy) {
       // Handle collision with enemy
       let enemy = other.owner as Enemy;
+      this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.checkDrop();
       enemy.kill();
     }
@@ -36,8 +39,9 @@ export class DarkWeapon extends Actor {
     this.angle += this.angVel;
 
     // Stop after one revolution
-    if (this.angle > Math.PI * 2) {
+    if (this.angle >= Math.PI * 2) {
       this.angle = Math.PI * 2;
+
       this.kill();
     }
 

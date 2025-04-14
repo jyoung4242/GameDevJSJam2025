@@ -25,7 +25,7 @@ export class DarkPlayer extends Actor {
       pos: vec(0, 0),
       anchor: Vector.Half,
       z: 1000,
-      collisionType: CollisionType.Passive,
+      collisionType: CollisionType.Active,
       collisionGroup: playerCollisionGroup,
     });
     this.addComponent(this.jc);
@@ -70,6 +70,7 @@ export class DarkPlayer extends Actor {
 
   fire() {
     let newWeapon = new DarkWeapon(this.pos);
+
     this.addChild(newWeapon);
   }
 

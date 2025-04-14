@@ -1,17 +1,32 @@
 import { UI, UIView } from "@peasy-lib/peasy-ui";
-import { IsometricMap, Scene, SceneActivationContext } from "excalibur";
+import { IsometricMap, Scene, SceneActivationContext, vec } from "excalibur";
 import { model } from "../UI/UI";
 import { day1Tilemap, getCenterOfTileMap } from "../Tilemap/tilemapDay1";
 import { DarkPlayer } from "../Actors/DarkPlayer";
 import { LightPlayer } from "../Actors/LightPlayer";
 import { EnemyWaveManager } from "../Lib/EnemyWaveManager";
+import { Signal } from "../Lib/Signals";
+import { StatusBar } from "../UI/StatusBar";
+import { Burndown } from "../UI/SwitchPlayerBurnDown";
 
 export class GameScene extends Scene {
   gameUI: UIView | undefined;
   arena: IsometricMap | undefined;
   darkPlayer: DarkPlayer | undefined;
   lightPlayer: LightPlayer | undefined;
+  statusBar: StatusBar | undefined;
+  burnDown: Burndown | undefined;
   enemyWaveManager: EnemyWaveManager | undefined;
+  gameState = {
+    waveNumber: 0,
+    enemiesRemaining: 0,
+    darkEnemiesDefeated: 0,
+    lightEnemiesDefeated: 0,
+    darkExp: 0,
+    lightExp: 0,
+    gameDuration: 0,
+  };
+  stateSignal = new Signal("stateUpdate");
 
   constructor() {
     super();
@@ -27,11 +42,18 @@ export class GameScene extends Scene {
     this.darkPlayer.pos = getCenterOfTileMap(this.arena!);
     this.lightPlayer = new LightPlayer();
     this.add(this.lightPlayer);
-
     this.darkPlayer.registerPartner(this.lightPlayer);
     this.lightPlayer.registerPartner(this.darkPlayer);
-    this.enemyWaveManager = new EnemyWaveManager(this, this.lightPlayer, this.darkPlayer);
+    this.enemyWaveManager = new EnemyWaveManager(this, this.lightPlayer, this.darkPlayer, this.arena);
     this.enemyWaveManager?.init();
+    const screenWidth = this.engine.screen.viewport.width;
+    const screenHeight = this.engine.screen.viewport.height;
+    this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
+    this.add(this.statusBar);
+    this.stateSignal.listen(this.stateUpdate.bind(this));
+
+    this.burnDown = new Burndown(vec(screenWidth - 25, 20), vec(0, screenHeight - 20), 60, this);
+    this.add(this.burnDown);
   }
 
   onDeactivate(context: SceneActivationContext): void {
@@ -44,6 +66,11 @@ export class GameScene extends Scene {
 
   onPreUpdate(engine: any, delta: number): void {
     this.enemyWaveManager?.update(delta);
+  }
+
+  stateUpdate(params: CustomEvent) {
+    const [key, data] = params.detail.params;
+    this.gameState[key as keyof typeof this.gameState] = data;
   }
 
   switchPlayerFocus() {
@@ -92,8 +119,8 @@ class GameUI {
         }
     </style> 
     <div id='gameUI'> 
-        <button style="margin: 10px" \${click@=>startbutton}>Start</button>
-        <button style="margin: 10px" \${click@=>stopbutton}>Stop</button>
-        <button style="margin: 10px" \${click@=>switchButton}>Switch</button>
+         <button style="margin-left: 10px; margin-top: 20px" \${click@=>startbutton}>Start</button>
+        <button style="margin-left: 10px; margin-top: 20px" \${click@=>stopbutton}>Stop</button>
+        <button style="margin-left: 10px; margin-top: 20px" \${click@=>switchButton}>Switch</button>
     </div>`;
 }
