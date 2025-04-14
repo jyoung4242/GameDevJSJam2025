@@ -4,7 +4,9 @@ export const model = {
 
 export const template = `
 <style> 
-   
+   canvas {
+     user-select: none;
+   }
 </style> 
 <div \${==>App}> 
     <canvas id='cnv'> </canvas> 
