@@ -1145,4 +1145,4 @@ Read https://excaliburjs.com/docs/imagesource for more information.`)}_initializ
          <button style="margin-left: 10px; margin-top: 20px" \${click@=>startbutton}>Start</button>
         <button style="margin-left: 10px; margin-top: 20px" \${click@=>stopbutton}>Stop</button>
         <button style="margin-left: 10px; margin-top: 20px" \${click@=>switchButton}>Switch</button>
-    </div>`}await L.create(document.body,ra,Rl).attached;const va=new yl({resolution:{width:640,height:360},viewport:{width:640,height:360},canvasElementId:"cnv",displayMode:bl.FitScreenAndFill,pixelArt:!0,scenes:{game:{scene:new ql}},pixelRatio:2});await va.start(aa);va.goToScene("game");
+    </div>`}await L.create(document.body,ra,Rl).attached;const va=new yl({resolution:{width:640,height:360},viewport:{width:640,height:360},canvasElementId:"cnv",displayMode:bl.FitScreenAndZoom,pixelArt:!0,scenes:{game:{scene:new ql}},pixelRatio:2});await va.start(aa);va.goToScene("game");

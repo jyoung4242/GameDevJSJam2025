@@ -13,7 +13,7 @@ const game = new Engine({
   resolution: { width: 640, height: 360 }, // the resolution of the game
   viewport: { width: 640, height: 360 }, // the viewport of the game
   canvasElementId: "cnv", // the DOM canvas element ID, if you are providing your own
-  displayMode: DisplayMode.FitScreenAndFill, // the display mode
+  displayMode: DisplayMode.FitScreenAndZoom, // the display mode
   pixelArt: true,
   scenes: {
     game: { scene: new GameScene() },
