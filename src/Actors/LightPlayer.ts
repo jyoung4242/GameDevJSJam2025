@@ -1,4 +1,4 @@
-import { Actor, CollisionType, Color, Engine, vec, Vector } from "excalibur";
+import { Actor, CollisionType, Color, Engine, Follow, vec, Vector } from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
@@ -46,13 +46,13 @@ export class LightPlayer extends Actor {
         if (!this.isPlayerActive) return;
         if (data.state === "active") {
           // Handle active joystick
-          console.log(`Joystick active: direction (${data.direction.x}, ${data.direction.y}), distance: ${data.distance}`);
+
           // Move your character or object
-          this.vel.x = data.direction.x * 100;
-          this.vel.y = data.direction.y * 100;
+          this.vel.x = data.direction.x * this.speed;
+          this.vel.y = data.direction.y * this.speed;
         } else {
           // Handle idle joystick
-          console.log("Joystick idle");
+
           // Stop your character or object
           this.vel.x = 0;
           this.vel.y = 0;
@@ -63,6 +63,7 @@ export class LightPlayer extends Actor {
 
   registerPartner(partner: Actor) {
     this.partner = partner;
+    this.pos = partner.pos.clone().add(vec(0, -50)); // Position the light player above the dark player
   }
 
   fire() {
@@ -88,8 +89,13 @@ export class LightPlayer extends Actor {
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
-    if (!this.isPlayerActive && this.partner && this.partner.pos.distance(this.pos) > 25) {
+    const currentActions = this.actions.getQueue();
+    const followAction = currentActions.getActions().find(action => action instanceof Follow);
+
+    if (!this.isPlayerActive && this.partner && this.partner.pos.distance(this.pos) > 25 && !followAction) {
       this.actions.follow(this.partner, 50);
+    } else if (this.isPlayerActive && followAction) {
+      this.actions.clearActions();
     }
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
 

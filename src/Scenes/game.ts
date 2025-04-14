@@ -19,7 +19,6 @@ export class GameScene extends Scene {
 
   onActivate(context: SceneActivationContext<unknown>): void {
     this.gameUI = UI.create(model.App, new GameUI(), GameUI.template);
-    console.log("GameUI created", this.gameUI);
     this.gameUI.model.register(this);
     this.arena = day1Tilemap;
     this.add(this.arena);
@@ -46,6 +45,18 @@ export class GameScene extends Scene {
   onPreUpdate(engine: any, delta: number): void {
     this.enemyWaveManager?.update(delta);
   }
+
+  switchPlayerFocus() {
+    if (this.darkPlayer?.isPlayerActive && !this.lightPlayer?.isPlayerActive) {
+      this.darkPlayer!.isPlayerActive = false;
+      this.lightPlayer!.isPlayerActive = true;
+      this.camera.strategy.lockToActor(this.lightPlayer!);
+    } else {
+      this.darkPlayer!.isPlayerActive = true;
+      this.lightPlayer!.isPlayerActive = false;
+      this.camera.strategy.lockToActor(this.darkPlayer!);
+    }
+  }
 }
 
 class GameUI {
@@ -54,6 +65,9 @@ class GameUI {
   };
   stopbutton = () => {
     this.owner?.enemyWaveManager?.endWave();
+  };
+  switchButton = () => {
+    this.owner?.switchPlayerFocus();
   };
 
   register = (owner: GameScene) => {
@@ -80,5 +94,6 @@ class GameUI {
     <div id='gameUI'> 
         <button style="margin: 10px" \${click@=>startbutton}>Start</button>
         <button style="margin: 10px" \${click@=>stopbutton}>Stop</button>
+        <button style="margin: 10px" \${click@=>switchButton}>Switch</button>
     </div>`;
 }

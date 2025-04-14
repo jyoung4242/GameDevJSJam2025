@@ -1,4 +1,4 @@
-import { Actor, CollisionType, Color, Engine, vec, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, vec, Vector } from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
@@ -42,8 +42,8 @@ export class DarkPlayer extends Actor {
       data => {
         if (!this.isPlayerActive) return;
         if (data.state === "active") {
-          this.vel.x = data.direction.x * 100;
-          this.vel.y = data.direction.y * 100;
+          this.vel.x = data.direction.x * this.speed;
+          this.vel.y = data.direction.y * this.speed;
         } else {
           this.vel.x = 0;
           this.vel.y = 0;
@@ -56,6 +56,10 @@ export class DarkPlayer extends Actor {
     this.scene.camera.zoom = 1.5;
   }
 
+  onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
+    console.log(`Collision started between ${self.owner} and ${other.owner} on side ${side}`);
+  }
+
   registerPartner(partner: Actor) {
     this.partner = partner;
   }
@@ -66,6 +70,14 @@ export class DarkPlayer extends Actor {
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
+    const currentActions = this.actions.getQueue();
+    const followAction = currentActions.getActions().find(action => action instanceof Follow);
+
+    if (!this.isPlayerActive && this.partner && this.partner.pos.distance(this.pos) > 25 && !followAction) {
+      this.actions.follow(this.partner, 50);
+    } else if (this.isPlayerActive && followAction) {
+      this.actions.clearActions();
+    }
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
 
     if (this.currentHP <= 0) {
