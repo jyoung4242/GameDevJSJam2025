@@ -3,17 +3,17 @@ import { JoystickComponent } from "../Components/TouchControlComponent";
 import { GameScene } from "../Scenes/game";
 import { getCenterOfTileMap } from "../Tilemap/tilemapDay1";
 
-export class DarkPlayer extends Actor {
-  isPlayerActive: boolean = true;
-  partner: Actor | undefined;
+export class LightPlayer extends Actor {
+  isPlayerActive: boolean = false;
   jc: JoystickComponent = new JoystickComponent();
+  partner: Actor | undefined;
 
   speed: number = 100;
 
   constructor() {
     super({
       radius: 10,
-      color: Color.Black,
+      color: Color.White,
       pos: vec(0, 0),
       anchor: Vector.Half,
       z: 1000,
@@ -54,5 +54,9 @@ export class DarkPlayer extends Actor {
     this.partner = partner;
   }
 
-  onPreUpdate(engine: Engine, elapsed: number): void {}
+  onPreUpdate(engine: Engine, elapsed: number): void {
+    if (!this.isPlayerActive && this.partner && this.partner.pos.distance(this.pos) > 25) {
+      this.actions.follow(this.partner, 50);
+    }
+  }
 }
