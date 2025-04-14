@@ -46,13 +46,13 @@ export class GameScene extends Scene {
     this.lightPlayer.registerPartner(this.darkPlayer);
     this.enemyWaveManager = new EnemyWaveManager(this, this.lightPlayer, this.darkPlayer, this.arena);
     this.enemyWaveManager?.init();
-    const screenWidth = this.engine.screen.viewport.width;
-    const screenHeight = this.engine.screen.viewport.height;
+    const screenWidth = this.engine.screen.contentArea.width;
+    const screenHeight = this.engine.screen.contentArea.height;
     this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
     this.add(this.statusBar);
     this.stateSignal.listen(this.stateUpdate.bind(this));
 
-    this.burnDown = new Burndown(vec(screenWidth - 25, 20), vec(0, screenHeight - 20), 60, this);
+    this.burnDown = new Burndown(vec(screenWidth, 20), vec(0, screenHeight - 20), 60, this);
     this.add(this.burnDown);
   }
 
