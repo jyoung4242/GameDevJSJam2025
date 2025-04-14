@@ -1,4 +1,6 @@
-export const model = {};
+export const model = {
+  App: undefined as undefined | HTMLDivElement,
+};
 
 export const template = `
 <style> 
@@ -9,6 +11,6 @@ export const template = `
         transform: translate(-50% , -50%);
     }
 </style> 
-<div> 
+<div \${==>App}> 
     <canvas id='cnv'> </canvas> 
 </div>`;

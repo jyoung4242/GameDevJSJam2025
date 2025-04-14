@@ -20,11 +20,25 @@ jobs:
           fetch-depth: 1
           submodules: true
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
       - name: Install dependencies
         run: npm install
 
       - name: Build
         run: npm run build
+
+      - name: Bump version
+        run: |
+          npm version patch --no-git-tag-version
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
 
       - name: Extract version from package.json
         uses: sergeysova/jq-action@v2
