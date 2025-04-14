@@ -19,6 +19,8 @@ export class DarkPlayer extends Actor {
   fireIntervalHandler: any;
   fireInterval: number = 2000; // Time between shots in milliseconds
   fireDamage: number = 3;
+  isJoystickActive: boolean = true;
+  isKeyboardActive: boolean = false;
 
   constructor() {
     super({
@@ -43,7 +45,7 @@ export class DarkPlayer extends Actor {
         deadZone: 15, // Minimum movement before "active" state
       },
       data => {
-        if (!this.isPlayerActive) return;
+        if (!this.isPlayerActive || !this.isJoystickActive) return;
         if (data.state === "active") {
           this.vel.x = data.direction.x * this.speed;
           this.vel.y = data.direction.y * this.speed;
@@ -88,7 +90,12 @@ export class DarkPlayer extends Actor {
     }
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
 
-    if (this.isPlayerActive) {
+    if (this.kc.keyEnable) {
+      this.isKeyboardActive = true;
+      this.isJoystickActive = false;
+    }
+
+    if (this.isPlayerActive && this.isKeyboardActive) {
       let keys = this.kc.keys;
 
       if (keys.includes("ArrowLeft")) {

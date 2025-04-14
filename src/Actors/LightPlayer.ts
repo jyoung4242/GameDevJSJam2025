@@ -17,6 +17,8 @@ export class LightPlayer extends Actor {
   partner: Actor | undefined;
   HealthBar: HealthBar | undefined;
   fireIntervalHandler: any;
+  isJoystickActive: boolean = true;
+  isKeyboardActive: boolean = false;
 
   speed: number = 100;
   fireInterval: number = 6000; // Time between shots in milliseconds

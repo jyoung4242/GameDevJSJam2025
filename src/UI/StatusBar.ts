@@ -38,7 +38,7 @@ export class StatusBar extends ScreenElement {
 
     this.whiteKills = new Label({
       anchor: Vector.Zero,
-      text: `Light Eliminations: ${this.whites}`,
+      text: `Light Kills: ${this.whites}`,
       font: new Font({
         size: 12,
         family: "Arial",
@@ -52,17 +52,20 @@ export class StatusBar extends ScreenElement {
 
     this.blackKills = new Label({
       anchor: Vector.Zero,
-      text: `Dark Eliminations: ${this.blacks}`,
+      text: `Dark Kills: ${this.blacks}`,
       font: new Font({
         size: 12,
         family: "Arial",
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
-      x: dims.x - 100,
+      x: dims.x - 5,
       y: 0,
     });
     this.addChild(this.blackKills);
+
+    let blackKillsWidth = this.blackKills.getTextWidth();
+    this.blackKills.pos.x = dims.x - 5 - blackKillsWidth;
 
     let textWidth = this.timeLabel.getTextWidth();
     this.timeLabel.pos.x = this.width / 2 - textWidth / 2;
@@ -74,6 +77,9 @@ export class StatusBar extends ScreenElement {
   onPreUpdate(engine: Engine, elapsed: number): void {
     let textWidth = this.timeLabel.getTextWidth();
     this.timeLabel.pos.x = this.width / 2 - textWidth / 2;
+
+    let blackKillsWidth = this.blackKills.getTextWidth();
+    this.blackKills.pos.x = this.width - 5 - blackKillsWidth;
 
     //update white kills
     this.whiteKills.text = `Light Eliminations: ${this.whites}`;
