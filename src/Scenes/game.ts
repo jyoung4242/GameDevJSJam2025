@@ -8,6 +8,7 @@ import { EnemyWaveManager } from "../Lib/EnemyWaveManager";
 import { Signal } from "../Lib/Signals";
 import { StatusBar } from "../UI/StatusBar";
 import { Burndown } from "../UI/SwitchPlayerBurnDown";
+import { day2Tilemap } from "../Tilemap/tileMapDay2";
 
 export class GameScene extends Scene {
   gameUI: UIView | undefined;
@@ -35,7 +36,7 @@ export class GameScene extends Scene {
   onActivate(context: SceneActivationContext<unknown>): void {
     this.gameUI = UI.create(model.App, new GameUI(), GameUI.template);
     this.gameUI.model.register(this);
-    this.arena = day1Tilemap;
+    this.arena = day2Tilemap;
     this.add(this.arena);
     this.darkPlayer = new DarkPlayer();
     this.add(this.darkPlayer);

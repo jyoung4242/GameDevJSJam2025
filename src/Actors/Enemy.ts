@@ -1,13 +1,42 @@
-import { Actor, Circle, Collider, CollisionContact, CollisionType, Color, Engine, Meet, Random, Side, vec, Vector } from "excalibur";
+import {
+  Actor,
+  Circle,
+  Collider,
+  CollisionContact,
+  CollisionType,
+  Color,
+  Engine,
+  GraphicsGroup,
+  Meet,
+  Random,
+  Side,
+  vec,
+  Vector,
+} from "excalibur";
 import { EnemyCollisionGroup } from "../Lib/colliderGroups";
 import { DarkPlayer } from "./DarkPlayer";
 import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
+import { Resources } from "../resources";
+import { purpleGuyAnimation } from "../Animations/purpleGuyAnimation";
 
 const ENEMY_SPEED = 25; // Speed of the enemy
-
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
+
+const enemyGraphicGroup = new GraphicsGroup({
+  useAnchor: true,
+  members: [
+    {
+      graphic: Resources.purpleShadow.toSprite(),
+      offset: vec(0, 0),
+    },
+    {
+      graphic: purpleGuyAnimation,
+      offset: vec(0, 0),
+    },
+  ],
+});
 
 const darkBorder = new Circle({
   radius: 7.5,
@@ -41,12 +70,13 @@ export class Enemy extends Actor {
     this.lightTarget = lightPlayer;
     this.darkTarget = darkPlayer;
 
-    if (enemyRNG.bool()) {
+    /* if (enemyRNG.bool()) {
       this.affinity = "light";
       this.graphics.add(lightBorder); // Set affinity to light
     } else {
       this.graphics.add(darkBorder);
-    }
+    } */
+    this.graphics.add(enemyGraphicGroup);
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
@@ -89,6 +119,7 @@ export class Enemy extends Actor {
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
+    this.graphics.add(enemyGraphicGroup);
     //get actions
     const currentActions = this.actions.getQueue();
     const meetAction = currentActions.getActions().find(action => action instanceof Meet);

@@ -6,8 +6,8 @@ export const day1Tilemap = new IsometricMap({
   pos: vec(0, 0),
   tileWidth: 34,
   tileHeight: 17,
-  columns: 25,
-  rows: 25,
+  columns: 6,
+  rows: 6,
 });
 
 let tileIndex = 0;
