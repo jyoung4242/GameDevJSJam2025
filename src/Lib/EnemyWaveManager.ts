@@ -1,8 +1,8 @@
-import { Circle, IsometricMap, Random, Scene, vec } from "excalibur";
+import { IsometricMap, Random, Scene, vec } from "excalibur";
 import { Enemy } from "../Actors/Enemy";
 import { RentalPool } from "./RentalPool";
 import { Signal } from "./Signals";
-import { getEnemiesToSpawn, getNumberOfBatches, isEdgeTile } from "./Util";
+import { getEnemiesToSpawn, getNumberOfBatches } from "./Util";
 import {
   SpawnPositionStrategy,
   RandomSpawnStrategy,
@@ -11,9 +11,10 @@ import {
   ClusterSpawnStrategy,
   RandomOffscreenSpawnStrategy,
 } from "./spawnStrategies";
+import { LightPlayer } from "../Actors/LightPlayer";
+import { DarkPlayer } from "../Actors/DarkPlayer";
 
-let SPAWN_FREQUENCY = 12000; // Frequency in milliseconds
-
+let SPAWN_FREQUENCY = 18000; // Frequency in milliseconds
 let START_OF_WAVE_TIME = 5;
 
 const SpawnStrategy = {
@@ -35,8 +36,8 @@ const spawnStrategyMap: Record<keyof typeof SpawnStrategy, SpawnPositionStrategy
 export class EnemyWaveManager {
   enemyPool: RentalPool<any> | undefined;
   rng: Random;
-  lightPlayer: any; // Replace with actual type
-  darkPlayer: any; // Replace with actual type
+  lightPlayer: LightPlayer;
+  darkPlayer: DarkPlayer;
   spawnInterval: number = SPAWN_FREQUENCY; // Interval in milliseconds
   spawnEnabled: boolean = false; // Flag to control spawning
   scene: Scene;
@@ -48,6 +49,8 @@ export class EnemyWaveManager {
   batchSize: number[] = []; // Number of enemies to spawn in each batch
   batchIndex: number = 0; // Index for the current batch
   spawnStrategy: keyof typeof SpawnStrategy = SpawnStrategy.RANDOM; // Strategy for spawning enemies
+
+  lastBatchSpawnedFlag: boolean = false;
 
   WaveTimer: any; // Timer for wave management
   isWaveActive: boolean = false; // Flag to check if a wave is active
@@ -77,7 +80,7 @@ export class EnemyWaveManager {
       this.spawnEnemies();
     }
 
-    if (!this.isStartDelayConsumed) {
+    if (this.isStartDelayConsumed) {
       this.stateSignal.send(["waveDuration", this.duration]); // Send the wave duration signal
       this.burnDown.send();
     }
@@ -92,6 +95,7 @@ export class EnemyWaveManager {
     this.enemyCount = getEnemiesToSpawn(this.waveNumber); // Get the number of enemies to spawn
     this.batchSize = getNumberOfBatches(this.enemyCount); // Get the batch sizes for spawning
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
+    this.lastBatchSpawnedFlag = false;
   }
   endWave() {
     this.spawnEnabled = false;
@@ -102,12 +106,29 @@ export class EnemyWaveManager {
 
   spawnEnemies() {
     //TODO - don't hardcode this
-    this.spawnStrategy = SpawnStrategy.RANDOM;
+    if (this.lastBatchSpawnedFlag) {
+      //check if still enemies in scene
+      let ents = this.scene.entities;
+      let enemies = ents.filter(ent => ent instanceof Enemy);
+      if (enemies.length == 0) {
+        //end wave
+        this.endWave();
+      }
+      return;
+    }
+
     let enemyPositions = spawnStrategyMap[this.spawnStrategy].getSpawnPositions(
       this.batchSize[this.batchIndex],
       this.map as IsometricMap
     ); // Get spawn positions based on the strategy
     this.batchIndex += 1; // Increment the batch index
+    //pick new strategy
+    this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
+
+    //check if completed spawning
+    if (this.batchIndex == this.batchSize.length) {
+      this.lastBatchSpawnedFlag = true;
+    }
 
     for (let i = 0; i < enemyPositions.length; i++) {
       let nextTile = enemyPositions[i]; // Get the next tile for spawning

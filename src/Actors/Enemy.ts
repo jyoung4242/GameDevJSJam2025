@@ -1,4 +1,4 @@
-import { Actor, Circle, Collider, CollisionContact, CollisionType, Color, Engine, Random, Side, vec, Vector } from "excalibur";
+import { Actor, Circle, Collider, CollisionContact, CollisionType, Color, Engine, Meet, Random, Side, vec, Vector } from "excalibur";
 import { EnemyCollisionGroup } from "../Lib/colliderGroups";
 import { DarkPlayer } from "./DarkPlayer";
 import { LightPlayer } from "./LightPlayer";
@@ -27,6 +27,8 @@ export class Enemy extends Actor {
   affinity: "dark" | "light" = "dark"; // Affinity of the enemy
   lightTarget: LightPlayer | undefined;
   darkTarget: DarkPlayer | undefined;
+  currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
+
   constructor(pos: Vector, lightPlayer: LightPlayer, darkPlayer: DarkPlayer) {
     super({
       radius: 7.5,
@@ -57,7 +59,18 @@ export class Enemy extends Actor {
 
   onInitialize() {}
 
-  reset() {}
+  reset() {
+    let currentGraphics = this.graphics.getNames();
+    currentGraphics.forEach(grp => this.graphics.remove(grp));
+
+    if (enemyRNG.bool()) {
+      this.affinity = "light";
+      this.graphics.add(lightBorder); // Set affinity to light
+    } else {
+      this.affinity = "dark";
+      this.graphics.add(darkBorder);
+    }
+  }
 
   checkDrop() {
     let drop = enemyRNG.integer(0, 100); // Generate a random number between 0 and 100
@@ -76,6 +89,41 @@ export class Enemy extends Actor {
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
+    //get actions
+    const currentActions = this.actions.getQueue();
+    const meetAction = currentActions.getActions().find(action => action instanceof Meet);
+    let closestTarget;
+    if (!meetAction) {
+      if (this.lightTarget && this.darkTarget) {
+        //find closest target
+        closestTarget =
+          this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
+      } else if (this.lightTarget) closestTarget = this.lightTarget;
+      else if (this.darkTarget) closestTarget = this.darkTarget;
+      if (!closestTarget) return;
+      this.currentTarget = closestTarget;
+      this.actions.meet(closestTarget, ENEMY_SPEED);
+    } else {
+      //already chasing player
+      //get target, confirm they are still viable
+      let ents = this.scene?.entities;
+      let indexOfTarget = ents?.find(ent => ent == this.currentTarget);
+      if (!indexOfTarget) {
+        //find another target
+        if (this.lightTarget && this.darkTarget) {
+          closestTarget =
+            this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
+        } else if (this.lightTarget) {
+          closestTarget = this.lightTarget;
+        } else {
+          closestTarget = this.darkTarget;
+        }
+        this.currentTarget = closestTarget;
+        this.actions.clearActions();
+        this.actions.meet(closestTarget!, ENEMY_SPEED);
+      }
+    }
+
     if (this.lightTarget && this.darkTarget) {
       let closestTarget =
         this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;

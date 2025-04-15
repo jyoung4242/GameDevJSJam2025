@@ -47,7 +47,7 @@ export class StatusBar extends ScreenElement {
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
-      x: this.pos.x + 65,
+      x: this.pos.x + 100,
       y: 0,
     });
     this.addChild(this.whiteKills);

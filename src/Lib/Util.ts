@@ -4,6 +4,12 @@ export function isEdgeTile(index: number, width: number, height: number): boolea
   return x === 0 || x === width - 1 || y === 0 || y === height - 1;
 }
 
+export function isInnerEdgeTile(index: number, width: number, height: number): boolean {
+  const x = index % width;
+  const y = Math.floor(index / width);
+  return x === 1 || x === width - 2 || y === 1 || y === height - 2;
+}
+
 export function getEnemiesToSpawn(level: number): number {
   // Basic formula: base amount + (scaling factor * level)
   const baseEnemies = 55;
