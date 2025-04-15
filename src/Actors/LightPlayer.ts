@@ -6,6 +6,8 @@ import { Enemy } from "./Enemy";
 import { LightBullet } from "./lightBullet";
 import { BlessingDrop } from "./drops";
 import { KeyBoardControlComponent } from "../Components/KeyboardInputComponent";
+import { GameScene } from "../Scenes/game";
+import { Signal } from "../Lib/Signals";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
@@ -19,6 +21,7 @@ export class LightPlayer extends Actor {
   fireIntervalHandler: any;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
+  UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
 
   speed: number = 100;
   fireInterval: number = 6000; // Time between shots in milliseconds
@@ -72,6 +75,7 @@ export class LightPlayer extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
     if (other.owner instanceof BlessingDrop) {
       other.owner.kill(); // Remove the blessing drop from the scene
+      this.UISignal.send(["blessing"]);
       this.exp += 1; // Increase the player's experience
     }
   }
@@ -113,7 +117,13 @@ export class LightPlayer extends Actor {
       this.actions.clearActions();
     }
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
-    if (this.isPlayerActive) {
+
+    if (this.kc.keyEnable) {
+      this.isKeyboardActive = true;
+      this.isJoystickActive = false;
+    }
+
+    if (this.isPlayerActive && this.isKeyboardActive) {
       let keys = this.kc.keys;
 
       if (keys.includes("ArrowLeft")) {
@@ -137,6 +147,13 @@ export class LightPlayer extends Actor {
     }
 
     if (this.currentHP <= 0) {
+      if (this.isPlayerActive) {
+        (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
+      }
+      if (this.fireIntervalHandler) {
+        clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
+      }
+
       this.kill();
     }
   }

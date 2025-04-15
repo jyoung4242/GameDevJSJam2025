@@ -54,6 +54,8 @@ export class GameScene extends Scene {
 
     this.burnDown = new Burndown(vec(screenWidth, 20), vec(0, screenHeight - 20), 60, this);
     this.add(this.burnDown);
+
+    this.enemyWaveManager?.startWave();
   }
 
   onDeactivate(context: SceneActivationContext): void {
@@ -125,8 +127,11 @@ class GameUI {
         }
     </style> 
     <div id='gameUI'> 
-         <button style="margin-left: 10px; margin-top: 20px" \${click@=>startbutton}>Start</button>
-        <button style="margin-left: 10px; margin-top: 20px" \${click@=>stopbutton}>Stop</button>
-        <button style="margin-left: 10px; margin-top: 20px" \${click@=>switchButton}>Switch</button>
+         
     </div>`;
 }
+/*
+        <button style="margin-left: 10px; margin-top: 20px" \${click@=>startbutton}>Start</button>
+        <button style="margin-left: 10px; margin-top: 20px" \${click@=>stopbutton}>Stop</button>
+        <button style="margin-left: 10px; margin-top: 20px" \${click@=>switchButton}>Switch</button>
+*/

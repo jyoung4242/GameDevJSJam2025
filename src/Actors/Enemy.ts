@@ -3,6 +3,7 @@ import { EnemyCollisionGroup } from "../Lib/colliderGroups";
 import { DarkPlayer } from "./DarkPlayer";
 import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
+import { GameScene } from "../Scenes/game";
 
 const ENEMY_SPEED = 25; // Speed of the enemy
 
@@ -48,7 +49,8 @@ export class Enemy extends Actor {
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof DarkPlayer || other.owner instanceof LightPlayer) {
-      this.kill();
+      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
+      this.scene?.remove(this); // Remove the enemy from the scene
       other.owner.currentHP -= 2; // Decrease the player's health by 1
     }
   }

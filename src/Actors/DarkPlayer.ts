@@ -5,6 +5,8 @@ import { HealthBar } from "../UI/healthbar";
 import { DarkWeapon } from "./darkWeapon";
 import { SoulDrop } from "./drops";
 import { KeyBoardControlComponent } from "../Components/KeyboardInputComponent";
+import { GameScene } from "../Scenes/game";
+import { Signal } from "../Lib/Signals";
 
 export class DarkPlayer extends Actor {
   currentHP: number = 20;
@@ -21,6 +23,7 @@ export class DarkPlayer extends Actor {
   fireDamage: number = 3;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
+  UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
 
   constructor() {
     super({
@@ -65,6 +68,7 @@ export class DarkPlayer extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
     if (other.owner instanceof SoulDrop) {
       this.exp += 1; // Increase the player's experience
+      this.UISignal.send(["soul"]);
       other.owner.kill();
     }
   }
@@ -119,6 +123,12 @@ export class DarkPlayer extends Actor {
     }
 
     if (this.currentHP <= 0) {
+      if (this.isPlayerActive) {
+        (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
+      }
+      if (this.fireIntervalHandler) {
+        clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
+      }
       this.kill();
     }
   }

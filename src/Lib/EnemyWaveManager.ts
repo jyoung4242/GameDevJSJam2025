@@ -1,9 +1,36 @@
-import { IsometricMap, Random, Scene, vec } from "excalibur";
+import { Circle, IsometricMap, Random, Scene, vec } from "excalibur";
 import { Enemy } from "../Actors/Enemy";
 import { RentalPool } from "./RentalPool";
 import { Signal } from "./Signals";
-import { isEdgeTile } from "./Util";
-const SPAWN_FREQUENCY = 2000; // Frequency in milliseconds
+import { getEnemiesToSpawn, getNumberOfBatches, isEdgeTile } from "./Util";
+import {
+  SpawnPositionStrategy,
+  RandomSpawnStrategy,
+  CircleSpawnStrategy,
+  EdgesSpawnStrategy,
+  ClusterSpawnStrategy,
+  RandomOffscreenSpawnStrategy,
+} from "./spawnStrategies";
+
+let SPAWN_FREQUENCY = 12000; // Frequency in milliseconds
+
+let START_OF_WAVE_TIME = 5;
+
+const SpawnStrategy = {
+  RANDOM: "RANDOM",
+  CIRCLE: "CIRCLE",
+  EDGES: "EDGES",
+  CLUSTER: "CLUSTER",
+  RANDOM_OFFSCREEN: "RANDOM_OFFSCREEN",
+} as const;
+
+const spawnStrategyMap: Record<keyof typeof SpawnStrategy, SpawnPositionStrategy> = {
+  RANDOM: new RandomSpawnStrategy(),
+  CIRCLE: new CircleSpawnStrategy(),
+  EDGES: new EdgesSpawnStrategy(),
+  CLUSTER: new ClusterSpawnStrategy(),
+  RANDOM_OFFSCREEN: new RandomOffscreenSpawnStrategy(),
+};
 
 export class EnemyWaveManager {
   enemyPool: RentalPool<any> | undefined;
@@ -16,10 +43,16 @@ export class EnemyWaveManager {
   stateSignal: Signal = new Signal("stateUpdate");
   burnDown: Signal = new Signal("burnDown");
   map: IsometricMap | undefined; // Tilemap reference
+  enemyCount: number = 0; // Count of enemies spawned
+  waveNumber: number = 0; // Current wave number
+  batchSize: number[] = []; // Number of enemies to spawn in each batch
+  batchIndex: number = 0; // Index for the current batch
+  spawnStrategy: keyof typeof SpawnStrategy = SpawnStrategy.RANDOM; // Strategy for spawning enemies
 
   WaveTimer: any; // Timer for wave management
   isWaveActive: boolean = false; // Flag to check if a wave is active
   duration: number = 0; // Duration of the wave
+  isStartDelayConsumed: boolean = false; // Flag to check if the start delay is consumed
 
   constructor(scene: Scene, lightPlayer: any, darkPlayer: any, tmap: IsometricMap) {
     this.rng = new Random(Date.now()); // Initialize with a seed for reproducibility
@@ -39,27 +72,53 @@ export class EnemyWaveManager {
     if (!this.isWaveActive) return; // Check if the wave is active
     this.duration += 1; // Increment the wave duration
 
-    this.stateSignal.send(["waveDuration", this.duration]); // Send the wave duration signal
-    this.burnDown.send();
+    if (!this.isStartDelayConsumed && this.duration >= START_OF_WAVE_TIME) {
+      this.isStartDelayConsumed = true; // Set the start delay consumed flag to true
+      this.spawnEnemies();
+    }
+
+    if (!this.isStartDelayConsumed) {
+      this.stateSignal.send(["waveDuration", this.duration]); // Send the wave duration signal
+      this.burnDown.send();
+    }
   };
 
   startWave() {
+    this.waveNumber += 1; // Increment the wave number
+    this.isWaveActive = true; // Set the wave active flag to true
     this.spawnEnabled = true;
+    this.duration = 0; // Reset the duration
+    this.isStartDelayConsumed = false; // Reset the start delay consumed flag
+    this.enemyCount = getEnemiesToSpawn(this.waveNumber); // Get the number of enemies to spawn
+    this.batchSize = getNumberOfBatches(this.enemyCount); // Get the batch sizes for spawning
+    this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
   }
   endWave() {
     this.spawnEnabled = false;
+    this.isWaveActive = false; // Set the wave active flag to false
+    this.duration = 0; // Reset the duration
+    this.isStartDelayConsumed = false; // Reset the start delay consumed flag
   }
-  spawnEnemies() {
-    let tIndex = this.rng.integer(0, 624); // Random position for the enemy
-    let nextTile = this.map!.tiles[tIndex]; // Get the tile at the random position
-    while (isEdgeTile(tIndex, this.map?.columns!, this.map?.rows!)) {
-      tIndex = this.rng.integer(0, 624); // Random position for the enemy
-      nextTile = this.map!.tiles[tIndex];
-    }
 
-    let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
-    nextEnemy.pos = nextTile.pos; // Set the position of the enemy
-    this.scene.add(nextEnemy);
+  spawnEnemies() {
+    //TODO - don't hardcode this
+    this.spawnStrategy = SpawnStrategy.RANDOM;
+    let enemyPositions = spawnStrategyMap[this.spawnStrategy].getSpawnPositions(
+      this.batchSize[this.batchIndex],
+      this.map as IsometricMap
+    ); // Get spawn positions based on the strategy
+    this.batchIndex += 1; // Increment the batch index
+
+    for (let i = 0; i < enemyPositions.length; i++) {
+      let nextTile = enemyPositions[i]; // Get the next tile for spawning
+      if (nextTile === undefined) continue; // Skip if the tile is undefined
+      //find the tile at nextTile coordinates
+      let tile = this.map?.tiles.find(tile => tile.pos.x === nextTile.x && tile.pos.y === nextTile.y);
+      if (!tile) continue; // Skip if the tile is not found
+      let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
+      nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy
+      this.scene.add(nextEnemy);
+    }
   }
 
   makeEnemy = () => {
@@ -73,7 +132,7 @@ export class EnemyWaveManager {
   }
 
   update(elapsed: number) {
-    if (this.spawnEnabled) {
+    if (this.spawnEnabled && this.isStartDelayConsumed) {
       this.spawnInterval -= elapsed;
       if (this.spawnInterval <= 0) {
         this.spawnInterval = SPAWN_FREQUENCY; // Reset the spawn interval

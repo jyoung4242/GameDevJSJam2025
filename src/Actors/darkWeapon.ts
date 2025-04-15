@@ -2,6 +2,7 @@ import { Color, Vector, Actor, vec, Engine, toRadians, Collider, CollisionContac
 import { Enemy } from "./Enemy";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Signal } from "../Lib/Signals";
+import { GameScene } from "../Scenes/game";
 
 let angularVelocity = 0.15; // Adjust this value to control the rotation speed
 
@@ -29,7 +30,8 @@ export class DarkWeapon extends Actor {
       let enemy = other.owner as Enemy;
       this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.checkDrop();
-      enemy.kill();
+      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
+      this.scene?.remove(enemy); // Remove the enemy from the scene
     }
   }
 

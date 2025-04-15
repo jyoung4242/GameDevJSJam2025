@@ -2,6 +2,7 @@ import { Actor, Collider, CollisionContact, CollisionType, Color, Side, vec, Vec
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
+import { GameScene } from "../Scenes/game";
 
 const BULLET_SPEED = 300; // Speed of the bullet
 
@@ -27,7 +28,8 @@ export class LightBullet extends Actor {
       const enemy = other.owner as Enemy;
       this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.checkDrop();
-      enemy.kill();
+      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
+      this.scene?.remove(enemy); // Remove the enemy from the scene
       this.kill(); // Kill the bullet if it collides with an enemy
     }
   }

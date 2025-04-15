@@ -5,6 +5,8 @@ export class StatusBar extends ScreenElement {
   time: number = 0;
   whites: number = 0;
   blacks: number = 0;
+  souls: number = 0;
+  blessings: number = 0;
 
   timeLabel: Label;
   whiteKills: Label;
@@ -59,13 +61,13 @@ export class StatusBar extends ScreenElement {
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
-      x: dims.x - 5,
+      x: 0,
       y: 0,
     });
     this.addChild(this.blackKills);
 
     let blackKillsWidth = this.blackKills.getTextWidth();
-    this.blackKills.pos.x = dims.x - 5 - blackKillsWidth;
+    this.blackKills.pos.x = dims.x - blackKillsWidth;
 
     let textWidth = this.timeLabel.getTextWidth();
     this.timeLabel.pos.x = this.width / 2 - textWidth / 2;
@@ -78,14 +80,13 @@ export class StatusBar extends ScreenElement {
     let textWidth = this.timeLabel.getTextWidth();
     this.timeLabel.pos.x = this.width / 2 - textWidth / 2;
 
-    let blackKillsWidth = this.blackKills.getTextWidth();
-    this.blackKills.pos.x = this.width - 5 - blackKillsWidth;
-
     //update white kills
-    this.whiteKills.text = `Light Eliminations: ${this.whites}`;
+    this.whiteKills.text = `Light Kills: ${this.whites}  Blessings: ${this.blessings}`;
 
     //update black kills
-    this.blackKills.text = `Dark Eliminations: ${this.blacks}`;
+    this.blackKills.text = `Dark Kills: ${this.blacks} Souls: ${this.souls}`;
+    let blackKillsWidth = this.blackKills.getTextWidth();
+    this.blackKills.pos.x = this.width - 5 - blackKillsWidth;
   }
 
   UIUpdate(params: CustomEvent): void {
@@ -96,6 +97,10 @@ export class StatusBar extends ScreenElement {
     } else if (key === "enemyDefeated") {
       if (data === "light") this.whites += 1;
       if (data === "dark") this.blacks += 1;
+    } else if (key == "soul") {
+      this.souls++;
+    } else if (key == "blessing") {
+      this.blessings++;
     }
   }
 }
