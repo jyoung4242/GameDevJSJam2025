@@ -6,6 +6,7 @@ import { Engine, DisplayMode } from "excalibur";
 import { model, template } from "./UI/UI";
 import { GameScene } from "./Scenes/game";
 import { loader } from "./resources";
+import { IntroScene } from "./Scenes/Intro";
 
 await UI.create(document.body, model, template).attached;
 
@@ -16,6 +17,7 @@ const game = new Engine({
   displayMode: DisplayMode.FitScreenAndZoom, // the display mode
   pixelArt: true,
   scenes: {
+    intro: { scene: new IntroScene() },
     game: { scene: new GameScene() },
   },
   pixelRatio: 2, // the pixel ratio of the game
@@ -23,4 +25,4 @@ const game = new Engine({
 
 await game.start(loader);
 
-game.goToScene("game");
+game.goToScene("intro");

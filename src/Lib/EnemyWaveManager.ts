@@ -13,6 +13,7 @@ import {
 } from "./spawnStrategies";
 import { LightPlayer } from "../Actors/LightPlayer";
 import { DarkPlayer } from "../Actors/DarkPlayer";
+import { GameScene } from "../Scenes/game";
 
 let SPAWN_FREQUENCY = 18000; // Frequency in milliseconds
 let START_OF_WAVE_TIME = 5;
@@ -94,6 +95,8 @@ export class EnemyWaveManager {
     this.isStartDelayConsumed = false; // Reset the start delay consumed flag
     this.enemyCount = getEnemiesToSpawn(this.waveNumber); // Get the number of enemies to spawn
     this.batchSize = getNumberOfBatches(this.enemyCount); // Get the batch sizes for spawning
+    //TODO remove hardcoding
+    this.batchSize = [5];
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
     this.lastBatchSpawnedFlag = false;
   }
@@ -102,10 +105,10 @@ export class EnemyWaveManager {
     this.isWaveActive = false; // Set the wave active flag to false
     this.duration = 0; // Reset the duration
     this.isStartDelayConsumed = false; // Reset the start delay consumed flag
+    (this.scene as GameScene).showEndOfWaveModal();
   }
 
   spawnEnemies() {
-    //TODO - don't hardcode this
     if (this.lastBatchSpawnedFlag) {
       //check if still enemies in scene
       let ents = this.scene.entities;

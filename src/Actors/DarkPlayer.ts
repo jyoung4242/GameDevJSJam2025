@@ -24,6 +24,7 @@ export class DarkPlayer extends Actor {
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
+  gamePausedSignal: Signal = new Signal("pauseGame");
 
   constructor() {
     super({

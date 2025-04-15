@@ -1,3 +1,5 @@
+import { IsometricMap, Vector, vec } from "excalibur";
+
 export function isEdgeTile(index: number, width: number, height: number): boolean {
   const x = index % width;
   const y = Math.floor(index / width);
@@ -39,4 +41,8 @@ export function getNumberOfBatches(numEnemies: number): number[] {
   }
 
   return batches;
+}
+
+export function getCenterOfTileMap(tilemap: IsometricMap): Vector {
+  return vec(0, (tilemap.rows * tilemap.tileHeight) / 2);
 }

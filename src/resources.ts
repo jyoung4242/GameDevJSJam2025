@@ -8,6 +8,8 @@ import tree from "./Assets/tree-80x.png";
 import purpleGuy from "./Assets/purple-guy-body-sheet-32px.png";
 import purpleShadow from "./Assets/purple-guy-shadow-32px.png";
 import lifebar from "./Assets/lifebar-32x16px.png";
+import buttonUp from "./Assets/button_rectangle_depth_gradient.png";
+import buttonDown from "./Assets/button_rectangle_gradient.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -18,6 +20,8 @@ export const Resources = {
   purpleGuy: new ImageSource(purpleGuy),
   purpleShadow: new ImageSource(purpleShadow),
   lifebar: new ImageSource(lifebar),
+  buttonUp: new ImageSource(buttonUp),
+  buttonDown: new ImageSource(buttonDown),
 };
 
 export const tilesetD1SS = SpriteSheet.fromImageSource({

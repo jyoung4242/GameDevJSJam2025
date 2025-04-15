@@ -13,7 +13,7 @@ export class Burndown extends ScreenElement {
     const innerRect = new Rectangle({ width: dims.x, height: dims.y, color: Color.Green });
     const outerRect = new Rectangle({ width: dims.x, height: dims.y, color: Color.Red });
 
-    super({ name: "burnDownBar", width: dims.x, height: dims.y, pos: position, z: 1001 });
+    super({ name: "burnDownBar", width: dims.x, height: dims.y, pos: position, z: 1001, opacity: 0.7 });
     this.graphics.use(outerRect);
     this.percent = maxVal;
     this.scene = scene;

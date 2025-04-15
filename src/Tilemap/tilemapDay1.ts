@@ -21,8 +21,4 @@ for (const tile of day1Tilemap.tiles) {
   tileIndex++;
 }
 
-export function getCenterOfTileMap(tilemap: IsometricMap): Vector {
-  return vec(0, (tilemap.rows * tilemap.tileHeight) / 2);
-}
-
 day1Tilemap.updateColliders();

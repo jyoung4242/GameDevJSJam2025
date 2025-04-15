@@ -19,8 +19,6 @@ export const day2Tilemap = new IsometricMap({
   rows: 25,
 });
 
-let tileIndex = 0;
-
 let overLayArray = [
   overlaySS.getSprite(0, 0),
   overlaySS.getSprite(1, 0),
@@ -34,10 +32,9 @@ let overLayArray = [
   overlaySS.getSprite(2, 1),
 ];
 
+let tileIndex = 0;
 for (const tile of day2Tilemap.tiles) {
   if (!isEdgeTile(tileIndex, day2Tilemap.columns, day2Tilemap.rows)) {
-    console.log("not edge tile", tileIndex);
-
     let groundCover = groundSS.getSprite(0, 0);
     //check noise field for random overlays
     const grid = generator.grid(day2Tilemap.columns, day2Tilemap.rows);
@@ -48,7 +45,6 @@ for (const tile of day2Tilemap.tiles) {
       const overlaySprite = rng.pickOne(overLayArray);
       let ospriteX = rng.integer(16, 32);
       let ospriteY = -32;
-      console.log(ospriteX, ospriteY);
 
       let tileGraphicGroup = new GraphicsGroup({
         useAnchor: true,
@@ -63,10 +59,9 @@ for (const tile of day2Tilemap.tiles) {
           },
         ],
       });
-      console.log("adding normal tile graphic with overlay");
+
       tile.addGraphic(tileGraphicGroup);
     } else {
-      console.log("adding normal tile graphic");
       let tileGraphicGroup = new GraphicsGroup({
         useAnchor: true,
         members: [
@@ -76,12 +71,10 @@ for (const tile of day2Tilemap.tiles) {
           },
         ],
       });
-      console.log("adding normal tile graphic with overlay");
+
       tile.addGraphic(tileGraphicGroup);
     }
   } else {
-    console.log("edge tile", tile);
-
     if (tile.x == 0) {
       //left edge tile
       let edgeTileGG = new GraphicsGroup({
@@ -97,11 +90,9 @@ for (const tile of day2Tilemap.tiles) {
           },
         ],
       });
-      console.log("adding tree graphics");
 
       tile.addGraphic(edgeTileGG);
     } else if ((tile.y == 0 && tile.x != 0) || (tile.y == day2Tilemap.rows - 1 && tile.x != 0)) {
-      console.log("top edge tile", tileIndex);
       //top edge tile
       const fence = Resources.fence.toSprite();
       let topEdgeGG = new GraphicsGroup({
@@ -117,13 +108,9 @@ for (const tile of day2Tilemap.tiles) {
           },
         ],
       });
-      console.log("adding top edge graphic");
 
       tile.addGraphic(topEdgeGG);
     } else {
-      console.log("right edge tile", tileIndex);
-      //right edge tile
-
       let rightEdgeGG = new GraphicsGroup({
         useAnchor: true,
         members: [
@@ -133,7 +120,6 @@ for (const tile of day2Tilemap.tiles) {
           },
         ],
       });
-      console.log("adding top edge graphic");
 
       tile.addGraphic(rightEdgeGG);
     }
@@ -142,10 +128,6 @@ for (const tile of day2Tilemap.tiles) {
     tile.addCollider(Shape.Polygon([vec(0, 17), vec(32, 1), vec(63, 17), vec(32, 33)]));
   }
   tileIndex++;
-}
-
-export function getCenterOfTileMap(tilemap: IsometricMap): Vector {
-  return vec(0, (tilemap.rows * tilemap.tileHeight) / 2);
 }
 
 day2Tilemap.updateColliders();
