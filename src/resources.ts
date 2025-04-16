@@ -10,6 +10,14 @@ import purpleShadow from "./Assets/purple-guy-shadow-32px.png";
 import lifebar from "./Assets/lifebar-32x16px.png";
 import buttonUp from "./Assets/button_rectangle_depth_gradient.png";
 import buttonDown from "./Assets/button_rectangle_gradient.png";
+import swordPlayerBody from "./Assets/SwordCharacter_body.png";
+import swordPlayerHands from "./Assets/SwordCharacter_arms-normal.png";
+import swordPlayerHandArmed from "./Assets/SwordCharacterarms-weapon.png";
+import sword from "./Assets/sword-sheet.png";
+import bowPlayerBody from "./Assets/ArrowCharacter_body.png";
+import bowPlayerHands from "./Assets/ArrowCharacter_arms-normal.png";
+import bowPlayerHandsArmed from "./Assets/ArrowCharacter_arms-weapon.png";
+import bow from "./Assets/bow-sheet.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -22,6 +30,14 @@ export const Resources = {
   lifebar: new ImageSource(lifebar),
   buttonUp: new ImageSource(buttonUp),
   buttonDown: new ImageSource(buttonDown),
+  swordPlayerBody: new ImageSource(swordPlayerBody),
+  swordPlayerHands: new ImageSource(swordPlayerHands),
+  swordPlayerHandArmed: new ImageSource(swordPlayerHandArmed),
+  sword: new ImageSource(sword),
+  arrowPlayerBody: new ImageSource(bowPlayerBody),
+  arrowPlayerHands: new ImageSource(bowPlayerHands),
+  arrowPlayerHandsArmed: new ImageSource(bowPlayerHandsArmed),
+  bow: new ImageSource(bow),
 };
 
 export const tilesetD1SS = SpriteSheet.fromImageSource({
@@ -61,6 +77,86 @@ export const purpleGuySS = SpriteSheet.fromImageSource({
     columns: 4,
     spriteHeight: 32,
     spriteWidth: 32,
+  },
+});
+
+export const swordPlayerBodySS = SpriteSheet.fromImageSource({
+  image: Resources.swordPlayerBody,
+  grid: {
+    rows: 1,
+    columns: 7,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
+
+export const swordPlayerHandsNormalSS = SpriteSheet.fromImageSource({
+  image: Resources.swordPlayerHands,
+  grid: {
+    rows: 1,
+    columns: 7,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
+
+export const swordPlayerHandsArmedSS = SpriteSheet.fromImageSource({
+  image: Resources.swordPlayerHandArmed,
+  grid: {
+    rows: 1,
+    columns: 7,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
+
+export const swordSS = SpriteSheet.fromImageSource({
+  image: Resources.sword,
+  grid: {
+    rows: 1,
+    columns: 4,
+    spriteHeight: 80,
+    spriteWidth: 80,
+  },
+});
+
+export const bowPlayerBodySS = SpriteSheet.fromImageSource({
+  image: Resources.arrowPlayerBody,
+  grid: {
+    rows: 1,
+    columns: 7,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
+
+export const bowPlayerHandsNormalSS = SpriteSheet.fromImageSource({
+  image: Resources.arrowPlayerHands,
+  grid: {
+    rows: 1,
+    columns: 7,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
+
+export const bowPlayerHandsArmedSS = SpriteSheet.fromImageSource({
+  image: Resources.arrowPlayerHandsArmed,
+  grid: {
+    rows: 1,
+    columns: 7,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
+
+export const bowSS = SpriteSheet.fromImageSource({
+  image: Resources.bow,
+  grid: {
+    rows: 1,
+    columns: 4,
+    spriteHeight: 80,
+    spriteWidth: 80,
   },
 });
 

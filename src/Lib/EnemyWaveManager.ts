@@ -78,6 +78,8 @@ export class EnemyWaveManager {
 
     if (!this.isStartDelayConsumed && this.duration >= START_OF_WAVE_TIME) {
       this.isStartDelayConsumed = true; // Set the start delay consumed flag to true
+      console.log("initial batch spawn");
+
       this.spawnEnemies();
     }
 
@@ -95,8 +97,7 @@ export class EnemyWaveManager {
     this.isStartDelayConsumed = false; // Reset the start delay consumed flag
     this.enemyCount = getEnemiesToSpawn(this.waveNumber); // Get the number of enemies to spawn
     this.batchSize = getNumberOfBatches(this.enemyCount); // Get the batch sizes for spawning
-    //TODO remove hardcoding
-    this.batchSize = [5];
+
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
     this.lastBatchSpawnedFlag = false;
   }

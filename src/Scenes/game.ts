@@ -65,6 +65,7 @@ export class GameScene extends Scene {
     this.burnDown = new Burndown(vec(screenWidth, 10), vec(0, screenHeight - 12), 60, this);
     this.add(this.burnDown);
 
+    //last thing loaded
     this.endOfWaveModal = new EndOFWaveModal(context.engine);
     //this doesn't get added until needed
 

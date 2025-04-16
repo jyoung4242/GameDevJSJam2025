@@ -50,12 +50,14 @@ export class NextWaveButton extends ScreenElement {
   buttonText: Label;
   upGraphic: Sprite;
   downGraphic: Sprite;
+  engine: Engine | undefined;
   constructor(pos: Vector) {
     super({
       width: 192,
       height: 64,
       pos,
-      z: 2000,
+      z: 2001,
+      color: Color.Transparent,
     });
 
     this.buttonText = new Label({
@@ -75,31 +77,24 @@ export class NextWaveButton extends ScreenElement {
     this.downGraphic = Resources.buttonDown.toSprite();
   }
 
-  onInitialize(engine: Engine) {}
+  onInitialize(engine: Engine) {
+    this.engine = engine;
+  }
 
   onAdd(engine: Engine): void {
-    console.log("adding button");
-
     this.graphics.use(this.upGraphic);
-
-    this.on("pointerup", () => {
-      console.log("up");
-
-      this.graphics.use(this.upGraphic);
-      this.buttonText.pos = this.buttonText.pos.add(vec(0, -4));
-      (engine.currentScene as GameScene).hideEndOfWaveModal();
-    });
-
-    this.on("pointerdown", () => {
-      console.log("down");
-
-      this.graphics.use(this.downGraphic);
-      this.buttonText.pos = this.buttonText.pos.add(vec(0, 4));
-    });
+    window.addEventListener("pointerup", this.upClick);
+    window.addEventListener("pointerdown", this.downClick);
   }
 
-  onRemove(engine: Engine): void {
-    //this.off("pointerup");
-    //this.off("pointerdown");
-  }
+  downClick = (evt: PointerEvent) => {
+    this.graphics.use(this.downGraphic);
+    this.buttonText.pos = this.buttonText.pos.add(vec(0, 4));
+  };
+
+  upClick = (evt: PointerEvent) => {
+    this.graphics.use(this.upGraphic);
+    this.buttonText.pos = this.buttonText.pos.add(vec(0, -4));
+    (this.engine!.currentScene as GameScene).hideEndOfWaveModal();
+  };
 }
