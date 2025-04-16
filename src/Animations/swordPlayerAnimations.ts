@@ -5,8 +5,8 @@ const WALK_FRAME_SPEED = 75;
 const IDLE_FRAME_SPEED = 150;
 const SWORD_SLASH_1 = 100;
 const SWORD_SLASH_2 = 100;
-const SWORD_SLASH_3 = 100;
-const SWORD_SLASH_4 = 100;
+const SWORD_SLASH_3 = 200;
+const SWORD_SLASH_4 = 400;
 
 // Idle animations for Sword Guy
 export const swordGuyBodyIdleRight = new Animation({
@@ -72,7 +72,7 @@ export const swordGuyHandsNormalIdleRight = new Animation({
   ],
 });
 
-const swordGuyHandsNormalIdleLeft = swordGuyHandsNormalIdleRight.clone();
+export const swordGuyHandsNormalIdleLeft = swordGuyHandsNormalIdleRight.clone();
 swordGuyHandsNormalIdleLeft.flipHorizontal = true;
 
 export const swordGuyHandsNormalWalkRight = new Animation({
@@ -101,7 +101,7 @@ export const swordGuyHandsNormalWalkRight = new Animation({
   ],
 });
 
-const swordGuyHandsNormalWalkLeft = swordGuyHandsNormalWalkRight.clone();
+export const swordGuyHandsNormalWalkLeft = swordGuyHandsNormalWalkRight.clone();
 swordGuyHandsNormalWalkLeft.flipHorizontal = true;
 
 // Armed - Idle
@@ -119,7 +119,7 @@ export const swordGuyHandsArmedIdleRight = new Animation({
   ],
 });
 
-const swordGuyHandsArmedIdleLeft = swordGuyHandsArmedIdleRight.clone();
+export const swordGuyHandsArmedIdleLeft = swordGuyHandsArmedIdleRight.clone();
 swordGuyHandsArmedIdleLeft.flipHorizontal = true;
 
 // Armed - Walk
@@ -150,28 +150,28 @@ export const swordGuyHandsArmedWalkRight = new Animation({
   ],
 });
 
-const swordGuyHandsArmedWalkLeft = swordGuyHandsArmedWalkRight.clone();
+export const swordGuyHandsArmedWalkLeft = swordGuyHandsArmedWalkRight.clone();
 swordGuyHandsArmedWalkLeft.flipHorizontal = true;
 
 //sword slash
 
 export const swordSlashAnimationRight = new Animation({
-  strategy: AnimationStrategy.Freeze,
+  strategy: AnimationStrategy.End,
   frames: [
     {
       graphic: swordSS.getSprite(0, 0),
       duration: SWORD_SLASH_1,
     },
     {
-      graphic: swordSS.getSprite(0, 0),
+      graphic: swordSS.getSprite(1, 0),
       duration: SWORD_SLASH_2,
     },
     {
-      graphic: swordSS.getSprite(0, 0),
+      graphic: swordSS.getSprite(2, 0),
       duration: SWORD_SLASH_3,
     },
     {
-      graphic: swordSS.getSprite(0, 0),
+      graphic: swordSS.getSprite(3, 0),
       duration: SWORD_SLASH_4,
     },
   ],
@@ -179,3 +179,4 @@ export const swordSlashAnimationRight = new Animation({
 
 export const swordSlashAnimationLeft = swordSlashAnimationRight.clone();
 swordSlashAnimationLeft.flipHorizontal = true;
+swordSlashAnimationRight;
