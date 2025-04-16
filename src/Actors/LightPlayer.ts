@@ -8,6 +8,7 @@ import { BlessingDrop } from "./drops";
 import { KeyBoardControlComponent } from "../Components/KeyboardInputComponent";
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
+import { DarkPlayer } from "./DarkPlayer";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
@@ -16,12 +17,13 @@ export class LightPlayer extends Actor {
   isPlayerActive: boolean = false;
   jc: JoystickComponent = new JoystickComponent();
   kc: KeyBoardControlComponent = new KeyBoardControlComponent();
-  partner: Actor | undefined;
+  partner: DarkPlayer | undefined;
   HealthBar: HealthBar | undefined;
   fireIntervalHandler: any;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
+  directionFacing: "Left" | "Right" = "Right";
 
   speed: number = 100;
   fireInterval: number = 6000; // Time between shots in milliseconds
@@ -80,7 +82,11 @@ export class LightPlayer extends Actor {
     }
   }
 
-  registerPartner(partner: Actor) {
+  get direction() {
+    return this.directionFacing;
+  }
+
+  registerPartner(partner: DarkPlayer) {
     this.partner = partner;
     this.pos = partner.pos.clone().add(vec(0, -50)); // Position the light player above the dark player
   }

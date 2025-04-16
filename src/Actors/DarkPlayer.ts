@@ -22,12 +22,14 @@ import {
 } from "../Animations/swordPlayerAnimations";
 import { HandsActor } from "./HandsActor";
 import { WeaponActor } from "./WeaponActor";
+import { LightPlayer } from "./LightPlayer";
 
 export class DarkPlayer extends Actor {
   currentHP: number = 20;
   maxHP: number = 20;
   isPlayerActive: boolean = true;
-  partner: Actor | undefined;
+  partner: LightPlayer | undefined;
+  isWalking: boolean = false;
 
   jc: JoystickComponent = new JoystickComponent();
   kc: KeyBoardControlComponent = new KeyBoardControlComponent();
@@ -104,11 +106,17 @@ export class DarkPlayer extends Actor {
 
           this.vel.x = data.direction.x * this.speed;
           this.vel.y = data.direction.y * this.speed;
-          this.ac.set(`walk${this.directionFacing}`);
+          if (this.isWalking === false) {
+            this.isWalking = true;
+            this.ac.set(`walk${this.directionFacing}`);
+          }
         } else {
           this.vel.x = 0;
           this.vel.y = 0;
-          this.ac.set(`idle${this.directionFacing}`);
+          if (this.isWalking === true) {
+            this.isWalking = false;
+            this.ac.set(`idle${this.directionFacing}`);
+          }
         }
       }
     );
@@ -127,8 +135,12 @@ export class DarkPlayer extends Actor {
     }
   }
 
-  registerPartner(partner: Actor) {
+  registerPartner(partner: LightPlayer) {
     this.partner = partner;
+  }
+
+  get direction() {
+    return this.directionFacing;
   }
 
   fire() {
@@ -144,6 +156,7 @@ export class DarkPlayer extends Actor {
     );
 
     this.handChild.attackState = "attack";
+    this.handChild.directionfacing = this.directionFacing;
 
     //let newWeapon = new DarkWeapon(this.pos);
     //this.addChild(newWeapon);
@@ -164,6 +177,13 @@ export class DarkPlayer extends Actor {
     } else if (this.isPlayerActive && followAction) {
       this.actions.clearActions();
     }
+
+    if (!this.isPlayerActive && followAction) {
+      this.directionFacing = this.partner!.direction;
+      if (this.vel.x != 0 || this.vel.y != 0) this.isWalking = true;
+      else this.isWalking = false;
+    }
+
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
 
     if (this.kc.keyEnable) {
@@ -189,7 +209,7 @@ export class DarkPlayer extends Actor {
         this.vel.y = this.speed;
       }
 
-      if (this.vel.x != 0 || this.vel.y != 0) this.ac.set(`walk${this.directionFacing}`);
+      //if (this.vel.x != 0 || this.vel.y != 0) this.ac.set(`walk${this.directionFacing}`);
 
       if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {
         this.vel.x = 0;
@@ -197,8 +217,19 @@ export class DarkPlayer extends Actor {
       if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
         this.vel.y = 0;
       }
-      if (this.vel.x != 0 || this.vel.y != 0) this.ac.set(`walk${this.directionFacing}`);
-      else this.ac.set(`idle${this.directionFacing}`);
+      if (this.vel.x !== 0 || this.vel.y !== 0) {
+        if (this.isWalking === false) {
+          console.log("setting walk animatino");
+          this.isWalking = true;
+          this.ac.set(`walk${this.directionFacing}`);
+        }
+      } else {
+        if (this.isWalking === true) {
+          console.log("setting idle animatino");
+          this.isWalking = false;
+          this.ac.set(`idle${this.directionFacing}`);
+        }
+      }
     }
 
     if (this.currentHP <= 0) {

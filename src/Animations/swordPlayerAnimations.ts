@@ -3,10 +3,10 @@ import { swordPlayerBodySS, swordPlayerHandsArmedSS, swordPlayerHandsNormalSS, s
 
 const WALK_FRAME_SPEED = 75;
 const IDLE_FRAME_SPEED = 150;
-const SWORD_SLASH_1 = 100;
-const SWORD_SLASH_2 = 100;
-const SWORD_SLASH_3 = 200;
-const SWORD_SLASH_4 = 400;
+const SWORD_SLASH_1 = 50;
+const SWORD_SLASH_2 = 50;
+const SWORD_SLASH_3 = 100;
+const SWORD_SLASH_4 = 300;
 
 // Idle animations for Sword Guy
 export const swordGuyBodyIdleRight = new Animation({

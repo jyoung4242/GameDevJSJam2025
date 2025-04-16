@@ -56,6 +56,13 @@ export class AnimationComponent<Keys extends string> extends Component {
   get current() {
     return this.owner.graphics.current;
   }
+
+  get currentFrame() {
+    //@ts-ignore
+    const anim: Animation = this._animations[this.currentName];
+    return anim.currentFrameIndex;
+  }
+
   is(animation: Keys) {
     return this.get(this._currentAnimationName as Keys) === this.get(animation);
   }
