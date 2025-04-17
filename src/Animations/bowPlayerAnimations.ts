@@ -3,10 +3,10 @@ import { bowPlayerBodySS, bowPlayerHandsArmedSS, bowPlayerHandsNormalSS, bowSS }
 
 const WALK_FRAME_SPEED = 75;
 const IDLE_FRAME_SPEED = 150;
-const BOW_DRAW_1 = 100;
+const BOW_DRAW_1 = 750;
 const BOW_DRAW_2 = 100;
 const BOW_DRAW_3 = 100;
-const BOW_DRAW_4 = 100;
+const BOW_DRAW_4 = 700;
 
 // Idle animations for Sword Guy
 export const bowGuyBodyIdleRight = new Animation({
@@ -72,7 +72,7 @@ export const bowGuyHandsNormalIdleRight = new Animation({
   ],
 });
 
-const bowGuyHandsNormalIdleLeft = bowGuyHandsNormalIdleRight.clone();
+export const bowGuyHandsNormalIdleLeft = bowGuyHandsNormalIdleRight.clone();
 bowGuyHandsNormalIdleLeft.flipHorizontal = true;
 
 export const bowGuyHandsNormalWalkRight = new Animation({
@@ -101,7 +101,7 @@ export const bowGuyHandsNormalWalkRight = new Animation({
   ],
 });
 
-const bowGuyHandsNormalWalkLeft = bowGuyHandsNormalWalkRight.clone();
+export const bowGuyHandsNormalWalkLeft = bowGuyHandsNormalWalkRight.clone();
 bowGuyHandsNormalWalkLeft.flipHorizontal = true;
 
 // Armed - Idle
@@ -119,7 +119,7 @@ export const bowGuyHandsArmedIdleRight = new Animation({
   ],
 });
 
-const bowGuyHandsArmedIdleLeft = bowGuyHandsArmedIdleRight.clone();
+export const bowGuyHandsArmedIdleLeft = bowGuyHandsArmedIdleRight.clone();
 bowGuyHandsArmedIdleLeft.flipHorizontal = true;
 
 // Armed - Walk
@@ -150,28 +150,28 @@ export const bowGuyHandsArmedWalkRight = new Animation({
   ],
 });
 
-const bowGuyHandsArmedWalkLeft = bowGuyHandsArmedWalkRight.clone();
+export const bowGuyHandsArmedWalkLeft = bowGuyHandsArmedWalkRight.clone();
 bowGuyHandsArmedWalkLeft.flipHorizontal = true;
 
 //bow draw
 
 export const bowDrawAnimationRight = new Animation({
-  strategy: AnimationStrategy.Freeze,
+  strategy: AnimationStrategy.End,
   frames: [
     {
       graphic: bowSS.getSprite(0, 0),
       duration: BOW_DRAW_1,
     },
     {
-      graphic: bowSS.getSprite(0, 0),
+      graphic: bowSS.getSprite(1, 0),
       duration: BOW_DRAW_2,
     },
     {
-      graphic: bowSS.getSprite(0, 0),
+      graphic: bowSS.getSprite(2, 0),
       duration: BOW_DRAW_3,
     },
     {
-      graphic: bowSS.getSprite(0, 0),
+      graphic: bowSS.getSprite(3, 0),
       duration: BOW_DRAW_4,
     },
   ],

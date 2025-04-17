@@ -18,6 +18,7 @@ import bowPlayerBody from "./Assets/ArrowCharacter_body.png";
 import bowPlayerHands from "./Assets/ArrowCharacter_arms-normal.png";
 import bowPlayerHandsArmed from "./Assets/ArrowCharacter_arms-weapon.png";
 import bow from "./Assets/bow-sheet.png";
+import arrow from "./Assets/arrow.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -38,6 +39,7 @@ export const Resources = {
   arrowPlayerHands: new ImageSource(bowPlayerHands),
   arrowPlayerHandsArmed: new ImageSource(bowPlayerHandsArmed),
   bow: new ImageSource(bow),
+  arrow: new ImageSource(arrow),
 };
 
 export const tilesetD1SS = SpriteSheet.fromImageSource({
@@ -155,8 +157,8 @@ export const bowSS = SpriteSheet.fromImageSource({
   grid: {
     rows: 1,
     columns: 4,
-    spriteHeight: 80,
-    spriteWidth: 80,
+    spriteHeight: 32,
+    spriteWidth: 32,
   },
 });
 

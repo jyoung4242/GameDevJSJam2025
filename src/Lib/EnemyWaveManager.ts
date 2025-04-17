@@ -133,7 +133,7 @@ export class EnemyWaveManager {
     if (this.batchIndex == this.batchSize.length) {
       this.lastBatchSpawnedFlag = true;
     }
-
+    console.log("spawning");
     for (let i = 0; i < enemyPositions.length; i++) {
       let nextTile = enemyPositions[i]; // Get the next tile for spawning
       if (nextTile === undefined) continue; // Skip if the tile is undefined

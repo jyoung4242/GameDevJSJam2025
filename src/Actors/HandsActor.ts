@@ -2,10 +2,41 @@ import { Actor, Engine } from "excalibur";
 import { AnimationComponent } from "../Components/AnimationComponent";
 
 export class HandsActor extends Actor {
-  ac: AnimationComponent<"attackLeft" | "attackRight" | "idleLeft" | "idleRight"> | undefined;
-  directionfacing: "Left" | "Right" = "Right";
-  state: "idle" | "attack" = "idle";
+  ac:
+    | AnimationComponent<
+        | "idleNormalLeft"
+        | "idleNormalRight"
+        | "walkNormalLeft"
+        | "walkNormalRight"
+        | "idleAttackLeft"
+        | "idleAttackRight"
+        | "walkAttackLeft"
+        | "walkAttackRight"
+      >
+    | undefined;
+  _directionfacing: "Left" | "Right" = "Right";
   animationSet: any;
+  _walkState: "idle" | "walk" = "idle";
+  _attackState: "Attack" | "Normal" = "Normal";
+  _oldStates:
+    | "idleNormalLeft"
+    | "idleNormalRight"
+    | "walkNormalLeft"
+    | "walkNormalRight"
+    | "idleAttackLeft"
+    | "idleAttackRight"
+    | "walkAttackLeft"
+    | "walkAttackRight" = "idleNormalRight";
+
+  _currentStates:
+    | "idleNormalLeft"
+    | "idleNormalRight"
+    | "walkNormalLeft"
+    | "walkNormalRight"
+    | "idleAttackLeft"
+    | "idleAttackRight"
+    | "walkAttackLeft"
+    | "walkAttackRight" = "idleNormalRight";
 
   constructor(animationSet: any) {
     super({
@@ -19,29 +50,59 @@ export class HandsActor extends Actor {
   onInitialize(engine: Engine): void {
     this.ac = new AnimationComponent(this.animationSet);
     this.addComponent(this.ac);
-    this.ac.set("idleRight");
+    this.ac.set("idleNormalRight");
+    this._oldStates = "idleNormalRight";
+    this._currentStates = "idleNormalRight";
   }
 
   set direction(dir: "Left" | "Right") {
     if (!this.ac) return;
-    this.directionfacing = dir;
-    const animationState: "idleLeft" | "idleRight" | "attackLeft" | "attackRight" = (this.state + this.directionfacing) as
-      | "idleLeft"
-      | "idleRight"
-      | "attackLeft"
-      | "attackRight";
 
-    this.ac.set(animationState as "idleLeft" | "idleRight" | "attackLeft" | "attackRight");
+    this._directionfacing = dir;
+    this._currentStates = (this._walkState + this._attackState + this._directionfacing) as
+      | "idleNormalLeft"
+      | "idleNormalRight"
+      | "walkNormalLeft"
+      | "walkNormalRight"
+      | "idleAttackLeft"
+      | "idleAttackRight"
+      | "walkAttackLeft"
+      | "walkAttackRight";
   }
 
-  set attackState(state: "idle" | "attack") {
+  set attackState(state: "Normal" | "Attack") {
     if (!this.ac) return;
-    this.state = state;
-    const animationState: "idleLeft" | "idleRight" | "attackLeft" | "attackRight" = (this.state + this.directionfacing) as
-      | "idleLeft"
-      | "idleRight"
-      | "attackLeft"
-      | "attackRight";
-    this.ac.set(animationState as "idleLeft" | "idleRight" | "attackLeft" | "attackRight");
+    this._attackState = state;
+    this._currentStates = (this._walkState + this._attackState + this._directionfacing) as
+      | "idleNormalLeft"
+      | "idleNormalRight"
+      | "walkNormalLeft"
+      | "walkNormalRight"
+      | "idleAttackLeft"
+      | "idleAttackRight"
+      | "walkAttackLeft"
+      | "walkAttackRight";
+  }
+
+  set walkState(state: "idle" | "walk") {
+    if (!this.ac) return;
+    this._walkState = state;
+    this._currentStates = (this._walkState + this._attackState + this._directionfacing) as
+      | "idleNormalLeft"
+      | "idleNormalRight"
+      | "walkNormalLeft"
+      | "walkNormalRight"
+      | "idleAttackLeft"
+      | "idleAttackRight"
+      | "walkAttackLeft"
+      | "walkAttackRight";
+  }
+
+  onPreUpdate(engine: Engine, elapsed: number): void {
+    if (this.ac && this._oldStates !== this._currentStates) {
+      this._oldStates = this._currentStates;
+      //update ac
+      this.ac.set(this._currentStates);
+    }
   }
 }

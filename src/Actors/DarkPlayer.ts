@@ -2,7 +2,6 @@ import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
-import { DarkWeapon } from "./darkWeapon";
 import { SoulDrop } from "./drops";
 import { KeyBoardControlComponent } from "../Components/KeyboardInputComponent";
 import { GameScene } from "../Scenes/game";
@@ -15,8 +14,12 @@ import {
   swordGuyBodyWalkRight,
   swordGuyHandsArmedIdleLeft,
   swordGuyHandsArmedIdleRight,
+  swordGuyHandsArmedWalkLeft,
+  swordGuyHandsArmedWalkRight,
   swordGuyHandsNormalIdleLeft,
   swordGuyHandsNormalIdleRight,
+  swordGuyHandsNormalWalkLeft,
+  swordGuyHandsNormalWalkRight,
   swordSlashAnimationLeft,
   swordSlashAnimationRight,
 } from "../Animations/swordPlayerAnimations";
@@ -31,6 +34,8 @@ export class DarkPlayer extends Actor {
   partner: LightPlayer | undefined;
   isWalking: boolean = false;
 
+  oldXVelocity: number = 0;
+
   jc: JoystickComponent = new JoystickComponent();
   kc: KeyBoardControlComponent = new KeyBoardControlComponent();
   ac: AnimationComponent<"idleLeft" | "idleRight" | "walkLeft" | "walkRight"> = new AnimationComponent({
@@ -42,16 +47,15 @@ export class DarkPlayer extends Actor {
   directionFacing: "Left" | "Right" = "Right";
 
   handChild: HandsActor = new HandsActor({
-    idleLeft: swordGuyHandsNormalIdleLeft,
-    idleRight: swordGuyHandsNormalIdleRight,
-    attackLeft: swordGuyHandsArmedIdleLeft,
-    attackRight: swordGuyHandsArmedIdleRight,
+    idleNormalLeft: swordGuyHandsNormalIdleLeft,
+    idleNormalRight: swordGuyHandsNormalIdleRight,
+    walkNormalLeft: swordGuyHandsNormalWalkLeft,
+    walkNormalRight: swordGuyHandsNormalWalkRight,
+    idleAttackLeft: swordGuyHandsArmedIdleLeft,
+    idleAttackRight: swordGuyHandsArmedIdleRight,
+    walkAttackLeft: swordGuyHandsArmedWalkLeft,
+    walkAttackRight: swordGuyHandsArmedWalkRight,
   });
-
-  /*   weaponChild: WeaponActor = new WeaponActor({
-    attackLeft: swordSlashAnimationLeft,
-    attackRight: swordSlashAnimationRight,
-  }); */
 
   HealthBar: HealthBar | undefined;
   speed: number = 80;
@@ -63,6 +67,7 @@ export class DarkPlayer extends Actor {
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
+  oldDirectionFacing: "Left" | "Right" = "Right";
 
   constructor() {
     super({
@@ -82,8 +87,10 @@ export class DarkPlayer extends Actor {
     this.addChild(this.HealthBar);
     this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
 
-    this.handChild.state = "idle";
+    this.handChild.walkState = "idle";
+    this.handChild.attackState = "Normal";
     this.handChild.direction = "Right";
+
     this.addChild(this.handChild);
 
     //Add this actor when attacking
@@ -144,9 +151,6 @@ export class DarkPlayer extends Actor {
   }
 
   fire() {
-    //this.weaponChild.attackState = "attack";
-    //this.weaponChild.direction = this.directionFacing;
-
     this.addChild(
       new WeaponActor(
         { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
@@ -154,18 +158,12 @@ export class DarkPlayer extends Actor {
         this.releaseWeapon
       )
     );
-
-    this.handChild.attackState = "attack";
-    this.handChild.directionfacing = this.directionFacing;
-
-    //let newWeapon = new DarkWeapon(this.pos);
-    //this.addChild(newWeapon);
+    this.handChild.attackState = "Attack";
+    this.handChild.direction = this.directionFacing;
   }
 
   releaseWeapon = () => {
-    //console.log("reset callback", this.weaponChild);
-    //this.removeChild(this.weaponChild);
-    this.handChild.attackState = "idle";
+    this.handChild.attackState = "Normal";
   };
 
   onPreUpdate(engine: Engine, elapsed: number): void {
@@ -178,10 +176,29 @@ export class DarkPlayer extends Actor {
       this.actions.clearActions();
     }
 
-    if (!this.isPlayerActive && followAction) {
-      this.directionFacing = this.partner!.direction;
-      if (this.vel.x != 0 || this.vel.y != 0) this.isWalking = true;
-      else this.isWalking = false;
+    if (!this.isPlayerActive) {
+      let dirtyFlag = false;
+      if (this.partner!.isWalking && this.isWalking === false) {
+        this.isWalking = true;
+        dirtyFlag = true;
+      } else if (!this.partner!.isWalking && this.isWalking === true) {
+        this.isWalking = false;
+        dirtyFlag = true;
+      }
+
+      if (this.partner!.directionFacing != this.directionFacing) {
+        this.directionFacing = this.partner!.directionFacing;
+        this.handChild.direction = this.directionFacing;
+        dirtyFlag = true;
+      }
+
+      if (dirtyFlag) {
+        if (this.isWalking) {
+          this.ac.set(`walk${this.directionFacing}`);
+        } else {
+          this.ac.set(`idle${this.directionFacing}`);
+        }
+      }
     }
 
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
@@ -196,12 +213,9 @@ export class DarkPlayer extends Actor {
 
       if (keys.includes("ArrowLeft")) {
         this.vel.x = -this.speed;
-        this.directionFacing = "Left";
       } else if (keys.includes("ArrowRight")) {
         this.vel.x = this.speed;
-        this.directionFacing = "Right";
       }
-      //this.weaponChild.direction = this.directionFacing;
 
       if (keys.includes("ArrowUp")) {
         this.vel.y = -this.speed;
@@ -209,23 +223,40 @@ export class DarkPlayer extends Actor {
         this.vel.y = this.speed;
       }
 
-      //if (this.vel.x != 0 || this.vel.y != 0) this.ac.set(`walk${this.directionFacing}`);
-
       if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {
         this.vel.x = 0;
       }
       if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
         this.vel.y = 0;
       }
-      if (this.vel.x !== 0 || this.vel.y !== 0) {
+
+      if (this.vel.x != 0 || this.vel.y != 0) {
         if (this.isWalking === false) {
-          console.log("setting walk animatino");
+          // if idle, and starting to walk
+          if (this.vel.x > 0) this.directionFacing = "Right";
+          else if (this.vel.x < 0) this.directionFacing = "Left";
+          this.handChild.direction = this.directionFacing;
+          this.oldXVelocity = this.vel.x;
           this.isWalking = true;
           this.ac.set(`walk${this.directionFacing}`);
+        } else {
+          // if walking already
+
+          //if the x direction changes while walking
+          if (this.oldXVelocity < 0 && this.vel.x > 0) {
+            this.directionFacing = "Right";
+            this.handChild.direction = this.directionFacing;
+            this.oldXVelocity = this.vel.x;
+            this.ac.set(`walk${this.directionFacing}`);
+          } else if (this.oldXVelocity > 0 && this.vel.x < 0) {
+            this.directionFacing = "Left";
+            this.handChild.direction = this.directionFacing;
+            this.oldXVelocity = this.vel.x;
+            this.ac.set(`walk${this.directionFacing}`);
+          }
         }
       } else {
         if (this.isWalking === true) {
-          console.log("setting idle animatino");
           this.isWalking = false;
           this.ac.set(`idle${this.directionFacing}`);
         }

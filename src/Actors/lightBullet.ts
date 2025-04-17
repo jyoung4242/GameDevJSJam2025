@@ -1,8 +1,9 @@
-import { Actor, Collider, CollisionContact, CollisionType, Color, Side, vec, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, RotationType, Side, vec, Vector } from "excalibur";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
+import { Resources } from "../resources";
 
 const BULLET_SPEED = 300; // Speed of the bullet
 
@@ -11,16 +12,20 @@ export class LightBullet extends Actor {
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   constructor(startingpos: Vector, target: Enemy, damage: number) {
     super({
-      radius: 2,
-      color: Color.Yellow,
+      width: 16,
+      height: 4,
+      rotation: 0,
+      //color: Color.Yellow,
       pos: startingpos,
       anchor: Vector.Half,
-      z: 1000,
+      z: 1001,
       collisionType: CollisionType.Passive,
       collisionGroup: weaponCollisionGroup,
     });
     this.damage = damage;
     this.vel = target.pos.sub(this.pos).normalize().scale(BULLET_SPEED); // Set the velocity towards the target
+    this.rotation = this.vel.toAngle();
+    this.graphics.use(Resources.arrow.toSprite());
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {

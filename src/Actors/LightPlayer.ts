@@ -10,6 +10,26 @@ import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
 import { DarkPlayer } from "./DarkPlayer";
 
+import { AnimationComponent } from "../Components/AnimationComponent";
+import { HandsActor } from "./HandsActor";
+import { BowWeaponActor } from "./nonCollidingWeapon";
+import {
+  bowGuyBodyIdleLeft,
+  bowDrawAnimationLeft,
+  bowDrawAnimationRight,
+  bowGuyBodyIdleRight,
+  bowGuyBodyWalkLeft,
+  bowGuyBodyWalkRight,
+  bowGuyHandsArmedIdleRight,
+  bowGuyHandsArmedWalkRight,
+  bowGuyHandsNormalIdleRight,
+  bowGuyHandsNormalWalkRight,
+  bowGuyHandsNormalWalkLeft,
+  bowGuyHandsArmedWalkLeft,
+  bowGuyHandsNormalIdleLeft,
+  bowGuyHandsArmedIdleLeft,
+} from "../Animations/bowPlayerAnimations";
+
 export class LightPlayer extends Actor {
   currentHP: number = 20;
   maxHP: number = 20;
@@ -17,6 +37,12 @@ export class LightPlayer extends Actor {
   isPlayerActive: boolean = false;
   jc: JoystickComponent = new JoystickComponent();
   kc: KeyBoardControlComponent = new KeyBoardControlComponent();
+  ac: AnimationComponent<"idleLeft" | "idleRight" | "walkLeft" | "walkRight"> = new AnimationComponent({
+    idleLeft: bowGuyBodyIdleLeft,
+    idleRight: bowGuyBodyIdleRight,
+    walkLeft: bowGuyBodyWalkLeft,
+    walkRight: bowGuyBodyWalkRight,
+  });
   partner: DarkPlayer | undefined;
   HealthBar: HealthBar | undefined;
   fireIntervalHandler: any;
@@ -24,11 +50,28 @@ export class LightPlayer extends Actor {
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   directionFacing: "Left" | "Right" = "Right";
+  isWalking: boolean = false;
+  oldXVelocity: number = 0;
+  oldDirectionFacing: "Left" | "Right" = "Right";
+  weaponChild: BowWeaponActor | undefined;
+  closestEnemy: Enemy | undefined;
+
+  handChild: HandsActor = new HandsActor({
+    idleNormalLeft: bowGuyHandsNormalIdleLeft,
+    idleNormalRight: bowGuyHandsNormalIdleRight,
+    walkNormalLeft: bowGuyHandsNormalWalkLeft,
+    walkNormalRight: bowGuyHandsNormalWalkRight,
+    idleAttackLeft: bowGuyHandsArmedIdleLeft,
+    idleAttackRight: bowGuyHandsArmedIdleRight,
+    walkAttackLeft: bowGuyHandsArmedWalkLeft,
+    walkAttackRight: bowGuyHandsArmedWalkRight,
+  });
 
   speed: number = 100;
   fireInterval: number = 6000; // Time between shots in milliseconds
   fireRange: number = 100; // Range of the bullet
   fireDamage: number = 1; // Damage dealt by the bullet
+  isFiring: boolean = false;
 
   constructor() {
     super({
@@ -41,8 +84,16 @@ export class LightPlayer extends Actor {
       collisionGroup: playerCollisionGroup,
     });
     this.addComponent(this.jc);
+    this.addComponent(this.ac);
+    this.ac.set("idleRight");
+
     this.HealthBar = new HealthBar(new Vector(20, 2), new Vector(-10, -15), 20);
     this.addChild(this.HealthBar);
+
+    this.handChild.walkState = "idle";
+    this.handChild.attackState = "Normal";
+    this.handChild.direction = "Right";
+    this.addChild(this.handChild);
 
     this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
   }
@@ -54,19 +105,26 @@ export class LightPlayer extends Actor {
         deadZone: 15, // Minimum movement before "active" state
       },
       data => {
-        if (!this.isPlayerActive) return;
-        if (data.state === "active") {
-          // Handle active joystick
+        if (!this.isPlayerActive || !this.isJoystickActive) return;
 
-          // Move your character or object
+        if (data.state === "active") {
+          if (data.direction.x < 0) this.directionFacing = "Left";
+          else this.directionFacing = "Right";
+          //this.weaponChild.direction = this.directionFacing;
+
           this.vel.x = data.direction.x * this.speed;
           this.vel.y = data.direction.y * this.speed;
+          if (this.isWalking === false) {
+            this.isWalking = true;
+            this.ac.set(`walk${this.directionFacing}`);
+          }
         } else {
-          // Handle idle joystick
-
-          // Stop your character or object
           this.vel.x = 0;
           this.vel.y = 0;
+          if (this.isWalking === true) {
+            this.isWalking = false;
+            this.ac.set(`idle${this.directionFacing}`);
+          }
         }
       }
     );
@@ -108,12 +166,34 @@ export class LightPlayer extends Actor {
     }
 
     if (closestEnemy) {
-      let bullet = new LightBullet(this.pos, closestEnemy, this.fireDamage);
-      this.scene?.add(bullet);
+      this.closestEnemy = closestEnemy;
+      this.weaponChild = new BowWeaponActor(
+        { attackLeft: bowDrawAnimationLeft, attackRight: bowDrawAnimationRight },
+        this.directionFacing,
+        this.releaseWeapon
+      );
+      this.addChild(this.weaponChild);
+      this.isFiring = true;
+      this.handChild.attackState = "Attack";
     }
   }
 
+  releaseWeapon = () => {
+    this.handChild.attackState = "Normal";
+  };
+
   onPreUpdate(engine: Engine, elapsed: number): void {
+    if (this.isFiring && this.closestEnemy && this.weaponChild) {
+      //check animation frame
+      let currentFrame = this.weaponChild.animationframe;
+      if (currentFrame == 1) {
+        let bullet = new LightBullet(this.pos, this.closestEnemy, this.fireDamage);
+        this.scene?.add(bullet);
+        this.closestEnemy = undefined;
+        this.isFiring = false;
+      }
+    }
+
     const currentActions = this.actions.getQueue();
     const followAction = currentActions.getActions().find(action => action instanceof Follow);
 
@@ -122,6 +202,32 @@ export class LightPlayer extends Actor {
     } else if (this.isPlayerActive && followAction) {
       this.actions.clearActions();
     }
+
+    if (!this.isPlayerActive) {
+      let dirtyFlag = false;
+      if (this.partner!.isWalking && this.isWalking === false) {
+        this.isWalking = true;
+        dirtyFlag = true;
+      } else if (!this.partner!.isWalking && this.isWalking === true) {
+        this.isWalking = false;
+        dirtyFlag = true;
+      }
+
+      if (this.partner!.directionFacing != this.directionFacing) {
+        this.directionFacing = this.partner!.directionFacing;
+        this.handChild.direction = this.directionFacing;
+        dirtyFlag = true;
+      }
+
+      if (dirtyFlag) {
+        if (this.isWalking) {
+          this.ac.set(`walk${this.directionFacing}`);
+        } else {
+          this.ac.set(`idle${this.directionFacing}`);
+        }
+      }
+    }
+
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
 
     if (this.kc.keyEnable) {
@@ -149,6 +255,36 @@ export class LightPlayer extends Actor {
       }
       if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
         this.vel.y = 0;
+      }
+
+      if (this.vel.x != 0 || this.vel.y != 0) {
+        // if idle, and starting to walk
+        if (this.isWalking === false) {
+          if (this.vel.x > 0) this.directionFacing = "Right";
+          else this.directionFacing = "Left";
+          this.handChild.direction = this.directionFacing;
+          this.oldXVelocity = this.vel.x;
+          this.isWalking = true;
+          this.ac.set(`walk${this.directionFacing}`);
+        } else {
+          if (this.oldXVelocity < 0 && this.vel.x > 0) {
+            this.directionFacing = "Right";
+            this.oldXVelocity = this.vel.x;
+            this.ac.set(`walk${this.directionFacing}`);
+            this.handChild.direction = this.directionFacing;
+          } else if (this.oldXVelocity > 0 && this.vel.x < 0) {
+            this.directionFacing = "Left";
+            this.oldXVelocity = this.vel.x;
+            this.ac.set(`walk${this.directionFacing}`);
+            this.handChild.direction = this.directionFacing;
+          }
+        }
+      } else {
+        if (this.isWalking === true) {
+          console.log("setting idle animatino");
+          this.isWalking = false;
+          this.ac.set(`idle${this.directionFacing}`);
+        }
       }
     }
 
