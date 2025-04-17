@@ -9,12 +9,13 @@ import { Burndown } from "../UI/SwitchPlayerBurnDown";
 import { day2Tilemap } from "../Tilemap/tileMapDay2";
 import { getCenterOfTileMap } from "../Lib/Util";
 import { EndOFWaveModal } from "../UI/EndOfWaveModal";
+import { NewStatusBar } from "../UI/newStatusBar";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
   darkPlayer: DarkPlayer | undefined;
   lightPlayer: LightPlayer | undefined;
-  statusBar: StatusBar | undefined;
+  statusBar: NewStatusBar | undefined;
   burnDown: Burndown | undefined;
   enemyWaveManager: EnemyWaveManager | undefined;
   gameState = {
@@ -59,7 +60,8 @@ export class GameScene extends Scene {
     // Setup UI
     const screenWidth = this.engine.screen.contentArea.width;
     const screenHeight = this.engine.screen.contentArea.height;
-    this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
+    this.statusBar = new NewStatusBar(vec(screenWidth, screenHeight));
+    //this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
     this.add(this.statusBar);
     this.stateSignal.listen(this.stateUpdate.bind(this));
     this.burnDown = new Burndown(vec(screenWidth, 10), vec(0, screenHeight - 12), 60, this);

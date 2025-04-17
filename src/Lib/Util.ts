@@ -46,3 +46,9 @@ export function getNumberOfBatches(numEnemies: number): number[] {
 export function getCenterOfTileMap(tilemap: IsometricMap): Vector {
   return vec(0, (tilemap.rows * tilemap.tileHeight) / 2);
 }
+
+export function formatDuration(seconds: number): string {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `Time: ${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+}

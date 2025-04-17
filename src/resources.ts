@@ -19,6 +19,9 @@ import bowPlayerHands from "./Assets/ArrowCharacter_arms-normal.png";
 import bowPlayerHandsArmed from "./Assets/ArrowCharacter_arms-weapon.png";
 import bow from "./Assets/bow-sheet.png";
 import arrow from "./Assets/arrow.png";
+import blessing from "./Assets/blessingOrb.png";
+import soul from "./Assets/soulsOrb.png";
+import cancel from "./Assets/cancelPurpledude-Sheet.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -40,7 +43,20 @@ export const Resources = {
   arrowPlayerHandsArmed: new ImageSource(bowPlayerHandsArmed),
   bow: new ImageSource(bow),
   arrow: new ImageSource(arrow),
+  blessing: new ImageSource(blessing),
+  soul: new ImageSource(soul),
+  cancel: new ImageSource(cancel),
 };
+
+export const cancelPurpledudeSS = SpriteSheet.fromImageSource({
+  image: Resources.cancel,
+  grid: {
+    rows: 1,
+    columns: 2,
+    spriteHeight: 32,
+    spriteWidth: 32,
+  },
+});
 
 export const tilesetD1SS = SpriteSheet.fromImageSource({
   image: Resources.tsetD1,
