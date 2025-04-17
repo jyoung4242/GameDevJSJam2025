@@ -1,19 +1,39 @@
 import { Color, Rectangle, ScreenElement, Vector } from "excalibur";
+import { Resources } from "../resources";
+
+const greenHighlight = Color.fromHex("#99e550");
+const greenLowLight = Color.fromHex("#6cd705");
+const yellowHighlight = Color.fromHex("#ffe105");
+const yellowLowLight = Color.fromHex("#f5c100");
+const redHighlight = Color.fromHex("#ff2b05");
+const redLowLight = Color.fromHex("#d41c00");
 
 export class HealthBar extends ScreenElement {
   percent: number;
-  child: ScreenElement;
-  constructor(public dims: Vector, public position: Vector, public maxVal: number) {
-    const innerRect = new Rectangle({ width: dims.x, height: dims.y, color: Color.Green });
-    const outerRect = new Rectangle({ width: dims.x, height: dims.y, color: Color.Red });
+  child1: ScreenElement;
+  child2: ScreenElement;
 
-    super({ name: "outerHealthBar", width: dims.x, height: dims.y, pos: position, z: 1 });
-    this.graphics.use(outerRect);
+  constructor(public dims: Vector, public position: Vector, public maxVal: number) {
+    const topBar = new Rectangle({ width: 26, height: 1, color: greenHighlight });
+    const bottomBar = new Rectangle({ width: 26, height: 1, color: greenLowLight });
+    super({
+      name: "outerHealthBar",
+      width: dims.x,
+      height: dims.y,
+      pos: position,
+      z: 1,
+    });
+
+    this.graphics.use(Resources.lifebar.toSprite());
     this.percent = 100;
 
-    this.child = new ScreenElement({ name: "innerHealthBar", width: dims.x, height: dims.y, pos: new Vector(0, 0), z: 1 });
-    this.child.graphics.use(innerRect);
-    this.addChild(this.child);
+    this.child1 = new ScreenElement({ name: "innerHealthBar", width: 10, height: dims.y, pos: new Vector(3, 7), z: 1 });
+    this.child2 = new ScreenElement({ name: "innerHealthBar2", width: 10, height: dims.y, pos: new Vector(3, 8), z: 1 });
+
+    this.child1.graphics.use(topBar);
+    this.child2.graphics.use(bottomBar);
+    this.addChild(this.child1);
+    this.addChild(this.child2);
   }
 
   setPercent(percent: number): void {
@@ -25,7 +45,18 @@ export class HealthBar extends ScreenElement {
       this.percent = 100;
     }
 
-    this.child.scale.x = this.percent / 100;
-    this.child.scale.y = 1;
+    if (this.percent <= 40) {
+      this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: yellowHighlight }));
+      this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: yellowLowLight }));
+    }
+    if (this.percent <= 15) {
+      this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: redHighlight }));
+      this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: redLowLight }));
+    }
+
+    this.child1.scale.x = this.percent / 100;
+    this.child1.scale.y = 1;
+    this.child2.scale.x = this.percent / 100;
+    this.child2.scale.y = 1;
   }
 }

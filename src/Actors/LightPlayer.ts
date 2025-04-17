@@ -87,7 +87,7 @@ export class LightPlayer extends Actor {
     this.addComponent(this.ac);
     this.ac.set("idleRight");
 
-    this.HealthBar = new HealthBar(new Vector(20, 2), new Vector(-10, -15), 20);
+    this.HealthBar = new HealthBar(new Vector(32, 16), new Vector(-16, -32), 20);
     this.addChild(this.HealthBar);
 
     this.handChild.walkState = "idle";
