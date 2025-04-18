@@ -5,6 +5,7 @@ import { purpleGuySS, Resources, cancelPurpledudeSS } from "../resources";
 export class NewStatusBar extends ScreenElement {
   totalEnemiesDefeated: number = 0;
   totalEnemiesRemaining: number = 0;
+  totalEnemiesRemoved: number = 0;
   lightEnemiesDefeated: number = 0;
   darkEnemiesDefeated: number = 0;
   soulsCollected: number = 0;
@@ -132,7 +133,7 @@ export class NewStatusBar extends ScreenElement {
     if (key === "enemyDefeated") {
       if (data === "light") this.lightEnemiesDefeated += 1;
       if (data === "dark") this.darkEnemiesDefeated += 1;
-      this.totalEnemiesDefeated = this.lightEnemiesDefeated + this.darkEnemiesDefeated;
+      this.totalEnemiesDefeated = this.lightEnemiesDefeated + this.darkEnemiesDefeated + this.totalEnemiesRemoved;
       this.totalEnemiesRemaining = this.enemiesInWave - this.totalEnemiesDefeated;
     } else if (key == "soul") {
       this.soulsCollected++;
@@ -142,6 +143,10 @@ export class NewStatusBar extends ScreenElement {
       console.log("batchsize", data);
 
       this.enemiesInWave = data;
+      this.totalEnemiesRemaining = this.enemiesInWave - this.totalEnemiesDefeated;
+    } else if (key == "playerDamaged") {
+      this.totalEnemiesRemoved++;
+      this.totalEnemiesDefeated = this.lightEnemiesDefeated + this.darkEnemiesDefeated + this.totalEnemiesRemoved;
       this.totalEnemiesRemaining = this.enemiesInWave - this.totalEnemiesDefeated;
     }
   }

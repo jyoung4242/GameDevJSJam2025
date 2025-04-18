@@ -20,6 +20,7 @@ import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
 import { Resources } from "../resources";
 import { purpleGuyAnimation } from "../Animations/purpleGuyAnimation";
+import { Signal } from "../Lib/Signals";
 
 const ENEMY_SPEED = 25; // Speed of the enemy
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
@@ -44,6 +45,7 @@ export class Enemy extends Actor {
   darkTarget: DarkPlayer | undefined;
   currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
   graphic: GraphicsGroup;
+  UISignal: Signal = new Signal("stateUpdate");
 
   constructor(pos: Vector, lightPlayer: LightPlayer, darkPlayer: DarkPlayer) {
     super({
@@ -86,6 +88,7 @@ export class Enemy extends Actor {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
       other.owner.currentHP -= 2; // Decrease the player's health by 1
+      this.UISignal.send(["playerDamaged"]);
     }
   }
 
