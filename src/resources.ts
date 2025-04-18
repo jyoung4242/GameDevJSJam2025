@@ -144,7 +144,7 @@ export const swordSS = SpriteSheet.fromImageSource({
   image: Resources.sword,
   grid: {
     rows: 1,
-    columns: 4,
+    columns: 5,
     spriteHeight: 80,
     spriteWidth: 80,
   },

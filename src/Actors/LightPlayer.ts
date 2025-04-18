@@ -29,6 +29,7 @@ import {
   bowGuyHandsNormalIdleLeft,
   bowGuyHandsArmedIdleLeft,
 } from "../Animations/bowPlayerAnimations";
+import {bodyShadowSS} from "../resources";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
@@ -96,6 +97,13 @@ export class LightPlayer extends Actor {
     this.addChild(this.handChild);
 
     this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
+
+    const shadow = new Actor({
+      width: 48,
+      height: 48,
+    });
+    shadow.graphics.use(bodyShadowSS.sprites[0]);
+    this.addChild(shadow);
   }
 
   onInitialize(engine: Engine): void {

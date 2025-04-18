@@ -104,7 +104,6 @@ export class DarkPlayer extends Actor {
     });
     shadow.graphics.use(bodyShadowSS.sprites[0]);
     this.addChild(shadow);
-
   }
 
   onInitialize(engine: Engine): void {

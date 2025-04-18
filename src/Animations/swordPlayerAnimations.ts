@@ -7,6 +7,7 @@ const SWORD_SLASH_1 = 50;
 const SWORD_SLASH_2 = 50;
 const SWORD_SLASH_3 = 50;
 const SWORD_SLASH_4 = 50;
+const SWORD_SLASH_5 = 50;
 
 // Idle animations for Sword Guy
 export const swordGuyBodyIdleRight = new Animation({
@@ -173,6 +174,10 @@ export const swordSlashAnimationRight = new Animation({
     {
       graphic: swordSS.getSprite(3, 0),
       duration: SWORD_SLASH_4,
+    },
+    {
+      graphic: swordSS.getSprite(4, 0),
+      duration: SWORD_SLASH_5,
     },
   ],
 });
