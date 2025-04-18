@@ -2,11 +2,11 @@ import { Animation, AnimationStrategy } from "excalibur";
 import { swordPlayerBodySS, swordPlayerHandsArmedSS, swordPlayerHandsNormalSS, swordSS } from "../resources";
 
 const WALK_FRAME_SPEED = 75;
-const IDLE_FRAME_SPEED = 150;
+const IDLE_FRAME_SPEED = 450;
 const SWORD_SLASH_1 = 50;
 const SWORD_SLASH_2 = 50;
-const SWORD_SLASH_3 = 100;
-const SWORD_SLASH_4 = 300;
+const SWORD_SLASH_3 = 50;
+const SWORD_SLASH_4 = 50;
 
 // Idle animations for Sword Guy
 export const swordGuyBodyIdleRight = new Animation({
