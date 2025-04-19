@@ -56,6 +56,10 @@ export class Enemy extends Actor {
       collisionType: CollisionType.Active,
       collisionGroup: EnemyCollisionGroup,
     });
+    const randomFirstFrame = Math.floor(Math.random() * 5); //0 - 4
+    const animation = purpleGuyAnimation.clone();
+    animation.goToFrame(randomFirstFrame);
+
     const enemyGraphicGroup = new GraphicsGroup({
       useAnchor: true,
       members: [
@@ -64,7 +68,7 @@ export class Enemy extends Actor {
           offset: vec(0, 0),
         },
         {
-          graphic: purpleGuyAnimation,
+          graphic: animation,
           offset: vec(0, 0),
         },
       ],
