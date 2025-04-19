@@ -1,4 +1,15 @@
-import { Actor, Collider, CollisionContact, CollisionType, Color, RotationType, Side, vec, Vector } from "excalibur";
+import {
+  Actor,
+  Collider,
+  CollisionContact,
+  CollisionType,
+  Color,
+  Engine,
+  RotationType,
+  Side,
+  vec,
+  Vector
+} from "excalibur";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
@@ -28,14 +39,28 @@ export class LightBullet extends Actor {
     this.graphics.use(Resources.arrow.toSprite());
   }
 
+  onInitialize(engine: Engine) {
+    this.events.on("exitviewport", () => {
+      this.kill();
+    })
+  }
+
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
       this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.checkDrop();
-      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
-      this.scene?.remove(enemy); // Remove the enemy from the scene
-      this.kill(); // Kill the bullet if it collides with an enemy
+      enemy.pain("arrow");
+      //this.kill(); // Kill the bullet if it collides with an enemy - It's actually kinda cool when this isn't destroyed
+
+      /* TODO - The rest can go away once enemy is restored to the pool (move that code to Enemy?) */
+      const engine = this.scene?.engine;
+      if (engine) {
+       engine.clock.schedule(() => {
+         // (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
+         // this.scene?.remove(enemy); // Remove the enemy from the scene
+       }, 1000)
+      }
     }
   }
 }

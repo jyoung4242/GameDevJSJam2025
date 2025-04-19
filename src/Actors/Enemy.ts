@@ -19,8 +19,13 @@ import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
 import { Resources } from "../resources";
-import { purpleGuyAnimation } from "../Animations/purpleGuyAnimation";
+import {
+  purpleGuyAnimation,
+  purpleGuyArrowDeathAnimation,
+  purpleGuySwordDeathAnimation
+} from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
+import {actorFlashWhite} from "../Effects/createWhiteMaterial";
 
 const ENEMY_SPEED = 25; // Speed of the enemy
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
@@ -41,11 +46,14 @@ const lightBorder = new Circle({
 
 export class Enemy extends Actor {
   affinity: "dark" | "light" = "dark"; // Affinity of the enemy
+  state: "default" | "death" = "default";
   lightTarget: LightPlayer | undefined;
   darkTarget: DarkPlayer | undefined;
   currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
   graphic: GraphicsGroup;
   UISignal: Signal = new Signal("stateUpdate");
+  swordDeathAnimation = purpleGuySwordDeathAnimation.clone();
+  arrowDeathAnimation = purpleGuyArrowDeathAnimation.clone();
 
   constructor(pos: Vector, lightPlayer: LightPlayer, darkPlayer: DarkPlayer) {
     super({
@@ -56,6 +64,10 @@ export class Enemy extends Actor {
       collisionType: CollisionType.Active,
       collisionGroup: EnemyCollisionGroup,
     });
+    const randomFirstFrame = Math.floor(Math.random() * 5); //0 - 4
+    const animation = purpleGuyAnimation.clone();
+    animation.goToFrame(randomFirstFrame);
+
     const enemyGraphicGroup = new GraphicsGroup({
       useAnchor: true,
       members: [
@@ -64,7 +76,7 @@ export class Enemy extends Actor {
           offset: vec(0, 0),
         },
         {
-          graphic: purpleGuyAnimation,
+          graphic: animation,
           offset: vec(0, 0),
         },
       ],
@@ -84,15 +96,30 @@ export class Enemy extends Actor {
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
+    if (this.state === "death") {
+      return;
+    }
     if (other.owner instanceof DarkPlayer || other.owner instanceof LightPlayer) {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
       other.owner.currentHP -= 2; // Decrease the player's health by 1
+      const engine = other.owner.scene?.engine;
+      if (engine) {
+        actorFlashWhite(engine, other.owner, 150);
+      }
       this.UISignal.send(["playerDamaged"]);
     }
   }
 
-  onInitialize() {}
+  onInitialize() {
+    this.swordDeathAnimation.events.on("end", () => {
+      this.kill();
+    });
+    this.arrowDeathAnimation.events.on("end", () => {
+      this.kill();
+    })
+
+  }
 
   reset() {
     let currentGraphics = this.graphics.getNames();
@@ -123,7 +150,22 @@ export class Enemy extends Actor {
     }
   }
 
+  pain(deathBy: "sword" | "arrow") {
+    this.actions.clearActions();
+    this.state = "death";
+    this.collider.clear();
+    const engine = this.scene?.engine;
+    if (engine) {
+      actorFlashWhite(engine, this, 300, () => {
+        this.graphic.members[1] = deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation;
+      });
+    }
+  }
+
   onPreUpdate(engine: Engine, elapsed: number): void {
+    if (this.state === "death") {
+      return;
+    }
     this.graphics.use(this.graphic);
     //get actions
     const currentActions = this.actions.getQueue();

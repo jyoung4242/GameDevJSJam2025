@@ -26,6 +26,7 @@ import {
 import { HandsActor } from "./HandsActor";
 import { WeaponActor } from "./WeaponActor";
 import { LightPlayer } from "./LightPlayer";
+import {bodyShadowSS} from "../resources";
 
 export class DarkPlayer extends Actor {
   currentHP: number = 20;
@@ -61,7 +62,7 @@ export class DarkPlayer extends Actor {
   speed: number = 80;
   exp: number = 0;
   fireIntervalHandler: any;
-  fireInterval: number = 2000; // Time between shots in milliseconds
+  fireInterval: number = 1000; // Time between shots in milliseconds
   fireDamage: number = 3;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
@@ -96,6 +97,13 @@ export class DarkPlayer extends Actor {
     //Add this actor when attacking
     //this.weaponChild.direction = "Right";
     //this.weaponChild.setResetCallback(this.releaseWeapon);
+
+    const shadow = new Actor({
+      width: 48,
+      height: 48,
+    });
+    shadow.graphics.use(bodyShadowSS.sprites[0]);
+    this.addChild(shadow);
   }
 
   onInitialize(engine: Engine): void {
