@@ -10,12 +10,14 @@ import { day2Tilemap } from "../Tilemap/tileMapDay2";
 import { getCenterOfTileMap } from "../Lib/Util";
 import { EndOFWaveModal } from "../UI/EndOfWaveModal";
 import { NewStatusBar } from "../UI/newStatusBar";
+import { TouchSystem } from "../Lib/TouchSystem";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
   darkPlayer: DarkPlayer | undefined;
   lightPlayer: LightPlayer | undefined;
   statusBar: NewStatusBar | undefined;
+  sceneTouchManger: TouchSystem | undefined;
   burnDown: Burndown | undefined;
   enemyWaveManager: EnemyWaveManager | undefined;
   gameState = {
@@ -30,6 +32,7 @@ export class GameScene extends Scene {
   stateSignal = new Signal("stateUpdate");
   pauseGameSignal = new Signal("pauseGame");
   endOfWaveModal: EndOFWaveModal | undefined;
+  touchMap: Map<string, (data: any) => void> = new Map();
 
   constructor() {
     super();
@@ -52,6 +55,19 @@ export class GameScene extends Scene {
     // Link to players for gameplay, also set's LP position
     this.darkPlayer.registerPartner(this.lightPlayer);
     this.lightPlayer.registerPartner(this.darkPlayer);
+    this.endOfWaveModal = new EndOFWaveModal(context.engine);
+
+    // create and init Touch Manager
+    //touch map
+
+    this.touchMap.set("darkPlayer", this.darkPlayer.joystickCallback);
+    this.touchMap.set("lightPlayer", this.lightPlayer.joystickCallback);
+    this.touchMap.set("UImodal", (data: any) => {
+      this.endOfWaveModal?.handleTouchControls(data);
+    });
+    this.sceneTouchManger = new TouchSystem(this);
+    this.sceneTouchManger.initialize(this.touchMap);
+    this.sceneTouchManger.activeTouchReceiver = "darkPlayer" as keyof typeof this.touchMap;
 
     // create Wave manager
     this.enemyWaveManager = new EnemyWaveManager(this, this.lightPlayer, this.darkPlayer, this.arena);
@@ -68,7 +84,7 @@ export class GameScene extends Scene {
     this.add(this.burnDown);
 
     //last thing loaded
-    this.endOfWaveModal = new EndOFWaveModal(context.engine);
+    //this.endOfWaveModal = new EndOFWaveModal(context.engine);
     //this doesn't get added until needed
 
     //start things off
@@ -91,16 +107,31 @@ export class GameScene extends Scene {
   }
 
   showEndOfWaveModal() {
-    //this.pauseGameSignal.send([true]);
-    //this.engine.timescale = 0;
-    this.endOfWaveModal?.show(this);
+    //this.darkPlayer?.disableTouch();
+    //this.lightPlayer?.disableTouch();
+    (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
+    (this.lightPlayer as LightPlayer).vel = vec(0, 0);
+
+    (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
+    (this.sceneTouchManger as TouchSystem).modalShowing = true;
+    setTimeout(() => this.endOfWaveModal?.show(this, this.statusBar!.getUIState()), 500);
   }
 
   hideEndOfWaveModal() {
-    //this.pauseGameSignal.send([false]);
-    //this.engine.timescale = 1.0;
     this.endOfWaveModal?.hide(this);
+    (this.sceneTouchManger as TouchSystem).modalShowing = false;
+
     this.enemyWaveManager?.startWave();
+    // get active player
+    const activePlayer = this.darkPlayer?.isPlayerActive ? (this.darkPlayer as DarkPlayer) : (this.lightPlayer as LightPlayer);
+    if (activePlayer instanceof DarkPlayer) {
+      (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "darkPlayer" as keyof typeof this.touchMap;
+    } else {
+      (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "lightPlayer" as keyof typeof this.touchMap;
+    }
+
+    //this.darkPlayer?.enableTouch();
+    //this.lightPlayer?.enableTouch();
   }
 
   switchPlayerFocus() {

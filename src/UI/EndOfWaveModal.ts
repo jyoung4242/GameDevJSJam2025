@@ -1,9 +1,50 @@
-import { BoundingBox, Color, Engine, Font, Label, Scene, ScreenElement, TextAlign, vec, Vector } from "excalibur";
+import {
+  BoundingBox,
+  Color,
+  Engine,
+  Font,
+  Graphic,
+  GraphicsGroup,
+  Label,
+  NineSlice,
+  NineSliceConfig,
+  NineSliceStretch,
+  Scene,
+  ScreenElement,
+  Sprite,
+  PointerEvent,
+  Subscription,
+  TextAlign,
+  vec,
+  Vector,
+} from "excalibur";
 import { NextWaveButton, StartModalButton } from "./startButton";
+import { scaleAnimation } from "../Animations/scale";
+import { bowSS, cancelPurpledudeSS, purpleGuySS, Resources, swordSS } from "../resources";
+import { GameScene } from "../Scenes/game";
 
 export class EndOFWaveModal extends ScreenElement {
-  title: Label;
   engine: Engine;
+  scaleAnimation: ScreenElement;
+
+  lightEnemiesScore: Label;
+  darkEnemiesScore: Label;
+  blessingsScore: Label;
+  soulsScore: Label;
+  swordPlayerScore: Label;
+  bowPlayerScore: Label;
+  totalEnemies: Label;
+  totalEnemiesRemoved: Label;
+  myWidth: number;
+
+  heartButton: ProgressionButtons | undefined;
+  flexButton: ProgressionButtons | undefined;
+  clockButton: ProgressionButtons | undefined;
+
+  uiData: {
+    lightEnemiesDefeated: number;
+    darkEnemiesDefeated: number;
+  };
 
   constructor(engine: Engine) {
     let contentArea = engine.screen.contentArea;
@@ -15,29 +56,68 @@ export class EndOFWaveModal extends ScreenElement {
       width: myWidth,
       height: myHeight,
       pos: position,
-      color: Color.Black,
-      z: 2000,
+      color: Color.fromHex("#444444"),
+      z: 9000,
     });
+    this.myWidth = myWidth;
+    this.uiData = { lightEnemiesDefeated: 0, darkEnemiesDefeated: 0 };
     this.engine = engine;
-    this.title = new Label({
-      width: myWidth,
-      height: myHeight / 4,
-      pos: vec(0, 0),
-      text: `Wave Complete`,
+
+    //#region children_defs
+    class Scale extends ScreenElement {
+      constructor() {
+        super({ pos: vec(myWidth / 2 - 24, 15), x: myWidth / 2, width: 48, height: 48, z: 2002 });
+        this.graphics.use(scaleAnimation);
+      }
+    }
+    this.scaleAnimation = new Scale();
+    this.addChild(this.scaleAnimation);
+
+    const lightEnemiesScore = new Label({
+      pos: vec(24, 45),
+      text: "0",
       font: new Font({
         family: "Arial",
-        size: 36,
+        size: 24,
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
     });
 
-    this.title.pos = vec(myWidth / 2, myHeight / 4);
-    this.addChild(this.title);
-    this.addChild(new NextWaveButton(vec(myWidth / 2 - 192 / 2, myHeight * 0.55)));
+    this.darkEnemiesScore = LabelFactory.create(vec(80, 47), "0");
+    this.lightEnemiesScore = LabelFactory.create(vec(150, 47), "0");
+    this.blessingsScore = LabelFactory.create(vec(80, 88), "0");
+    this.soulsScore = LabelFactory.create(vec(150, 88), "0");
+    this.swordPlayerScore = LabelFactory.create(vec(80, 125), "0");
+    this.bowPlayerScore = LabelFactory.create(vec(150, 125), "0");
+    this.totalEnemies = LabelFactory.create(vec(80, 165), "0");
+    this.totalEnemiesRemoved = LabelFactory.create(vec(150, 165), "0");
+
+    this.addChild(this.lightEnemiesScore);
+    this.addChild(this.darkEnemiesScore);
+    this.addChild(this.blessingsScore);
+    this.addChild(this.soulsScore);
+    this.addChild(this.swordPlayerScore);
+    this.addChild(this.bowPlayerScore);
+    this.addChild(this.totalEnemies);
+    this.addChild(this.totalEnemiesRemoved);
+
+    this.addChild(ScreenElementFactory.create(vec(110, 45), cancelPurpledudeSS.getSprite(1, 0), vec(0.75, 0.75)));
+    this.addChild(ScreenElementFactory.create(vec(40, 45), cancelPurpledudeSS.getSprite(0, 0), vec(0.75, 0.75)));
+    this.addChild(ScreenElementFactory.create(vec(44, 90), Resources.blessing.toSprite(), vec(1.4, 1.4)));
+    this.addChild(ScreenElementFactory.create(vec(115, 90), Resources.soul.toSprite(), vec(1.4, 1.4)));
+    this.addChild(ScreenElementFactory.create(vec(21, 105), swordSS.getSprite(0, 0), vec(1.0, 1.0)));
+    this.addChild(ScreenElementFactory.create(vec(105, 119), bowSS.getSprite(0, 0), vec(1.0, 1.0)));
+    this.addChild(ScreenElementFactory.create(vec(38, 165), purpleGuySS.getSprite(0, 0), vec(0.75, 0.75)));
+    this.addChild(ScreenElementFactory.create(vec(108, 160), Resources.swordPlayerIconDamaged.toSprite(), vec(0.6, 0.6)));
+
+    //#endregion
   }
 
-  show(scene: Scene) {
+  show(scene: Scene, data: any) {
+    this.uiData.lightEnemiesDefeated = data.lightEnemiesDefeated;
+    this.uiData.darkEnemiesDefeated = data.darkEnemiesDefeated;
+
     scene.add(this);
   }
 
@@ -45,5 +125,163 @@ export class EndOFWaveModal extends ScreenElement {
     scene.remove(this);
   }
 
+  onAdd(engine: Engine): void {
+    this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), () => {
+      console.log("clock");
+    });
+    this.addChild(this.clockButton);
+
+    this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), () => {
+      console.log("heart");
+    });
+    this.addChild(this.heartButton);
+
+    this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), () => {
+      console.log("flex");
+    });
+    this.addChild(this.flexButton);
+  }
+
+  handleTouchControls(data: any) {
+    const mouseScreenPos = data.rawEvent.coordinates.screenPos;
+    //console.log("mouseScreenPos", mouseScreenPos, data.rawEvent.type);
+
+    if (data.rawEvent.type == "up") {
+      //check mouseScreenPos against the 3 buttons
+      //console.log(this.heartButton?.contains(mouseScreenPos.x, mouseScreenPos.y) as unknown as boolean);
+
+      if (this.heartButton?.contains(mouseScreenPos.x, mouseScreenPos.y)) {
+        this.heartButton.onUp();
+      } else if (this.flexButton?.contains(mouseScreenPos.x, mouseScreenPos.y)) {
+        this.flexButton.onUp();
+      } else if (this.clockButton?.contains(mouseScreenPos.x, mouseScreenPos.y)) {
+        this.clockButton.onUp();
+      }
+    } else if (data.rawEvent.type == "down") {
+      //check mouseScreenPos against the 3 buttons
+      if (this.heartButton?.contains(mouseScreenPos.x, mouseScreenPos.y)) {
+        this.heartButton.onDown();
+      } else if (this.flexButton?.contains(mouseScreenPos.x, mouseScreenPos.y)) {
+        this.flexButton.onDown();
+      } else if (this.clockButton?.contains(mouseScreenPos.x, mouseScreenPos.y)) {
+        this.clockButton.onDown();
+      }
+    }
+  }
+
   onInitialize(engine: Engine): void {}
+}
+
+class ScreenElementFactory extends ScreenElement {
+  constructor(pos: Vector, graphic: Graphic, scale?: Vector) {
+    super({
+      pos,
+    });
+    if (scale) this.scale = scale;
+    this.graphics.use(graphic);
+  }
+
+  static create(pos: Vector, graphic: Graphic, scale?: Vector) {
+    return new ScreenElementFactory(pos, graphic, scale);
+  }
+}
+
+class LabelFactory extends Label {
+  constructor(pos: Vector, text: string) {
+    super({
+      pos,
+      text,
+      font: new Font({
+        family: "Arial",
+        size: 20,
+        color: Color.White,
+        textAlign: TextAlign.Center,
+      }),
+    });
+  }
+
+  static create(pos: Vector, text: string) {
+    return new LabelFactory(pos, text);
+  }
+}
+
+class ProgressionButtons extends ScreenElement {
+  upGraphic: NineSlice;
+  downGraphic: NineSlice;
+  icon: Graphic;
+
+  upGraphicGroup: GraphicsGroup;
+  downGraphicGroup: GraphicsGroup;
+  subUp: Subscription | undefined;
+  subDown: Subscription | undefined;
+
+  constructor(icon: Sprite, position: Vector, public callback: () => void) {
+    super({ width: 80, height: 48, pos: position, z: 2002, anchor: Vector.Half, color: Color.fromHex("#2bb2ea") });
+    this.pointer.useGraphicsBounds = false;
+    this.pointer.useColliderShape = true;
+    this.icon = icon;
+    const bgraphicConfigUp: NineSliceConfig = {
+      width: 80,
+      height: 48,
+      source: Resources.buttonUp,
+      sourceConfig: {
+        width: 192,
+        height: 64,
+        leftMargin: 3,
+        rightMargin: 3,
+        topMargin: 2,
+        bottomMargin: 4,
+      },
+      destinationConfig: {
+        drawCenter: true,
+        horizontalStretch: NineSliceStretch.Stretch,
+        verticalStretch: NineSliceStretch.Stretch,
+      },
+    };
+    this.upGraphic = new NineSlice(bgraphicConfigUp);
+
+    this.upGraphicGroup = new GraphicsGroup({
+      useAnchor: true,
+      members: [this.upGraphic, { graphic: icon, offset: vec(22, 8) }],
+    });
+    this.graphics.use(this.upGraphicGroup);
+    const bgraphicConfigDown: NineSliceConfig = {
+      width: 80,
+      height: 48,
+      source: Resources.buttonDown,
+      sourceConfig: {
+        width: 192,
+        height: 64,
+        leftMargin: 3,
+        rightMargin: 3,
+        topMargin: 2,
+        bottomMargin: 2,
+      },
+      destinationConfig: {
+        drawCenter: true,
+        horizontalStretch: NineSliceStretch.Stretch,
+        verticalStretch: NineSliceStretch.Stretch,
+      },
+    };
+    this.downGraphic = new NineSlice(bgraphicConfigDown);
+    this.downGraphicGroup = new GraphicsGroup({
+      useAnchor: true,
+      members: [this.downGraphic, { graphic: icon, offset: vec(22, 8) }],
+    });
+  }
+
+  onInitialize = (engine: Engine): void => {};
+
+  onDown(): void {
+    this.graphics.use(this.downGraphicGroup);
+  }
+
+  onUp(): void {
+    (this.scene as GameScene).hideEndOfWaveModal();
+    this.graphics.use(this.upGraphicGroup);
+  }
+
+  onAdd(engine: Engine): void {}
+
+  onRemove(engine: Engine): void {}
 }

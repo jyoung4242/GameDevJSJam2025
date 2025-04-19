@@ -72,11 +72,19 @@ export class JoystickComponent extends Component {
     this.notifyJoystickChange("idle");
   }
 
-  onRemove(): void {
-    this.upHandler?.remove();
-    this.downHandler?.remove();
-    this.moveHandler?.remove();
-    this.cancelHandler?.remove();
+  onRemove(owner: Entity): void {
+    /* const primary = owner.scene?.engine.input.pointers.primary;
+    if (!primary) return;
+    primary.off("down", this.downHandler);
+    primary.off("up", this.upHandler);
+    primary.off("move", this.moveHandler);
+ */
+
+    console.log("closing tc");
+
+    this.upHandler?.close();
+    this.downHandler?.close();
+    this.moveHandler?.close();
     this.clearUpdateInterval();
   }
 
