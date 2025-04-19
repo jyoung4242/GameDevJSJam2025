@@ -96,6 +96,9 @@ export class Enemy extends Actor {
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
+    if (this.state === "death") {
+      return;
+    }
     if (other.owner instanceof DarkPlayer || other.owner instanceof LightPlayer) {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
@@ -105,11 +108,18 @@ export class Enemy extends Actor {
         actorFlashWhite(engine, other.owner, 150);
       }
       this.UISignal.send(["playerDamaged"]);
-
     }
   }
 
-  onInitialize() {}
+  onInitialize() {
+    this.swordDeathAnimation.events.on("end", () => {
+      this.kill();
+    });
+    this.arrowDeathAnimation.events.on("end", () => {
+      this.kill();
+    })
+
+  }
 
   reset() {
     let currentGraphics = this.graphics.getNames();
@@ -143,10 +153,12 @@ export class Enemy extends Actor {
   pain(deathBy: "sword" | "arrow") {
     this.actions.clearActions();
     this.state = "death";
+    this.collider.clear();
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {
-        this.graphics.use(deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation);
+        //this.graphics.use(deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation);
+        this.graphic.members[1] = deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation
       });
     }
   }
