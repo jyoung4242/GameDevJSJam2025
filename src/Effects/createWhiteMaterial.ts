@@ -35,9 +35,12 @@ export function createWhiteMaterial(engine: Engine): Material {
   return engine.graphicsContext.createMaterial(shaderSource);
 }
 
-export const actorFlashWhite = (engine: Engine, actor : Actor, durationMs: number) => {
+export const actorFlashWhite = (engine: Engine, actor : Actor, durationMs: number, cb?: () => void) => {
     actor.graphics.material = createWhiteMaterial(engine);
     engine.clock.schedule(() => {
       actor.graphics.material = null;
+      if (cb) {
+        cb();
+      }
     }, durationMs); // flash for 100ms
 }

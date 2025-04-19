@@ -62,7 +62,7 @@ export class DarkPlayer extends Actor {
   speed: number = 80;
   exp: number = 0;
   fireIntervalHandler: any;
-  fireInterval: number = 2000; // Time between shots in milliseconds
+  fireInterval: number = 1000; // Time between shots in milliseconds
   fireDamage: number = 3;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;

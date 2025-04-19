@@ -19,7 +19,11 @@ import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
 import { Resources } from "../resources";
-import { purpleGuyAnimation } from "../Animations/purpleGuyAnimation";
+import {
+  purpleGuyAnimation,
+  purpleGuyArrowDeathAnimation,
+  purpleGuySwordDeathAnimation
+} from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
 import {actorFlashWhite} from "../Effects/createWhiteMaterial";
 
@@ -42,11 +46,14 @@ const lightBorder = new Circle({
 
 export class Enemy extends Actor {
   affinity: "dark" | "light" = "dark"; // Affinity of the enemy
+  state: "default" | "death" = "default";
   lightTarget: LightPlayer | undefined;
   darkTarget: DarkPlayer | undefined;
   currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
   graphic: GraphicsGroup;
   UISignal: Signal = new Signal("stateUpdate");
+  swordDeathAnimation = purpleGuySwordDeathAnimation.clone();
+  arrowDeathAnimation = purpleGuyArrowDeathAnimation.clone();
 
   constructor(pos: Vector, lightPlayer: LightPlayer, darkPlayer: DarkPlayer) {
     super({
@@ -133,7 +140,21 @@ export class Enemy extends Actor {
     }
   }
 
+  pain() {
+    this.actions.clearActions();
+    this.state = "death";
+    const engine = this.scene?.engine;
+    if (engine) {
+      actorFlashWhite(engine, this, 300, () => {
+        this.graphics.use(this.swordDeathAnimation);
+      });
+    }
+  }
+
   onPreUpdate(engine: Engine, elapsed: number): void {
+    if (this.state === "death") {
+      return;
+    }
     this.graphics.use(this.graphic);
     //get actions
     const currentActions = this.actions.getQueue();

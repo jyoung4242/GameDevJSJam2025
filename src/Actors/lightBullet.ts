@@ -33,9 +33,11 @@ export class LightBullet extends Actor {
       const enemy = other.owner as Enemy;
       this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.checkDrop();
-      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
-      this.scene?.remove(enemy); // Remove the enemy from the scene
-      this.kill(); // Kill the bullet if it collides with an enemy
+
+      //TODO BEFORE MERGE - PUT THESE THREE LINES BACK
+      // (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
+      // this.scene?.remove(enemy); // Remove the enemy from the scene
+      // this.kill(); // Kill the bullet if it collides with an enemy
     }
   }
 }

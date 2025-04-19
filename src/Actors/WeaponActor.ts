@@ -74,8 +74,11 @@ export class WeaponActor extends Actor {
       this.others.forEach((enemy: Enemy) => {
         this.UISignal.send(["enemyDefeated", enemy.affinity]);
         enemy.checkDrop();
-        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
-        this.scene?.remove(enemy); // Remove the enemy from the scene
+        enemy.pain();
+
+        // TODO BEFORE PR MERGE - PUT THESE LINES BACK
+        //(this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
+        //this.scene?.remove(enemy); // Remove the enemy from the scene
       });
     }
   }
