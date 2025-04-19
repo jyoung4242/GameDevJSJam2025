@@ -21,6 +21,7 @@ import { GameScene } from "../Scenes/game";
 import { Resources } from "../resources";
 import { purpleGuyAnimation } from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
+import {actorFlashWhite} from "../Effects/createWhiteMaterial";
 
 const ENEMY_SPEED = 25; // Speed of the enemy
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
@@ -92,7 +93,12 @@ export class Enemy extends Actor {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
       other.owner.currentHP -= 2; // Decrease the player's health by 1
+      const engine = other.owner.scene?.engine;
+      if (engine) {
+        actorFlashWhite(engine, other.owner, 150);
+      }
       this.UISignal.send(["playerDamaged"]);
+
     }
   }
 

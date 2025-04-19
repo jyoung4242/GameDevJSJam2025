@@ -1,4 +1,4 @@
-import { Material, Engine } from "excalibur";
+import {Material, Engine, Actor} from "excalibur";
 
 export function createWhiteMaterial(engine: Engine): Material {
   const shaderSource = {
@@ -33,4 +33,11 @@ export function createWhiteMaterial(engine: Engine): Material {
   `,
   };
   return engine.graphicsContext.createMaterial(shaderSource);
+}
+
+export const actorFlashWhite = (engine: Engine, actor : Actor, durationMs: number) => {
+    actor.graphics.material = createWhiteMaterial(engine);
+    engine.clock.schedule(() => {
+      actor.graphics.material = null;
+    }, durationMs); // flash for 100ms
 }
