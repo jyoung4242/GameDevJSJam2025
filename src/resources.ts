@@ -10,6 +10,7 @@ import purpleShadow from "./Assets/purple-guy-shadow-32px.png";
 import lifebar from "./Assets/lifebar-32x16px.png";
 import buttonUp from "./Assets/button_rectangle_depth_gradient.png";
 import buttonDown from "./Assets/button_rectangle_gradient.png";
+import playerShadow from './Assets/character-shadow.png';
 import swordPlayerBody from "./Assets/SwordCharacter_body.png";
 import swordPlayerHands from "./Assets/SwordCharacter_arms-normal.png";
 import swordPlayerHandArmed from "./Assets/SwordCharacterarms-weapon.png";
@@ -42,6 +43,7 @@ export const Resources = {
   lifebar: new ImageSource(lifebar),
   buttonUp: new ImageSource(buttonUp),
   buttonDown: new ImageSource(buttonDown),
+  playerShadow: new ImageSource(playerShadow),
   swordPlayerBody: new ImageSource(swordPlayerBody),
   swordPlayerHands: new ImageSource(swordPlayerHands),
   swordPlayerHandArmed: new ImageSource(swordPlayerHandArmed),
@@ -117,12 +119,22 @@ export const overlaySS = SpriteSheet.fromImageSource({
 export const purpleGuySS = SpriteSheet.fromImageSource({
   image: Resources.purpleGuy,
   grid: {
-    rows: 1,
-    columns: 4,
+    rows: 3,
+    columns: 5,
     spriteHeight: 32,
     spriteWidth: 32,
   },
 });
+
+export const bodyShadowSS = SpriteSheet.fromImageSource({
+  image: Resources.playerShadow,
+  grid: {
+    rows: 1,
+    columns: 1,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  }
+})
 
 export const swordPlayerBodySS = SpriteSheet.fromImageSource({
   image: Resources.swordPlayerBody,
@@ -158,7 +170,7 @@ export const swordSS = SpriteSheet.fromImageSource({
   image: Resources.sword,
   grid: {
     rows: 1,
-    columns: 4,
+    columns: 5,
     spriteHeight: 80,
     spriteWidth: 80,
   },

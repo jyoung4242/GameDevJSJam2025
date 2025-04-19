@@ -19,7 +19,7 @@ export class WeaponActor extends Actor {
 
   constructor(animationSet: any, direction: "Left" | "Right", resetCallback: () => void) {
     super({
-      width: 19,
+      width: 42,
       height: 30,
       z: 1001,
       collisionType: CollisionType.Passive,
@@ -74,8 +74,13 @@ export class WeaponActor extends Actor {
       this.others.forEach((enemy: Enemy) => {
         this.UISignal.send(["enemyDefeated", enemy.affinity]);
         enemy.checkDrop();
-        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
-        this.scene?.remove(enemy); // Remove the enemy from the scene
+        enemy.pain("sword");
+
+        /* TODO - The rest can go away once enemy is restored to the pool (move that code to Enemy?) */
+        engine.clock.schedule(() => {
+          // (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(enemy); // Return the enemy to the pool
+          // this.scene?.remove(enemy); // Remove the enemy from the scene
+        }, 1000)
       });
     }
   }
