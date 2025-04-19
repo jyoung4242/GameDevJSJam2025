@@ -1,6 +1,6 @@
 import {Material, Engine, Actor} from "excalibur";
 
-export function createWhiteMaterial(engine: Engine): Material {
+function createWhiteMaterial(engine: Engine): Material {
   const shaderSource = {
     fragmentSource: `#version 300 es
     precision mediump float;

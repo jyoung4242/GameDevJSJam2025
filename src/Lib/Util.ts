@@ -21,7 +21,6 @@ export function getEnemiesToSpawn(level: number): number {
 }
 
 export function getNumberOfBatches(numEnemies: number): number[] {
-  return [20, 20, 20]
   const batchCount = Math.max(3, Math.floor(numEnemies / 15)); // Adjust this scale as needed
   let weights = Array.from({ length: batchCount }, (_, i) => i + 1); // e.g. [1, 2, 3, 4, ...]
   const totalWeight = weights.reduce((sum, w) => sum + w, 0);

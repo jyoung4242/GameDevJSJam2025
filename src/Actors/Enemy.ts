@@ -157,8 +157,7 @@ export class Enemy extends Actor {
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {
-        //this.graphics.use(deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation);
-        this.graphic.members[1] = deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation
+        this.graphic.members[1] = deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation;
       });
     }
   }
