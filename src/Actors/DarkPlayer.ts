@@ -68,6 +68,7 @@ export class DarkPlayer extends Actor {
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
   oldDirectionFacing: "Left" | "Right" = "Right";
+  isWaveActive: boolean = false;
 
   constructor() {
     super({
@@ -76,11 +77,11 @@ export class DarkPlayer extends Actor {
       //color: Color.Black,
       pos: vec(0, 0),
       anchor: Vector.Half,
-      z: 1000,
+      z: 1001,
       collisionType: CollisionType.Active,
       collisionGroup: playerCollisionGroup,
     });
-    this.addComponent(this.jc);
+    //this.addComponent(this.jc);
     this.addComponent(this.ac);
     this.ac.set("idleRight");
     this.HealthBar = new HealthBar(new Vector(32, 16), new Vector(-16, -32), 20);
@@ -92,41 +93,14 @@ export class DarkPlayer extends Actor {
     this.handChild.direction = "Right";
 
     this.addChild(this.handChild);
+    this.gamePausedSignal.listen((params: CustomEvent) => {
+      console.log("darkplayer getting game paused");
 
-    //Add this actor when attacking
-    //this.weaponChild.direction = "Right";
-    //this.weaponChild.setResetCallback(this.releaseWeapon);
+      this.isWaveActive = !params.detail.params[0];
+    });
   }
 
   onInitialize(engine: Engine): void {
-    this.jc.init(
-      {
-        updateInterval: 50, // Update frequency in ms
-        deadZone: 15, // Minimum movement before "active" state
-      },
-      data => {
-        if (!this.isPlayerActive || !this.isJoystickActive) return;
-        if (data.state === "active") {
-          if (data.direction.x < 0) this.directionFacing = "Left";
-          else this.directionFacing = "Right";
-          //this.weaponChild.direction = this.directionFacing;
-
-          this.vel.x = data.direction.x * this.speed;
-          this.vel.y = data.direction.y * this.speed;
-          if (this.isWalking === false) {
-            this.isWalking = true;
-            this.ac.set(`walk${this.directionFacing}`);
-          }
-        } else {
-          this.vel.x = 0;
-          this.vel.y = 0;
-          if (this.isWalking === true) {
-            this.isWalking = false;
-            this.ac.set(`idle${this.directionFacing}`);
-          }
-        }
-      }
-    );
     this.kc.init();
 
     if (!this.scene) return;
@@ -150,7 +124,38 @@ export class DarkPlayer extends Actor {
     return this.directionFacing;
   }
 
+  disableTouch() {
+    this.removeComponent(this.jc, true);
+  }
+
+  enableTouch() {
+    this.addComponent(this.jc, true);
+  }
+
+  joystickCallback = (data: any) => {
+    if (!this.isPlayerActive || !this.isJoystickActive) return;
+    if (data.state === "active") {
+      if (data.direction.x < 0) this.directionFacing = "Left";
+      else this.directionFacing = "Right";
+
+      this.vel.x = data.direction.x * this.speed;
+      this.vel.y = data.direction.y * this.speed;
+      if (this.isWalking === false) {
+        this.isWalking = true;
+        this.ac.set(`walk${this.directionFacing}`);
+      }
+    } else {
+      this.vel.x = 0;
+      this.vel.y = 0;
+      if (this.isWalking === true) {
+        this.isWalking = false;
+        this.ac.set(`idle${this.directionFacing}`);
+      }
+    }
+  };
+
   fire() {
+    if (!this.isWaveActive) return;
     this.addChild(
       new WeaponActor(
         { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
@@ -167,6 +172,7 @@ export class DarkPlayer extends Actor {
   };
 
   onPreUpdate(engine: Engine, elapsed: number): void {
+    if (!this.isWaveActive) return;
     const currentActions = this.actions.getQueue();
     const followAction = currentActions.getActions().find(action => action instanceof Follow);
 

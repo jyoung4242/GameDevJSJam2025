@@ -22,6 +22,14 @@ import arrow from "./Assets/arrow.png";
 import blessing from "./Assets/blessingOrb.png";
 import soul from "./Assets/soulsOrb.png";
 import cancel from "./Assets/cancelPurpledude-Sheet.png";
+import scale from "./Assets/scale-Sheet.png";
+import goLabel from "./Assets/go.png";
+import swordPlayerIcon from "./Assets/swordPlayerIcon.png";
+import bowPlayerIcon from "./Assets/bowPlayerIcon.png";
+import swordPlayerIconDamaged from "./Assets/swordPlayerIconDamagedIcon.png";
+import heart from "./Assets/heart.png";
+import flex from "./Assets/flex.png";
+import clock from "./Assets/clock.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -46,7 +54,25 @@ export const Resources = {
   blessing: new ImageSource(blessing),
   soul: new ImageSource(soul),
   cancel: new ImageSource(cancel),
+  scale: new ImageSource(scale),
+  goLabel: new ImageSource(goLabel),
+  swordPlayerIcon: new ImageSource(swordPlayerIcon),
+  bowPlayerIcon: new ImageSource(bowPlayerIcon),
+  swordPlayerIconDamaged: new ImageSource(swordPlayerIconDamaged),
+  heart: new ImageSource(heart),
+  flex: new ImageSource(flex),
+  clock: new ImageSource(clock),
 };
+
+export const scaleSS = SpriteSheet.fromImageSource({
+  image: Resources.scale,
+  grid: {
+    rows: 1,
+    columns: 8,
+    spriteHeight: 48,
+    spriteWidth: 48,
+  },
+});
 
 export const cancelPurpledudeSS = SpriteSheet.fromImageSource({
   image: Resources.cancel,

@@ -128,7 +128,6 @@ export class NewStatusBar extends ScreenElement {
 
   UIUpdate(params: CustomEvent): void {
     const [key, data] = params.detail.params;
-    console.log("UIUpdate", key, data);
 
     if (key === "enemyDefeated") {
       if (data === "light") this.lightEnemiesDefeated += 1;
@@ -143,11 +142,26 @@ export class NewStatusBar extends ScreenElement {
       console.log("batchsize", data);
 
       this.enemiesInWave = data;
+      this.totalEnemiesDefeated = 0;
+      this.totalEnemiesRemoved = 0;
+      this.lightEnemiesDefeated = 0;
+      this.darkEnemiesDefeated = 0;
       this.totalEnemiesRemaining = this.enemiesInWave - this.totalEnemiesDefeated;
     } else if (key == "playerDamaged") {
       this.totalEnemiesRemoved++;
       this.totalEnemiesDefeated = this.lightEnemiesDefeated + this.darkEnemiesDefeated + this.totalEnemiesRemoved;
       this.totalEnemiesRemaining = this.enemiesInWave - this.totalEnemiesDefeated;
     }
+  }
+
+  getUIState() {
+    return {
+      lightEnemiesDefeated: this.lightEnemiesDefeated,
+      darkEnemiesDefeated: this.darkEnemiesDefeated,
+      soulsCollected: this.soulsCollected,
+      blessingsCollected: this.blessingsCollected,
+      enemiesInWave: this.enemiesInWave,
+      enemiesRemoved: this.totalEnemiesRemoved,
+    };
   }
 }

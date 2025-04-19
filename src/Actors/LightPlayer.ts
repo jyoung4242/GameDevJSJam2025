@@ -49,6 +49,7 @@ export class LightPlayer extends Actor {
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
+  gamePausedSignal: Signal = new Signal("pauseGame");
   directionFacing: "Left" | "Right" = "Right";
   isWalking: boolean = false;
   oldXVelocity: number = 0;
@@ -72,7 +73,7 @@ export class LightPlayer extends Actor {
   fireRange: number = 100; // Range of the bullet
   fireDamage: number = 1; // Damage dealt by the bullet
   isFiring: boolean = false;
-
+  isWaveActive: boolean = false;
   constructor() {
     super({
       radius: 10,
@@ -83,7 +84,7 @@ export class LightPlayer extends Actor {
       collisionType: CollisionType.Active,
       collisionGroup: playerCollisionGroup,
     });
-    this.addComponent(this.jc);
+    //this.addComponent(this.jc);
     this.addComponent(this.ac);
     this.ac.set("idleRight");
 
@@ -96,39 +97,16 @@ export class LightPlayer extends Actor {
     this.addChild(this.handChild);
 
     this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
+    console.log("seeting up listerner for gamepause");
+
+    this.gamePausedSignal.listen((params: CustomEvent) => {
+      console.log("game paused", params.detail.params[0]);
+
+      this.isWaveActive = !params.detail.params[0];
+    });
   }
 
   onInitialize(engine: Engine): void {
-    this.jc.init(
-      {
-        updateInterval: 50, // Update frequency in ms
-        deadZone: 15, // Minimum movement before "active" state
-      },
-      data => {
-        if (!this.isPlayerActive || !this.isJoystickActive) return;
-
-        if (data.state === "active") {
-          if (data.direction.x < 0) this.directionFacing = "Left";
-          else this.directionFacing = "Right";
-          //this.weaponChild.direction = this.directionFacing;
-
-          this.vel.x = data.direction.x * this.speed;
-          this.vel.y = data.direction.y * this.speed;
-          if (this.isWalking === false) {
-            this.isWalking = true;
-            this.ac.set(`walk${this.directionFacing}`);
-          }
-        } else {
-          this.vel.x = 0;
-          this.vel.y = 0;
-          if (this.isWalking === true) {
-            this.isWalking = false;
-            this.ac.set(`idle${this.directionFacing}`);
-          }
-        }
-      }
-    );
-
     this.kc.init();
   }
 
@@ -150,6 +128,7 @@ export class LightPlayer extends Actor {
   }
 
   fire() {
+    if (!this.isWaveActive) return;
     //get enemies
     let enemies = this.scene?.entities.filter(entity => entity instanceof Enemy);
 
@@ -182,7 +161,39 @@ export class LightPlayer extends Actor {
     this.handChild.attackState = "Normal";
   };
 
+  disableTouch() {
+    this.removeComponent(this.jc);
+  }
+
+  enableTouch() {
+    this.addComponent(this.jc);
+  }
+
+  joystickCallback = (data: any) => {
+    if (!this.isPlayerActive || !this.isJoystickActive) return;
+    if (data.state === "active") {
+      if (data.direction.x < 0) this.directionFacing = "Left";
+      else this.directionFacing = "Right";
+
+      this.vel.x = data.direction.x * this.speed;
+      this.vel.y = data.direction.y * this.speed;
+      if (this.isWalking === false) {
+        this.isWalking = true;
+        this.ac.set(`walk${this.directionFacing}`);
+      }
+    } else {
+      this.vel.x = 0;
+      this.vel.y = 0;
+      if (this.isWalking === true) {
+        this.isWalking = false;
+        this.ac.set(`idle${this.directionFacing}`);
+      }
+    }
+  };
+
   onPreUpdate(engine: Engine, elapsed: number): void {
+    if (!this.isWaveActive) return;
+
     if (this.isFiring && this.closestEnemy && this.weaponChild) {
       //check animation frame
       let currentFrame = this.weaponChild.animationframe;
