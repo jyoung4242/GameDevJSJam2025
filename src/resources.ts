@@ -93,8 +93,8 @@ export const overlaySS = SpriteSheet.fromImageSource({
 export const purpleGuySS = SpriteSheet.fromImageSource({
   image: Resources.purpleGuy,
   grid: {
-    rows: 1,
-    columns: 4,
+    rows: 3,
+    columns: 5,
     spriteHeight: 32,
     spriteWidth: 32,
   },

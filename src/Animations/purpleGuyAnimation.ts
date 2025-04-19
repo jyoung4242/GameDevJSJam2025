@@ -20,5 +20,9 @@ export const purpleGuyAnimation = new Animation({
       graphic: purpleGuySS.getSprite(3, 0),
       duration: 100,
     },
+    {
+      graphic: purpleGuySS.getSprite(4, 0),
+      duration: 100,
+    },
   ],
 });
