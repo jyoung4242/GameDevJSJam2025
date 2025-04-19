@@ -69,7 +69,7 @@ export class LightPlayer extends Actor {
   });
 
   speed: number = 100;
-  fireInterval: number = 6000; // Time between shots in milliseconds
+  fireInterval: number = 3000; // Time between shots in milliseconds
   fireRange: number = 100; // Range of the bullet
   fireDamage: number = 1; // Damage dealt by the bullet
   isFiring: boolean = false;

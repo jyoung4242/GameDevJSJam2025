@@ -140,13 +140,13 @@ export class Enemy extends Actor {
     }
   }
 
-  pain() {
+  pain(deathBy: "sword" | "arrow") {
     this.actions.clearActions();
     this.state = "death";
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {
-        this.graphics.use(this.swordDeathAnimation);
+        this.graphics.use(deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation);
       });
     }
   }
