@@ -4,13 +4,15 @@ import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
 import { Resources } from "../resources";
+import { LightPlayer } from "./LightPlayer";
 
 const BULLET_SPEED = 300; // Speed of the bullet
 
 export class LightBullet extends Actor {
   damage: number;
+  owner: LightPlayer;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
-  constructor(startingpos: Vector, target: Enemy, damage: number) {
+  constructor(startingpos: Vector, target: Enemy, damage: number, player: LightPlayer) {
     super({
       width: 16,
       height: 4,
@@ -22,6 +24,7 @@ export class LightBullet extends Actor {
       collisionType: CollisionType.Passive,
       collisionGroup: weaponCollisionGroup,
     });
+    this.owner = player;
     this.damage = damage;
     this.vel = target.pos.sub(this.pos).normalize().scale(BULLET_SPEED); // Set the velocity towards the target
     this.rotation = this.vel.toAngle();
@@ -38,7 +41,9 @@ export class LightBullet extends Actor {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
       //this.UISignal.send(["enemyDefeated", enemy.affinity]);
+      if (enemy.state == "death") return;
       enemy.pain("arrow");
+      (this.owner as LightPlayer).numenemies++;
     }
   }
 }

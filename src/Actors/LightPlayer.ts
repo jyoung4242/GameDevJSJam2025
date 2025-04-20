@@ -51,6 +51,8 @@ export class LightPlayer extends Actor {
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
+  waveResetSignal: Signal = new Signal("waveReset");
+  numenemies: number = 0;
   directionFacing: "Left" | "Right" = "Right";
   isWalking: boolean = false;
   oldXVelocity: number = 0;
@@ -131,7 +133,7 @@ export class LightPlayer extends Actor {
     }
 
     this.addChild(new ActivePlayerTik(this));
-
+    this.waveResetSignal.listen((params: CustomEvent) => (this.numenemies = 0));
     this.gamePausedSignal.listen((params: CustomEvent) => {
       console.log("game paused", params.detail.params[0]);
 
@@ -231,7 +233,7 @@ export class LightPlayer extends Actor {
       //check animation frame
       let currentFrame = this.weaponChild.animationframe;
       if (currentFrame == 1) {
-        let bullet = new LightBullet(this.pos, this.closestEnemy, this.fireDamage);
+        let bullet = new LightBullet(this.pos, this.closestEnemy, this.fireDamage, this);
         this.scene?.add(bullet);
         this.closestEnemy = undefined;
         this.isFiring = false;

@@ -71,8 +71,8 @@ export class EnemyWaveManager {
     this.endOfWaveInterval = setInterval(this.endOfWave, 1000);
   }
 
-  endOfWave = () => {
-    if (this.monitorSpawning && this.lastBatchSpawnedFlag) {
+  endOfWave = (override: boolean = false) => {
+    if ((this.monitorSpawning && this.lastBatchSpawnedFlag) || override) {
       let ents = this.scene.entities;
 
       let enemies = ents.filter(ent => ent instanceof Enemy);
@@ -116,6 +116,10 @@ export class EnemyWaveManager {
     this.lastBatchSpawnedFlag = false;
     this.batchIndex = 0;
     this.monitorSpawning = false;
+
+    //TODO -debug remove later
+    //this.batchSize = [2]; //debug
+    //this.enemyCount = 2;
 
     this.stateSignal.send(["batchsize", this.enemyCount]); // Send the wave duration signal
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy

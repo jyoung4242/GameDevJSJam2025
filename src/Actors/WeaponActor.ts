@@ -4,6 +4,7 @@ import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
+import { DarkPlayer } from "./DarkPlayer";
 
 export class WeaponActor extends Actor {
   ac: AnimationComponent<"attackLeft" | "attackRight"> | undefined;
@@ -14,8 +15,10 @@ export class WeaponActor extends Actor {
   leftVector = vec(-25, 0);
   rightVector = vec(25, 0);
   UISignal: Signal = new Signal("stateUpdate");
+  waveResetSignal: Signal = new Signal("waveReset");
   isColliding: boolean = false;
   others: Enemy[] = [];
+  numenemies: number = 0;
 
   constructor(animationSet: any, direction: "Left" | "Right", resetCallback: () => void) {
     super({
@@ -72,6 +75,8 @@ export class WeaponActor extends Actor {
   onPreUpdate(engine: Engine, elapsed: number): void {
     if (this.isColliding && this.ac?.currentFrame == 2) {
       this.others.forEach((enemy: Enemy) => {
+        if (enemy.state == "death") return;
+        (this.parent as DarkPlayer).numenemies++;
         enemy.pain("sword");
       });
     }

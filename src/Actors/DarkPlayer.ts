@@ -70,6 +70,8 @@ export class DarkPlayer extends Actor {
   gamePausedSignal: Signal = new Signal("pauseGame");
   oldDirectionFacing: "Left" | "Right" = "Right";
   isWaveActive: boolean = false;
+  waveResetSignal: Signal = new Signal("waveReset");
+  numenemies: number = 0;
 
   constructor() {
     super({
@@ -127,7 +129,7 @@ export class DarkPlayer extends Actor {
     }
 
     this.addChild(new ActivePlayerTik(this));
-
+    this.waveResetSignal.listen((params: CustomEvent) => (this.numenemies = 0));
     this.gamePausedSignal.listen((params: CustomEvent) => {
       console.log("darkplayer getting game paused");
       this.isWaveActive = !params.detail.params[0];
