@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, CollisionType, Engine, Side, vec } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Engine, Side, vec, Vector } from "excalibur";
 import { AnimationComponent } from "../Components/AnimationComponent";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
@@ -45,8 +45,8 @@ export class WeaponActor extends Actor {
   }
 
   onInitialize(engine: Engine): void {
-    if (this.directionfacing == "Left") this.pos = this.leftVector;
-    else this.pos = this.rightVector;
+    if (this.directionfacing == "Left") this.pos = new Vector(this.leftVector.x+4, this.leftVector.y+2);
+    else this.pos = new Vector(this.rightVector.x-4, this.rightVector.y+2);
     this.ac = new AnimationComponent(this.animationSet);
     this.addComponent(this.ac);
     const animationState: "attackLeft" | "attackRight" = (this.state + this.directionfacing) as "attackLeft" | "attackRight";
