@@ -20,7 +20,7 @@ import { DarkPlayer } from "./DarkPlayer";
 import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
-import { Resources } from "../resources";
+import {Resources, SFX_VOLUME} from "../resources";
 import { purpleGuyAnimation, purpleGuyArrowDeathAnimation, purpleGuySwordDeathAnimation } from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
@@ -124,6 +124,7 @@ export class Enemy extends Actor {
       const engine = other.owner.scene?.engine;
       if (engine) {
         actorFlashWhite(engine, other.owner, 150);
+        Resources.sfxPlayerHurt.play(SFX_VOLUME);
       }
       this.UISignal.send(["playerDamaged"]);
     }
@@ -179,6 +180,7 @@ export class Enemy extends Actor {
     this.actions.clearActions();
     this.state = "death";
     this.collider.clear();
+    Resources.sfxEnemyKilled.play(SFX_VOLUME);
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {

@@ -4,6 +4,7 @@ import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
+import {Resources, SFX_VOLUME} from "../resources";
 import { DarkPlayer } from "./DarkPlayer";
 
 export class WeaponActor extends Actor {
@@ -51,6 +52,7 @@ export class WeaponActor extends Actor {
     this.addComponent(this.ac);
     const animationState: "attackLeft" | "attackRight" = (this.state + this.directionfacing) as "attackLeft" | "attackRight";
     this.ac!.set(animationState as "attackLeft" | "attackRight");
+    Resources.sfxSwordSwing.play(SFX_VOLUME);
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
