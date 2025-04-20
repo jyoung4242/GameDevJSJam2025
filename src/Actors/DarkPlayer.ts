@@ -26,7 +26,7 @@ import {
 import { HandsActor } from "./HandsActor";
 import { WeaponActor } from "./WeaponActor";
 import { LightPlayer } from "./LightPlayer";
-import { bodyShadowSS, Resources } from "../resources";
+import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class DarkPlayer extends Actor {
   //properties that change with progression
@@ -188,6 +188,7 @@ export class DarkPlayer extends Actor {
       this.exp += 1; // Increase the player's experience
       this.UISignal.send(["soul"]);
       other.owner.kill();
+      Resources.sfxGeneralPickup.play(SFX_VOLUME);
     }
   }
 
@@ -351,6 +352,7 @@ export class DarkPlayer extends Actor {
       if (this.fireIntervalHandler) {
         clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
       }
+      Resources.sfxDeath.play(SFX_VOLUME);
       this.kill();
     }
   }

@@ -29,7 +29,7 @@ import {
   bowGuyHandsNormalIdleLeft,
   bowGuyHandsArmedIdleLeft,
 } from "../Animations/bowPlayerAnimations";
-import { bodyShadowSS, Resources } from "../resources";
+import {bodyShadowSS, Resources, SFX_VOLUME} from "../resources";
 
 export class LightPlayer extends Actor {
   //properties that change with progression
@@ -187,6 +187,7 @@ export class LightPlayer extends Actor {
       other.owner.kill(); // Remove the blessing drop from the scene
       this.UISignal.send(["blessing"]);
       this.exp += 1; // Increase the player's experience
+      Resources.sfxGeneralPickup.play(SFX_VOLUME);
     }
   }
 
@@ -378,7 +379,7 @@ export class LightPlayer extends Actor {
       if (this.fireIntervalHandler) {
         clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
       }
-
+      Resources.sfxDeath.play(SFX_VOLUME);
       this.kill();
     }
   }

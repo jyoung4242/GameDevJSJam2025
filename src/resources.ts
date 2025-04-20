@@ -1,5 +1,5 @@
 // resources.ts
-import { ImageSource, Loader, Sprite, SpriteSheet } from "excalibur";
+import {ImageSource, Loader, Sound, Sprite, SpriteSheet} from "excalibur";
 import tilesetDay1 from "./Assets/baseTilesDay1.png";
 import groundDay2 from "./Assets/ground-sheet-64x48px.png";
 import overlay from "./Assets/ground-overlays-16px.png";
@@ -38,6 +38,13 @@ import bluetik from "./Assets/TimeBar/time-bar-blue-tick.png";
 import redtik from "./Assets/TimeBar/time-bar-red-tick.png";
 import whitetik from "./Assets/TimeBar/time-bar-white-tick.png";
 import activePlayerTik from "./Assets/active-arrow.png";
+import enemyKilledSfx from './Assets/Sfx/sfx-enemy-kill.mp3';
+import swordSwingSfx from './Assets/Sfx/sfx-sword-swing.mp3';
+import shootArrowSfx from './Assets/Sfx/sfx-shoot-arrow.mp3';
+import playerHurtSfx from './Assets/Sfx/sfx-player-hurt.mp3';
+import generalPickupSfx from './Assets/Sfx/sfx-pickup-general.mp3';
+import deathSfx from './Assets/Sfx/sfx-death.mp3';
+
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -78,7 +85,16 @@ export const Resources = {
   redtik: new ImageSource(redtik),
   whitetik: new ImageSource(whitetik),
   activePlayerTik: new ImageSource(activePlayerTik),
+
+  sfxEnemyKilled: new Sound(enemyKilledSfx),
+  sfxSwordSwing: new Sound(swordSwingSfx),
+  sfxShootArrow: new Sound(shootArrowSfx),
+  sfxPlayerHurt: new Sound(playerHurtSfx),
+  sfxGeneralPickup: new Sound(generalPickupSfx),
+  sfxDeath: new Sound(deathSfx),
 };
+
+export const SFX_VOLUME = 0.3;
 
 export const pickupSS = SpriteSheet.fromImageSource({
   image: Resources.pickupSS,
