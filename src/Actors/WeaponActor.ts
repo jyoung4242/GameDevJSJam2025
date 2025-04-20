@@ -72,7 +72,6 @@ export class WeaponActor extends Actor {
   onPreUpdate(engine: Engine, elapsed: number): void {
     if (this.isColliding && this.ac?.currentFrame == 2) {
       this.others.forEach((enemy: Enemy) => {
-        this.UISignal.send(["enemyDefeated", enemy.affinity]);
         enemy.pain("sword");
       });
     }

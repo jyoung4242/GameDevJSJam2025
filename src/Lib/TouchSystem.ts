@@ -71,7 +71,7 @@ export class TouchSystem {
 
   onUp(e: PointerEvent) {
     if (!this._isDown) return;
-    console.log("tc up, activeTouchReceiver", this._activeTouchReceiver);
+
     this._isDown = false;
     this._isActive = false;
     this._moveDelta = Vector.Zero;
@@ -84,7 +84,6 @@ export class TouchSystem {
 
   onMove(evt: PointerEvent) {
     if (!this._isDown) return;
-    //console.log("tc move, activeTouchReceiver", this._activeTouchReceiver);
 
     this._currentPos = evt.worldPos.clone();
     this._moveDelta = this._currentPos.sub(this._gestureStartPos);
@@ -168,8 +167,6 @@ export class TouchSystem {
     let callback = this._controlMap.get(this._activeTouchReceiver);
 
     if (!callback) return;
-
-    console.log(this._lastEvent);
 
     (callback as Function)({
       direction,

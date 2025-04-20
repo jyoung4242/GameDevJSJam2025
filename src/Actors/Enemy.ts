@@ -91,6 +91,8 @@ export class Enemy extends Actor {
     if (this.state === "death") {
       return;
     }
+
+    //this is if enemy damages player
     if (other.owner instanceof DarkPlayer || other.owner instanceof LightPlayer) {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
@@ -105,14 +107,10 @@ export class Enemy extends Actor {
 
   onInitialize() {
     this.swordDeathAnimation.events.on("end", () => {
-      this.checkDrop();
-      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
-      this.scene?.remove(this); // Remove the enemy from the scene
+      console.log("animation end event");
     });
     this.arrowDeathAnimation.events.on("end", () => {
-      this.checkDrop();
-      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
-      this.scene?.remove(this); // Remove the enemy from the scene
+      console.log("animation end event");
     });
   }
 
@@ -121,8 +119,11 @@ export class Enemy extends Actor {
     currentGraphicsNames.forEach(grp => this.graphics.remove(grp));
     this.graphics.use(this.startingGraphic.clone());
     this.graphic.members[1] = this.startingAnimation.clone();
+    this.swordDeathAnimation.reset();
+    this.arrowDeathAnimation.reset();
     this.state = "default";
     this.collider = this.startingCollider.clone();
+
     if (enemyRNG.bool()) {
       this.affinity = "light";
       this.graphic.tint = Color.fromHex("#888888").lighten(0.9);
@@ -149,6 +150,8 @@ export class Enemy extends Actor {
   }
 
   pain(deathBy: "sword" | "arrow") {
+    console.log("starting death", this);
+
     this.actions.clearActions();
     this.state = "death";
     this.collider.clear();
@@ -162,6 +165,22 @@ export class Enemy extends Actor {
 
   onPreUpdate(engine: Engine, elapsed: number): void {
     if (this.state === "death") {
+      if (this.swordDeathAnimation.done) {
+        this.checkDrop();
+        console.log("checking animation end ", this);
+        this.UISignal.send(["enemyDefeated", this.affinity]);
+        this.actions.clearActions();
+        this.scene?.remove(this); // Remove the enemy from the scene
+        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
+      }
+      if (this.arrowDeathAnimation.done) {
+        this.checkDrop();
+        console.log("checking animation end ", this);
+        this.UISignal.send(["enemyDefeated", this.affinity]);
+        this.actions.clearActions();
+        this.scene?.remove(this); // Remove the enemy from the scene
+        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
+      }
       return;
     }
     this.graphics.use(this.graphic);

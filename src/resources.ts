@@ -10,7 +10,7 @@ import purpleShadow from "./Assets/purple-guy-shadow-32px.png";
 import lifebar from "./Assets/lifebar-32x16px.png";
 import buttonUp from "./Assets/button_rectangle_depth_gradient.png";
 import buttonDown from "./Assets/button_rectangle_gradient.png";
-import playerShadow from './Assets/character-shadow.png';
+import playerShadow from "./Assets/character-shadow.png";
 import swordPlayerBody from "./Assets/SwordCharacter_body.png";
 import swordPlayerHands from "./Assets/SwordCharacter_arms-normal.png";
 import swordPlayerHandArmed from "./Assets/SwordCharacterarms-weapon.png";
@@ -31,6 +31,8 @@ import swordPlayerIconDamaged from "./Assets/swordPlayerIconDamagedIcon.png";
 import heart from "./Assets/heart.png";
 import flex from "./Assets/flex.png";
 import clock from "./Assets/clock.png";
+import PUshadow from "./Assets/pickups-shadow.png";
+import PUspritesheet from "./Assets/pickups-sheet-16px.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -64,7 +66,19 @@ export const Resources = {
   heart: new ImageSource(heart),
   flex: new ImageSource(flex),
   clock: new ImageSource(clock),
+  pickupshadow: new ImageSource(PUshadow),
+  pickupSS: new ImageSource(PUspritesheet),
 };
+
+export const pickupSS = SpriteSheet.fromImageSource({
+  image: Resources.pickupSS,
+  grid: {
+    rows: 1,
+    columns: 2,
+    spriteHeight: 16,
+    spriteWidth: 16,
+  },
+});
 
 export const scaleSS = SpriteSheet.fromImageSource({
   image: Resources.scale,
@@ -133,8 +147,8 @@ export const bodyShadowSS = SpriteSheet.fromImageSource({
     columns: 1,
     spriteHeight: 48,
     spriteWidth: 48,
-  }
-})
+  },
+});
 
 export const swordPlayerBodySS = SpriteSheet.fromImageSource({
   image: Resources.swordPlayerBody,

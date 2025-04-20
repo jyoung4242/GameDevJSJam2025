@@ -37,7 +37,7 @@ export class LightBullet extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
-      this.UISignal.send(["enemyDefeated", enemy.affinity]);
+      //this.UISignal.send(["enemyDefeated", enemy.affinity]);
       enemy.pain("arrow");
     }
   }
