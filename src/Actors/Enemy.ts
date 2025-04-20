@@ -25,10 +25,22 @@ import { purpleGuyAnimation, purpleGuyArrowDeathAnimation, purpleGuySwordDeathAn
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
 
-const ENEMY_SPEED = 25; // Speed of the enemy
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
 
 export class Enemy extends Actor {
+  //properties that change with progression
+  //constitution
+  currentHP: number = 1;
+  maxHP: number = 1;
+
+  //strength
+  attackPower: number = 1;
+
+  //speed
+  speed: number = 25;
+
+  _waveLevel: number = 1;
+
   affinity: "dark" | "light" = "dark"; // Affinity of the enemy
   state: "default" | "death" = "default";
   lightTarget: LightPlayer | undefined;
@@ -36,6 +48,7 @@ export class Enemy extends Actor {
   currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
   graphic: GraphicsGroup;
   UISignal: Signal = new Signal("stateUpdate");
+  progressionSignal: Signal = new Signal("progressionUpdate");
   swordDeathAnimation = purpleGuySwordDeathAnimation.clone();
   arrowDeathAnimation = purpleGuyArrowDeathAnimation.clone();
   startingGraphic: GraphicsGroup;
@@ -85,6 +98,17 @@ export class Enemy extends Actor {
     } else {
       this.graphic.tint = Color.fromHex("#888888").darken(0.1);
     }
+  }
+
+  set waveLevel(level: number) {
+    this._waveLevel = level;
+    this.maxHP = level;
+    this.speed = this.speed + level;
+    this.attackPower *= level * 0.1;
+    //get current scale
+    const currentScale = this.scale;
+    //increase scale by 5%
+    this.scale = currentScale.add(vec(0.05, 0.05));
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
@@ -197,7 +221,7 @@ export class Enemy extends Actor {
       else if (this.darkTarget) closestTarget = this.darkTarget;
       if (!closestTarget) return;
       this.currentTarget = closestTarget;
-      this.actions.meet(closestTarget, ENEMY_SPEED);
+      this.actions.meet(closestTarget, this.speed);
     } else {
       //already chasing player
       //get target, confirm they are still viable
@@ -215,7 +239,7 @@ export class Enemy extends Actor {
         }
         this.currentTarget = closestTarget;
         this.actions.clearActions();
-        this.actions.meet(closestTarget!, ENEMY_SPEED);
+        this.actions.meet(closestTarget!, this.speed);
       }
     }
 
@@ -223,7 +247,7 @@ export class Enemy extends Actor {
       let closestTarget =
         this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
 
-      this.actions.meet(closestTarget, ENEMY_SPEED); // Move towards the closest target
+      this.actions.meet(closestTarget, this.speed); // Move towards the closest target
     }
   }
 }

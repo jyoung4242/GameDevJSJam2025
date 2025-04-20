@@ -136,17 +136,6 @@ export class EnemyWaveManager {
   }
 
   spawnEnemies() {
-    /*  if (this.lastBatchSpawnedFlag) {
-      //check if still enemies in scene
-      let ents = this.scene.entities;
-      let enemies = ents.filter(ent => ent instanceof Enemy);
-      if (enemies.length == 0) {
-        //end wave
-        this.endWave();
-      }
-      return;
-    } */
-
     let enemyPositions = spawnStrategyMap[this.spawnStrategy].getSpawnPositions(
       this.batchSize[this.batchIndex],
       this.map as IsometricMap
@@ -169,6 +158,7 @@ export class EnemyWaveManager {
       if (!tile) continue; // Skip if the tile is not found
 
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
+      nextEnemy.waveLevel = this.waveNumber;
       nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy
       this.scene.add(nextEnemy);
       this.monitorSpawning = true;

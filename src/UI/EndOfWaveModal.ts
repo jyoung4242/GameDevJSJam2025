@@ -24,10 +24,13 @@ import { bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, swordSS } f
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
 
+type ProgressionType = "constitution" | "strength" | "speed";
+
 export class EndOFWaveModal extends ScreenElement {
   engine: Engine;
   scaleAnimation: ScreenElement;
   resetSignal: Signal = new Signal("waveReset");
+
   lightEnemiesScore: Label;
   darkEnemiesScore: Label;
   blessingsScore: Label;
@@ -115,7 +118,7 @@ export class EndOFWaveModal extends ScreenElement {
     this.balanceEnemyTypesDefeated = LabelFactory.create(vec(225, 47), "0");
     this.balancePickups = LabelFactory.create(vec(225, 88), "0");
     this.balancePlayerKills = LabelFactory.create(vec(225, 125), "0");
-    this.balanceEnemyDefeatRate = LabelFactory.create(vec(225, 165), "0");
+    this.balanceEnemyDefeatRate = LabelFactory.create(vec(231, 165), "0");
 
     this.addChild(this.lightEnemiesScore);
     this.addChild(this.darkEnemiesScore);
@@ -186,7 +189,6 @@ export class EndOFWaveModal extends ScreenElement {
       let numDigits = balanceEnemyDefeatRate.length;
 
       this.balanceEnemyDefeatRate.text = `${balanceEnemyDefeatRate}%`;
-      this.balanceEnemyDefeatRate.pos = this.balanceEnemyDefeatRate.pos.add(vec(numDigits * 3, 0));
     }
 
     scene.add(this);
@@ -199,17 +201,17 @@ export class EndOFWaveModal extends ScreenElement {
   }
 
   onAdd(engine: Engine): void {
-    this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), () => {
+    this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed", () => {
       console.log("clock");
     });
     this.addChild(this.clockButton);
 
-    this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), () => {
+    this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), "constitution", () => {
       console.log("heart");
     });
     this.addChild(this.heartButton);
 
-    this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), () => {
+    this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), "strength", () => {
       console.log("flex");
     });
     this.addChild(this.flexButton);
@@ -283,13 +285,17 @@ class ProgressionButtons extends ScreenElement {
   downGraphic: NineSlice;
   icon: Graphic;
 
+  type: ProgressionType;
+
   upGraphicGroup: GraphicsGroup;
   downGraphicGroup: GraphicsGroup;
   subUp: Subscription | undefined;
   subDown: Subscription | undefined;
+  progressionSignal: Signal = new Signal("progressionUpdate");
 
-  constructor(icon: Sprite, position: Vector, public callback: () => void) {
+  constructor(icon: Sprite, position: Vector, type: ProgressionType, public callback: () => void) {
     super({ width: 80, height: 48, pos: position, z: 2002, anchor: Vector.Half, color: Color.fromHex("#2bb2ea") });
+    this.type = type;
     this.pointer.useGraphicsBounds = false;
     this.pointer.useColliderShape = true;
     this.icon = icon;
@@ -352,6 +358,7 @@ class ProgressionButtons extends ScreenElement {
   onUp(): void {
     (this.scene as GameScene).hideEndOfWaveModal();
     this.graphics.use(this.upGraphicGroup);
+    this.progressionSignal.send([this.type]);
   }
 
   onAdd(engine: Engine): void {}

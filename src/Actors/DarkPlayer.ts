@@ -29,8 +29,20 @@ import { LightPlayer } from "./LightPlayer";
 import { bodyShadowSS, Resources } from "../resources";
 
 export class DarkPlayer extends Actor {
-  currentHP: number = 20;
-  maxHP: number = 20;
+  //properties that change with progression
+  //constitution
+  currentHP: number = 25;
+  maxHP: number = 25;
+  regenRate: number = 1000;
+
+  //strength
+  attackPower: number = 2;
+  pickupDistance: number = 150;
+
+  //speed
+  speed: number = 80;
+  fireInterval: number = 1000; // Time between shots in milliseconds
+
   isPlayerActive: boolean = true;
   partner: LightPlayer | undefined;
   isWalking: boolean = false;
@@ -59,15 +71,16 @@ export class DarkPlayer extends Actor {
   });
 
   HealthBar: HealthBar | undefined;
-  speed: number = 80;
+
   exp: number = 0;
   fireIntervalHandler: any;
-  fireInterval: number = 1000; // Time between shots in milliseconds
+
   fireDamage: number = 3;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
+  progressionSignal: Signal = new Signal("progressionUpdate");
   oldDirectionFacing: "Left" | "Right" = "Right";
   isWaveActive: boolean = false;
   waveResetSignal: Signal = new Signal("waveReset");
@@ -133,6 +146,32 @@ export class DarkPlayer extends Actor {
     this.gamePausedSignal.listen((params: CustomEvent) => {
       console.log("darkplayer getting game paused");
       this.isWaveActive = !params.detail.params[0];
+    });
+    this.progressionSignal.listen((params: CustomEvent) => {
+      console.log("darkplayer getting progression", params.detail.params);
+
+      const progression = params.detail.params[0];
+      switch (progression) {
+        case "constitution":
+          this.maxHP += 1;
+          this.currentHP = this.maxHP;
+          this.regenRate = Math.floor(this.regenRate * 0.95);
+          console.log("new health stats dark: ", this.maxHP, this.currentHP, this.regenRate);
+
+          break;
+        case "speed":
+          this.fireInterval = Math.floor(this.fireInterval * 0.95);
+          this.speed = Math.floor(this.speed * 1.05);
+          console.log("new speed stats dark: ", this.fireInterval, this.speed);
+
+          break;
+        case "strength":
+          this.fireDamage += 1;
+          this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
+          console.log("new strength stats dark: ", this.fireDamage, this.pickupDistance);
+
+          break;
+      }
     });
   }
 
