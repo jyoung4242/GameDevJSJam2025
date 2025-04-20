@@ -31,7 +31,6 @@ import swordPlayerIconDamaged from "./Assets/swordPlayerIconDamagedIcon.png";
 import heart from "./Assets/heart.png";
 import flex from "./Assets/flex.png";
 import clock from "./Assets/clock.png";
-import deathSfx from './Assets/Sfx/sfx-death.mp3';
 import PUshadow from "./Assets/pickups-shadow.png";
 import PUspritesheet from "./Assets/pickups-sheet-16px.png";
 import timebar from "./Assets/TimeBar/time-bar.png";
@@ -44,6 +43,7 @@ import swordSwingSfx from './Assets/Sfx/sfx-sword-swing.mp3';
 import shootArrowSfx from './Assets/Sfx/sfx-shoot-arrow.mp3';
 import playerHurtSfx from './Assets/Sfx/sfx-player-hurt.mp3';
 import generalPickupSfx from './Assets/Sfx/sfx-pickup-general.mp3';
+import deathSfx from './Assets/Sfx/sfx-death.mp3';
 
 
 export const Resources = {
