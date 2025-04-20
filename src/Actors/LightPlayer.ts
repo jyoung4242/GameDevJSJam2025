@@ -32,8 +32,20 @@ import {
 import {bodyShadowSS, Resources, SFX_VOLUME} from "../resources";
 
 export class LightPlayer extends Actor {
-  currentHP: number = 20;
-  maxHP: number = 20;
+  //properties that change with progression
+  //constitution
+  currentHP: number = 15;
+  maxHP: number = 15;
+  regenRate: number = 1000;
+
+  //strength
+  attackPower: number = 1;
+  pickupDistance: number = 100;
+
+  //speed
+  speed: number = 100;
+  fireInterval: number = 3000; // Time between shots in milliseconds
+
   exp: number = 0;
   isPlayerActive: boolean = false;
   jc: JoystickComponent = new JoystickComponent();
@@ -51,6 +63,9 @@ export class LightPlayer extends Actor {
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
+  progressionSignal: Signal = new Signal("progressionUpdate");
+  waveResetSignal: Signal = new Signal("waveReset");
+  numenemies: number = 0;
   directionFacing: "Left" | "Right" = "Right";
   isWalking: boolean = false;
   oldXVelocity: number = 0;
@@ -69,8 +84,6 @@ export class LightPlayer extends Actor {
     walkAttackRight: bowGuyHandsArmedWalkRight,
   });
 
-  speed: number = 100;
-  fireInterval: number = 3000; // Time between shots in milliseconds
   fireRange: number = 100; // Range of the bullet
   fireDamage: number = 1; // Damage dealt by the bullet
   isFiring: boolean = false;
@@ -106,10 +119,62 @@ export class LightPlayer extends Actor {
     shadow.graphics.use(bodyShadowSS.sprites[0]);
     this.addChild(shadow);
 
+    //active playertik
+    class ActivePlayerTik extends Actor {
+      owner: LightPlayer;
+      wasActive: boolean = true;
+      constructor(owner: LightPlayer) {
+        super({ pos: vec(0, -32), z: 1002, scale: vec(0.8, 0.8) });
+        this.owner = owner;
+        this.graphics.use(Resources.activePlayerTik.toSprite());
+      }
+      onPreUpdate(engine: Engine, elapsed: number): void {
+        if (this.owner.isPlayerActive === true) {
+          if (!this.wasActive) {
+            this.graphics.use(Resources.activePlayerTik.toSprite());
+            this.wasActive = true;
+          }
+        } else {
+          if (this.wasActive) {
+            this.wasActive = false;
+            this.graphics.hide();
+          }
+        }
+      }
+    }
+
+    this.addChild(new ActivePlayerTik(this));
+    this.waveResetSignal.listen((params: CustomEvent) => (this.numenemies = 0));
     this.gamePausedSignal.listen((params: CustomEvent) => {
       console.log("game paused", params.detail.params[0]);
 
       this.isWaveActive = !params.detail.params[0];
+    });
+    this.progressionSignal.listen((params: CustomEvent) => {
+      console.log("lightplayer getting progression", params.detail.params);
+
+      const progression = params.detail.params[0];
+      switch (progression) {
+        case "constitution":
+          this.maxHP += 1;
+          this.currentHP = this.maxHP;
+          this.regenRate = Math.floor(this.regenRate * 0.95);
+          console.log("new health stats light: ", this.maxHP, this.currentHP, this.regenRate);
+
+          break;
+        case "speed":
+          this.fireInterval = Math.floor(this.fireInterval * 0.95);
+          this.speed = Math.floor(this.speed * 1.05);
+          console.log("new speed stats light: ", this.fireInterval, this.speed);
+
+          break;
+        case "strength":
+          this.fireDamage += 1;
+          this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
+          console.log("new strength stats light: ", this.fireDamage, this.pickupDistance);
+
+          break;
+      }
     });
   }
 
@@ -206,7 +271,7 @@ export class LightPlayer extends Actor {
       //check animation frame
       let currentFrame = this.weaponChild.animationframe;
       if (currentFrame == 1) {
-        let bullet = new LightBullet(this.pos, this.closestEnemy, this.fireDamage);
+        let bullet = new LightBullet(this.pos, this.closestEnemy, this.fireDamage, this);
         this.scene?.add(bullet);
         this.closestEnemy = undefined;
         this.isFiring = false;

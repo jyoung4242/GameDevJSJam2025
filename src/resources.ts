@@ -10,7 +10,7 @@ import purpleShadow from "./Assets/purple-guy-shadow-32px.png";
 import lifebar from "./Assets/lifebar-32x16px.png";
 import buttonUp from "./Assets/button_rectangle_depth_gradient.png";
 import buttonDown from "./Assets/button_rectangle_gradient.png";
-import playerShadow from './Assets/character-shadow.png';
+import playerShadow from "./Assets/character-shadow.png";
 import swordPlayerBody from "./Assets/SwordCharacter_body.png";
 import swordPlayerHands from "./Assets/SwordCharacter_arms-normal.png";
 import swordPlayerHandArmed from "./Assets/SwordCharacterarms-weapon.png";
@@ -31,12 +31,20 @@ import swordPlayerIconDamaged from "./Assets/swordPlayerIconDamagedIcon.png";
 import heart from "./Assets/heart.png";
 import flex from "./Assets/flex.png";
 import clock from "./Assets/clock.png";
+import deathSfx from './Assets/Sfx/sfx-death.mp3';
+import PUshadow from "./Assets/pickups-shadow.png";
+import PUspritesheet from "./Assets/pickups-sheet-16px.png";
+import timebar from "./Assets/TimeBar/time-bar.png";
+import bluetik from "./Assets/TimeBar/time-bar-blue-tick.png";
+import redtik from "./Assets/TimeBar/time-bar-red-tick.png";
+import whitetik from "./Assets/TimeBar/time-bar-white-tick.png";
+import activePlayerTik from "./Assets/active-arrow.png";
 import enemyKilledSfx from './Assets/Sfx/sfx-enemy-kill.mp3';
 import swordSwingSfx from './Assets/Sfx/sfx-sword-swing.mp3';
 import shootArrowSfx from './Assets/Sfx/sfx-shoot-arrow.mp3';
 import playerHurtSfx from './Assets/Sfx/sfx-player-hurt.mp3';
 import generalPickupSfx from './Assets/Sfx/sfx-pickup-general.mp3';
-import deathSfx from './Assets/Sfx/sfx-death.mp3';
+
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -70,6 +78,13 @@ export const Resources = {
   heart: new ImageSource(heart),
   flex: new ImageSource(flex),
   clock: new ImageSource(clock),
+  pickupshadow: new ImageSource(PUshadow),
+  pickupSS: new ImageSource(PUspritesheet),
+  timebar: new ImageSource(timebar),
+  bluetik: new ImageSource(bluetik),
+  redtik: new ImageSource(redtik),
+  whitetik: new ImageSource(whitetik),
+  activePlayerTik: new ImageSource(activePlayerTik),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),
@@ -80,6 +95,16 @@ export const Resources = {
 };
 
 export const SFX_VOLUME = 0.3;
+
+export const pickupSS = SpriteSheet.fromImageSource({
+  image: Resources.pickupSS,
+  grid: {
+    rows: 1,
+    columns: 2,
+    spriteHeight: 16,
+    spriteWidth: 16,
+  },
+});
 
 export const scaleSS = SpriteSheet.fromImageSource({
   image: Resources.scale,
@@ -148,8 +173,8 @@ export const bodyShadowSS = SpriteSheet.fromImageSource({
     columns: 1,
     spriteHeight: 48,
     spriteWidth: 48,
-  }
-})
+  },
+});
 
 export const swordPlayerBodySS = SpriteSheet.fromImageSource({
   image: Resources.swordPlayerBody,

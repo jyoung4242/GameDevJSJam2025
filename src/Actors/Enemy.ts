@@ -25,10 +25,22 @@ import { purpleGuyAnimation, purpleGuyArrowDeathAnimation, purpleGuySwordDeathAn
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
 
-const ENEMY_SPEED = 25; // Speed of the enemy
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
 
 export class Enemy extends Actor {
+  //properties that change with progression
+  //constitution
+  currentHP: number = 1;
+  maxHP: number = 1;
+
+  //strength
+  attackPower: number = 1;
+
+  //speed
+  speed: number = 25;
+
+  _waveLevel: number = 1;
+
   affinity: "dark" | "light" = "dark"; // Affinity of the enemy
   state: "default" | "death" = "default";
   lightTarget: LightPlayer | undefined;
@@ -36,6 +48,7 @@ export class Enemy extends Actor {
   currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
   graphic: GraphicsGroup;
   UISignal: Signal = new Signal("stateUpdate");
+  progressionSignal: Signal = new Signal("progressionUpdate");
   swordDeathAnimation = purpleGuySwordDeathAnimation.clone();
   arrowDeathAnimation = purpleGuyArrowDeathAnimation.clone();
   startingGraphic: GraphicsGroup;
@@ -87,10 +100,23 @@ export class Enemy extends Actor {
     }
   }
 
+  set waveLevel(level: number) {
+    this._waveLevel = level;
+    this.maxHP = level;
+    this.speed = this.speed + level;
+    this.attackPower *= level * 0.1;
+    //get current scale
+    const currentScale = this.scale;
+    //increase scale by 5%
+    this.scale = currentScale.add(vec(0.05, 0.05));
+  }
+
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (this.state === "death") {
       return;
     }
+
+    //this is if enemy damages player
     if (other.owner instanceof DarkPlayer || other.owner instanceof LightPlayer) {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
@@ -106,14 +132,10 @@ export class Enemy extends Actor {
 
   onInitialize() {
     this.swordDeathAnimation.events.on("end", () => {
-      this.checkDrop();
-      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
-      this.scene?.remove(this); // Remove the enemy from the scene
+      console.log("animation end event");
     });
     this.arrowDeathAnimation.events.on("end", () => {
-      this.checkDrop();
-      (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
-      this.scene?.remove(this); // Remove the enemy from the scene
+      console.log("animation end event");
     });
   }
 
@@ -122,8 +144,11 @@ export class Enemy extends Actor {
     currentGraphicsNames.forEach(grp => this.graphics.remove(grp));
     this.graphics.use(this.startingGraphic.clone());
     this.graphic.members[1] = this.startingAnimation.clone();
+    this.swordDeathAnimation.reset();
+    this.arrowDeathAnimation.reset();
     this.state = "default";
     this.collider = this.startingCollider.clone();
+
     if (enemyRNG.bool()) {
       this.affinity = "light";
       this.graphic.tint = Color.fromHex("#888888").lighten(0.9);
@@ -150,6 +175,8 @@ export class Enemy extends Actor {
   }
 
   pain(deathBy: "sword" | "arrow") {
+    console.log("starting death", this);
+
     this.actions.clearActions();
     this.state = "death";
     this.collider.clear();
@@ -164,6 +191,22 @@ export class Enemy extends Actor {
 
   onPreUpdate(engine: Engine, elapsed: number): void {
     if (this.state === "death") {
+      if (this.swordDeathAnimation.done) {
+        this.checkDrop();
+        console.log("checking animation end ", this);
+        this.UISignal.send(["enemyDefeated", this.affinity]);
+        this.actions.clearActions();
+        this.scene?.remove(this); // Remove the enemy from the scene
+        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
+      }
+      if (this.arrowDeathAnimation.done) {
+        this.checkDrop();
+        console.log("checking animation end ", this);
+        this.UISignal.send(["enemyDefeated", this.affinity]);
+        this.actions.clearActions();
+        this.scene?.remove(this); // Remove the enemy from the scene
+        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
+      }
       return;
     }
     this.graphics.use(this.graphic);
@@ -180,7 +223,7 @@ export class Enemy extends Actor {
       else if (this.darkTarget) closestTarget = this.darkTarget;
       if (!closestTarget) return;
       this.currentTarget = closestTarget;
-      this.actions.meet(closestTarget, ENEMY_SPEED);
+      this.actions.meet(closestTarget, this.speed);
     } else {
       //already chasing player
       //get target, confirm they are still viable
@@ -198,7 +241,7 @@ export class Enemy extends Actor {
         }
         this.currentTarget = closestTarget;
         this.actions.clearActions();
-        this.actions.meet(closestTarget!, ENEMY_SPEED);
+        this.actions.meet(closestTarget!, this.speed);
       }
     }
 
@@ -206,7 +249,7 @@ export class Enemy extends Actor {
       let closestTarget =
         this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
 
-      this.actions.meet(closestTarget, ENEMY_SPEED); // Move towards the closest target
+      this.actions.meet(closestTarget, this.speed); // Move towards the closest target
     }
   }
 }

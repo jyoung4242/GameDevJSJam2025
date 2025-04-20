@@ -80,7 +80,7 @@ export class GameScene extends Scene {
     //this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
     this.add(this.statusBar);
     this.stateSignal.listen(this.stateUpdate.bind(this));
-    this.burnDown = new Burndown(vec(screenWidth, 10), vec(0, screenHeight - 12), 60, this);
+    this.burnDown = new Burndown(vec(1, screenHeight - 12), 60, this);
     this.add(this.burnDown);
 
     //last thing loaded
@@ -89,6 +89,7 @@ export class GameScene extends Scene {
 
     //start things off
     this.enemyWaveManager?.startWave();
+    //this.enemyWaveManager?.endOfWave(true);
   }
 
   onDeactivate(context: SceneActivationContext): void {
@@ -114,7 +115,14 @@ export class GameScene extends Scene {
 
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;
-    setTimeout(() => this.endOfWaveModal?.show(this, this.statusBar!.getUIState()), 500);
+    setTimeout(() => this.endOfWaveModal?.show(this, this.statusBar!.getUIState(), this.getPlayerData()), 500);
+  }
+
+  getPlayerData() {
+    return {
+      darkNumberOfEnemiesDefeated: (this.darkPlayer as DarkPlayer).numenemies,
+      lightNumberOfEnemiesDefeated: (this.lightPlayer as LightPlayer).numenemies,
+    };
   }
 
   hideEndOfWaveModal() {

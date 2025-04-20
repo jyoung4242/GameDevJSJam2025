@@ -1,0 +1,7 @@
+- [x] update pickups visuals, add shadow
+- [x] update timebar
+- [x] add active-arrow to active player
+- [x] send end of wave data to modal, update values
+- [ ] connect progreesion buttons to players
+- [ ] each wave should 'tweak' the enemies stats
+- [x] clear out wave data for each wave

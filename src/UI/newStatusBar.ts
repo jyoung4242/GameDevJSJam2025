@@ -12,6 +12,7 @@ export class NewStatusBar extends ScreenElement {
   blessingsCollected: number = 0;
   updateSignal: Signal = new Signal("stateUpdate");
   enemiesInWave: number = 0;
+  resetSignal: Signal = new Signal("waveReset");
 
   enemiesRemainingLabel: Label;
   lightKillsLabel: Label;
@@ -116,6 +117,8 @@ export class NewStatusBar extends ScreenElement {
     this.addChild(new UIGraphic(new Vector(dims.x - 125, 0), purpleGuySS.getSprite(0, 0), new Vector(0.4, 0.4)));
     this.addChild(new UIGraphic(new Vector(dims.x - 75, 0), cancelPurpledudeSS.getSprite(0, 0), new Vector(0.4, 0.4)));
     this.addChild(new UIGraphic(new Vector(dims.x - 100, 0), cancelPurpledudeSS.getSprite(1, 0), new Vector(0.4, 0.4)));
+
+    this.resetSignal.listen(() => this.reset());
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
@@ -128,10 +131,14 @@ export class NewStatusBar extends ScreenElement {
 
   UIUpdate(params: CustomEvent): void {
     const [key, data] = params.detail.params;
+    console.log("UIUpdate", key, data);
 
     if (key === "enemyDefeated") {
+      console.log("enemyDefeated", data);
+
       if (data === "light") this.lightEnemiesDefeated += 1;
       if (data === "dark") this.darkEnemiesDefeated += 1;
+
       this.totalEnemiesDefeated = this.lightEnemiesDefeated + this.darkEnemiesDefeated + this.totalEnemiesRemoved;
       this.totalEnemiesRemaining = this.enemiesInWave - this.totalEnemiesDefeated;
     } else if (key == "soul") {
@@ -154,14 +161,23 @@ export class NewStatusBar extends ScreenElement {
     }
   }
 
+  reset() {
+    this.lightEnemiesDefeated = 0;
+    this.darkEnemiesDefeated = 0;
+    this.soulsCollected = 0;
+    this.blessingsCollected = 0;
+    this.totalEnemiesDefeated = 0;
+    this.totalEnemiesRemoved = 0;
+  }
+
   getUIState() {
     return {
       lightEnemiesDefeated: this.lightEnemiesDefeated,
       darkEnemiesDefeated: this.darkEnemiesDefeated,
       soulsCollected: this.soulsCollected,
       blessingsCollected: this.blessingsCollected,
-      enemiesInWave: this.enemiesInWave,
-      enemiesRemoved: this.totalEnemiesRemoved,
+      totalEnemies: this.enemiesInWave,
+      totalEnemiesRemoved: this.totalEnemiesRemoved,
     };
   }
 }

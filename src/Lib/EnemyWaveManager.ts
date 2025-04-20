@@ -71,8 +71,8 @@ export class EnemyWaveManager {
     this.endOfWaveInterval = setInterval(this.endOfWave, 1000);
   }
 
-  endOfWave = () => {
-    if (this.monitorSpawning && this.lastBatchSpawnedFlag) {
+  endOfWave = (override: boolean = false) => {
+    if ((this.monitorSpawning && this.lastBatchSpawnedFlag) || override) {
       let ents = this.scene.entities;
 
       let enemies = ents.filter(ent => ent instanceof Enemy);
@@ -117,6 +117,10 @@ export class EnemyWaveManager {
     this.batchIndex = 0;
     this.monitorSpawning = false;
 
+    //TODO -debug remove later
+    //this.batchSize = [2]; //debug
+    //this.enemyCount = 2;
+
     this.stateSignal.send(["batchsize", this.enemyCount]); // Send the wave duration signal
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
 
@@ -132,17 +136,6 @@ export class EnemyWaveManager {
   }
 
   spawnEnemies() {
-    /*  if (this.lastBatchSpawnedFlag) {
-      //check if still enemies in scene
-      let ents = this.scene.entities;
-      let enemies = ents.filter(ent => ent instanceof Enemy);
-      if (enemies.length == 0) {
-        //end wave
-        this.endWave();
-      }
-      return;
-    } */
-
     let enemyPositions = spawnStrategyMap[this.spawnStrategy].getSpawnPositions(
       this.batchSize[this.batchIndex],
       this.map as IsometricMap
@@ -165,6 +158,7 @@ export class EnemyWaveManager {
       if (!tile) continue; // Skip if the tile is not found
 
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
+      nextEnemy.waveLevel = this.waveNumber;
       nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy
       this.scene.add(nextEnemy);
       this.monitorSpawning = true;

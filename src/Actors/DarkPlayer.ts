@@ -26,11 +26,23 @@ import {
 import { HandsActor } from "./HandsActor";
 import { WeaponActor } from "./WeaponActor";
 import { LightPlayer } from "./LightPlayer";
-import {bodyShadowSS, Resources, SFX_VOLUME} from "../resources";
+import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class DarkPlayer extends Actor {
-  currentHP: number = 20;
-  maxHP: number = 20;
+  //properties that change with progression
+  //constitution
+  currentHP: number = 25;
+  maxHP: number = 25;
+  regenRate: number = 1000;
+
+  //strength
+  attackPower: number = 2;
+  pickupDistance: number = 150;
+
+  //speed
+  speed: number = 80;
+  fireInterval: number = 1000; // Time between shots in milliseconds
+
   isPlayerActive: boolean = true;
   partner: LightPlayer | undefined;
   isWalking: boolean = false;
@@ -59,17 +71,20 @@ export class DarkPlayer extends Actor {
   });
 
   HealthBar: HealthBar | undefined;
-  speed: number = 80;
+
   exp: number = 0;
   fireIntervalHandler: any;
-  fireInterval: number = 1000; // Time between shots in milliseconds
+
   fireDamage: number = 3;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
+  progressionSignal: Signal = new Signal("progressionUpdate");
   oldDirectionFacing: "Left" | "Right" = "Right";
   isWaveActive: boolean = false;
+  waveResetSignal: Signal = new Signal("waveReset");
+  numenemies: number = 0;
 
   constructor() {
     super({
@@ -102,9 +117,61 @@ export class DarkPlayer extends Actor {
     shadow.graphics.use(bodyShadowSS.sprites[0]);
     this.addChild(shadow);
 
+    //active playertik
+    class ActivePlayerTik extends Actor {
+      owner: DarkPlayer;
+      wasActive: boolean = false;
+      constructor(owner: DarkPlayer) {
+        super({ pos: vec(0, -32), z: 1002, scale: vec(0.8, 0.8) });
+        this.owner = owner;
+        this.graphics.use(Resources.activePlayerTik.toSprite());
+      }
+      onPreUpdate(engine: Engine, elapsed: number): void {
+        if (this.owner.isPlayerActive === true) {
+          if (!this.wasActive) {
+            this.graphics.use(Resources.activePlayerTik.toSprite());
+            this.wasActive = true;
+          }
+        } else {
+          if (this.wasActive) {
+            this.wasActive = false;
+            this.graphics.hide();
+          }
+        }
+      }
+    }
+
+    this.addChild(new ActivePlayerTik(this));
+    this.waveResetSignal.listen((params: CustomEvent) => (this.numenemies = 0));
     this.gamePausedSignal.listen((params: CustomEvent) => {
       console.log("darkplayer getting game paused");
       this.isWaveActive = !params.detail.params[0];
+    });
+    this.progressionSignal.listen((params: CustomEvent) => {
+      console.log("darkplayer getting progression", params.detail.params);
+
+      const progression = params.detail.params[0];
+      switch (progression) {
+        case "constitution":
+          this.maxHP += 1;
+          this.currentHP = this.maxHP;
+          this.regenRate = Math.floor(this.regenRate * 0.95);
+          console.log("new health stats dark: ", this.maxHP, this.currentHP, this.regenRate);
+
+          break;
+        case "speed":
+          this.fireInterval = Math.floor(this.fireInterval * 0.95);
+          this.speed = Math.floor(this.speed * 1.05);
+          console.log("new speed stats dark: ", this.fireInterval, this.speed);
+
+          break;
+        case "strength":
+          this.fireDamage += 1;
+          this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
+          console.log("new strength stats dark: ", this.fireDamage, this.pickupDistance);
+
+          break;
+      }
     });
   }
 
