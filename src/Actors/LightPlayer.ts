@@ -29,7 +29,7 @@ import {
   bowGuyHandsNormalIdleLeft,
   bowGuyHandsArmedIdleLeft,
 } from "../Animations/bowPlayerAnimations";
-import {bodyShadowSS} from "../resources";
+import { bodyShadowSS, Resources } from "../resources";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
@@ -105,6 +105,32 @@ export class LightPlayer extends Actor {
     });
     shadow.graphics.use(bodyShadowSS.sprites[0]);
     this.addChild(shadow);
+
+    //active playertik
+    class ActivePlayerTik extends Actor {
+      owner: LightPlayer;
+      wasActive: boolean = true;
+      constructor(owner: LightPlayer) {
+        super({ pos: vec(0, -32), z: 1002, scale: vec(0.8, 0.8) });
+        this.owner = owner;
+        this.graphics.use(Resources.activePlayerTik.toSprite());
+      }
+      onPreUpdate(engine: Engine, elapsed: number): void {
+        if (this.owner.isPlayerActive === true) {
+          if (!this.wasActive) {
+            this.graphics.use(Resources.activePlayerTik.toSprite());
+            this.wasActive = true;
+          }
+        } else {
+          if (this.wasActive) {
+            this.wasActive = false;
+            this.graphics.hide();
+          }
+        }
+      }
+    }
+
+    this.addChild(new ActivePlayerTik(this));
 
     this.gamePausedSignal.listen((params: CustomEvent) => {
       console.log("game paused", params.detail.params[0]);

@@ -33,6 +33,11 @@ import flex from "./Assets/flex.png";
 import clock from "./Assets/clock.png";
 import PUshadow from "./Assets/pickups-shadow.png";
 import PUspritesheet from "./Assets/pickups-sheet-16px.png";
+import timebar from "./Assets/TimeBar/time-bar.png";
+import bluetik from "./Assets/TimeBar/time-bar-blue-tick.png";
+import redtik from "./Assets/TimeBar/time-bar-red-tick.png";
+import whitetik from "./Assets/TimeBar/time-bar-white-tick.png";
+import activePlayerTik from "./Assets/active-arrow.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -68,6 +73,11 @@ export const Resources = {
   clock: new ImageSource(clock),
   pickupshadow: new ImageSource(PUshadow),
   pickupSS: new ImageSource(PUspritesheet),
+  timebar: new ImageSource(timebar),
+  bluetik: new ImageSource(bluetik),
+  redtik: new ImageSource(redtik),
+  whitetik: new ImageSource(whitetik),
+  activePlayerTik: new ImageSource(activePlayerTik),
 };
 
 export const pickupSS = SpriteSheet.fromImageSource({
