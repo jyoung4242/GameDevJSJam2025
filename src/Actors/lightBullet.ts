@@ -3,7 +3,7 @@ import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
-import { Resources } from "../resources";
+import {Resources, SFX_VOLUME} from "../resources";
 
 const BULLET_SPEED = 300; // Speed of the bullet
 
@@ -32,6 +32,7 @@ export class LightBullet extends Actor {
     this.events.on("exitviewport", () => {
       this.kill();
     });
+    Resources.sfxShootArrow.play(SFX_VOLUME);
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {

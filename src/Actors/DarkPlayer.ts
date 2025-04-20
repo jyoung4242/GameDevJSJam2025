@@ -26,7 +26,7 @@ import {
 import { HandsActor } from "./HandsActor";
 import { WeaponActor } from "./WeaponActor";
 import { LightPlayer } from "./LightPlayer";
-import { bodyShadowSS } from "../resources";
+import {bodyShadowSS, Resources, SFX_VOLUME} from "../resources";
 
 export class DarkPlayer extends Actor {
   currentHP: number = 20;
@@ -121,6 +121,7 @@ export class DarkPlayer extends Actor {
       this.exp += 1; // Increase the player's experience
       this.UISignal.send(["soul"]);
       other.owner.kill();
+      Resources.sfxGeneralPickup.play(SFX_VOLUME);
     }
   }
 

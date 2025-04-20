@@ -29,7 +29,7 @@ import {
   bowGuyHandsNormalIdleLeft,
   bowGuyHandsArmedIdleLeft,
 } from "../Animations/bowPlayerAnimations";
-import {bodyShadowSS} from "../resources";
+import {bodyShadowSS, Resources, SFX_VOLUME} from "../resources";
 
 export class LightPlayer extends Actor {
   currentHP: number = 20;
@@ -122,6 +122,7 @@ export class LightPlayer extends Actor {
       other.owner.kill(); // Remove the blessing drop from the scene
       this.UISignal.send(["blessing"]);
       this.exp += 1; // Increase the player's experience
+      Resources.sfxGeneralPickup.play(SFX_VOLUME);
     }
   }
 
