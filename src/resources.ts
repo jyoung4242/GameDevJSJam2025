@@ -36,6 +36,7 @@ import swordSwingSfx from './Assets/Sfx/sfx-sword-swing.mp3';
 import shootArrowSfx from './Assets/Sfx/sfx-shoot-arrow.mp3';
 import playerHurtSfx from './Assets/Sfx/sfx-player-hurt.mp3';
 import generalPickupSfx from './Assets/Sfx/sfx-pickup-general.mp3';
+import deathSfx from './Assets/Sfx/sfx-death.mp3';
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -75,6 +76,7 @@ export const Resources = {
   sfxShootArrow: new Sound(shootArrowSfx),
   sfxPlayerHurt: new Sound(playerHurtSfx),
   sfxGeneralPickup: new Sound(generalPickupSfx),
+  sfxDeath: new Sound(deathSfx),
 };
 
 export const SFX_VOLUME = 0.3;

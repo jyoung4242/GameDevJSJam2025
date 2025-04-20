@@ -285,6 +285,7 @@ export class DarkPlayer extends Actor {
       if (this.fireIntervalHandler) {
         clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
       }
+      Resources.sfxDeath.play(SFX_VOLUME);
       this.kill();
     }
   }

@@ -150,11 +150,10 @@ export class Enemy extends Actor {
   }
 
   pain(deathBy: "sword" | "arrow") {
-    Resources.sfxEnemyKilled.play(SFX_VOLUME);
-    console.log("pain")
     this.actions.clearActions();
     this.state = "death";
     this.collider.clear();
+    Resources.sfxEnemyKilled.play(SFX_VOLUME);
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {

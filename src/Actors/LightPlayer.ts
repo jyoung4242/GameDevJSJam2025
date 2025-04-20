@@ -314,7 +314,7 @@ export class LightPlayer extends Actor {
       if (this.fireIntervalHandler) {
         clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
       }
-
+      Resources.sfxDeath.play(SFX_VOLUME);
       this.kill();
     }
   }
