@@ -11,6 +11,7 @@ import { getCenterOfTileMap } from "../Lib/Util";
 import { EndOFWaveModal } from "../UI/EndOfWaveModal";
 import { NewStatusBar } from "../UI/newStatusBar";
 import { TouchSystem } from "../Lib/TouchSystem";
+import { Resources, SFX_VOLUME } from "../resources";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;

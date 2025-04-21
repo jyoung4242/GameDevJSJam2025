@@ -44,6 +44,7 @@ import shootArrowSfx from './Assets/Sfx/sfx-shoot-arrow.mp3';
 import playerHurtSfx from './Assets/Sfx/sfx-player-hurt.mp3';
 import generalPickupSfx from './Assets/Sfx/sfx-pickup-general.mp3';
 import deathSfx from './Assets/Sfx/sfx-death.mp3';
+import playerSwitchSfx from './Assets/Sfx/sfx-player-switch.mp3';
 
 
 export const Resources = {
@@ -92,6 +93,7 @@ export const Resources = {
   sfxPlayerHurt: new Sound(playerHurtSfx),
   sfxGeneralPickup: new Sound(generalPickupSfx),
   sfxDeath: new Sound(deathSfx),
+  sfxPlayerSwitch: new Sound(playerSwitchSfx),
 };
 
 export const SFX_VOLUME = 0.3;

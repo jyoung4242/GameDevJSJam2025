@@ -238,6 +238,7 @@ export class DarkPlayer extends Actor {
       new WeaponActor(
         { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
         this.directionFacing,
+        this.isPlayerActive,
         this.releaseWeapon
       )
     );
