@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, vec, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, Timer, vec, Vector } from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
@@ -48,6 +48,8 @@ export class DarkPlayer extends Actor {
   isWalking: boolean = false;
 
   oldXVelocity: number = 0;
+
+  timer: Timer | undefined = undefined;
 
   jc: JoystickComponent = new JoystickComponent();
   kc: KeyBoardControlComponent = new KeyBoardControlComponent();
@@ -99,12 +101,13 @@ export class DarkPlayer extends Actor {
       collisionType: CollisionType.Active,
       collisionGroup: playerCollisionGroup,
     });
+
     //this.addComponent(this.jc);
     this.addComponent(this.ac);
     this.ac.set("idleRight");
     this.HealthBar = new HealthBar(new Vector(32, 16), new Vector(-16, -32), 20);
     this.addChild(this.HealthBar);
-    this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
+    //this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
 
     this.handChild.walkState = "idle";
     this.handChild.attackState = "Normal";
@@ -183,6 +186,15 @@ export class DarkPlayer extends Actor {
     if (!this.scene) return;
     this.scene.camera.strategy.lockToActor(this);
     this.scene.camera.zoom = 1.5;
+
+    //add firing Timer
+    this.timer = new Timer({
+      fcn: () => this.fire(),
+      repeats: true,
+      interval: this.fireInterval,
+    });
+    engine.currentScene.add(this.timer);
+    this.timer.start();
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {

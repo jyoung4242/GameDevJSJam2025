@@ -160,6 +160,8 @@ export class GameScene extends Scene {
   switchPlayerFocus() {
     let nextActivePlayer: DarkPlayer | LightPlayer | undefined = undefined;
 
+    Resources.sfxPlayerSwitch.play(SFX_VOLUME);
+
     if (this.darkPlayer?.isPlayerActive && !this.lightPlayer?.isPlayerActive) {
       nextActivePlayer = this.lightPlayer;
       this.darkPlayer!.isPlayerActive = false;

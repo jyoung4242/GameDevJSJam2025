@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, vec, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, Timer, vec, Vector } from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
@@ -72,6 +72,7 @@ export class LightPlayer extends Actor {
   oldDirectionFacing: "Left" | "Right" = "Right";
   weaponChild: BowWeaponActor | undefined;
   closestEnemy: Enemy | undefined;
+  timer: Timer | undefined = undefined;
 
   handChild: HandsActor = new HandsActor({
     idleNormalLeft: bowGuyHandsNormalIdleLeft,
@@ -181,6 +182,14 @@ export class LightPlayer extends Actor {
 
   onInitialize(engine: Engine): void {
     this.kc.init();
+    //add firing Timer
+    this.timer = new Timer({
+      fcn: () => this.fire(),
+      repeats: true,
+      interval: this.fireInterval,
+    });
+    engine.currentScene.add(this.timer);
+    this.timer.start();
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, lastContact: CollisionContact): void {
@@ -233,6 +242,8 @@ export class LightPlayer extends Actor {
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
+
+    this.weaponChild = undefined;
   };
 
   disableTouch() {
