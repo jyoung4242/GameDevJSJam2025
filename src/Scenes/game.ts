@@ -157,14 +157,26 @@ export class GameScene extends Scene {
   }
 
   switchPlayerFocus() {
+    let nextActivePlayer: DarkPlayer | LightPlayer | undefined = undefined;
+
     if (this.darkPlayer?.isPlayerActive && !this.lightPlayer?.isPlayerActive) {
+      nextActivePlayer = this.lightPlayer;
       this.darkPlayer!.isPlayerActive = false;
       this.lightPlayer!.isPlayerActive = true;
-      this.camera.strategy.lockToActor(this.lightPlayer!);
     } else {
+      nextActivePlayer = this.darkPlayer;
       this.darkPlayer!.isPlayerActive = true;
       this.lightPlayer!.isPlayerActive = false;
-      this.camera.strategy.lockToActor(this.darkPlayer!);
     }
+
+    this.engine.timescale = 0.1;
+    this.camera.clearAllStrategies();
+    this.camera.zoomOverTime(0.8, 100).then(() => {
+      this.camera.zoomOverTime(1.5, 100).then(() => {
+        this.engine.timescale = 1;
+        this.camera.strategy.lockToActor(nextActivePlayer!);
+      });
+    });
+    this.camera.move(nextActivePlayer!.pos, 200);
   }
 }
