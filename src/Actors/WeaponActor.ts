@@ -54,7 +54,7 @@ export class WeaponActor extends Actor {
     this.addComponent(this.ac);
     const animationState: "attackLeft" | "attackRight" = (this.state + this.directionfacing) as "attackLeft" | "attackRight";
     this.ac!.set(animationState as "attackLeft" | "attackRight");
-    const reducedInactivePlayerVolume = SFX_VOLUME - 0.25
+    const reducedInactivePlayerVolume = SFX_VOLUME - 0.25;
     Resources.sfxSwordSwing.play(this.isPlayerActive ? SFX_VOLUME : reducedInactivePlayerVolume );
   }
 
