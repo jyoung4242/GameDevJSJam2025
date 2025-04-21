@@ -5,8 +5,13 @@
 - [x] connect progreesion buttons to players
 - [x] each wave should 'tweak' the enemies stats
 - [x] clear out wave data for each wave
-- [ ] clean up game over status
-- [ ] manage players dying
+- [x] clean up game over status
+- [x] manage players dying
 - [ ] add 'balance' UI to modal
-- [ ] implement player attack power in hits
-- [ ] implement enemy HP
+- [ ] on strength progression for sword
+- [ ] on strength progression for arrows, mulitple staggard arrows
+- [ ] max out upgrades
+- [ ] swap player effect
+- [ ] lose intro scene
+- [ ] lose camera elastic
+- [ ]

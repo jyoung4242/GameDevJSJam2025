@@ -35,12 +35,14 @@ export class GameScene extends Scene {
   touchMap: Map<string, (data: any) => void> = new Map();
   scheduleGameOver: boolean = false;
   scheculedGameOverTik: number = 0;
+  isEndOfWaveModalEnabled: boolean = true;
 
   constructor() {
     super();
   }
 
   onActivate(context: SceneActivationContext<unknown>): void {
+    this.isEndOfWaveModalEnabled = true;
     this.scheduleGameOver = false;
     this.scheculedGameOverTik = 0;
 
@@ -85,7 +87,7 @@ export class GameScene extends Scene {
     //this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
     this.add(this.statusBar);
     this.stateSignal.listen(this.stateUpdate.bind(this));
-    this.burnDown = new Burndown(vec(1, screenHeight - 12), 60, this);
+    this.burnDown = new Burndown(vec(1, screenHeight - 12), 25, this);
     this.add(this.burnDown);
 
     //last thing loaded
@@ -113,6 +115,7 @@ export class GameScene extends Scene {
 
     if (!this.darkPlayer?.isAlive && !this.lightPlayer?.isAlive) {
       this.scheduleGameOver = true;
+      this.isEndOfWaveModalEnabled = false;
       this.enemyWaveManager!.isWaveActive = false;
     }
   }
@@ -123,6 +126,7 @@ export class GameScene extends Scene {
   }
 
   showEndOfWaveModal() {
+    if (!this.isEndOfWaveModalEnabled) return;
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
@@ -156,13 +160,11 @@ export class GameScene extends Scene {
     if (this.darkPlayer?.isPlayerActive && !this.lightPlayer?.isPlayerActive) {
       this.darkPlayer!.isPlayerActive = false;
       this.lightPlayer!.isPlayerActive = true;
-      //this.camera.strategy.lockToActor(this.lightPlayer!);
-      this.camera.strategy.elasticToActor(this.lightPlayer!, 0.2, 0.2);
+      this.camera.strategy.lockToActor(this.lightPlayer!);
     } else {
       this.darkPlayer!.isPlayerActive = true;
       this.lightPlayer!.isPlayerActive = false;
-      //this.camera.strategy.lockToActor(this.darkPlayer!);
-      this.camera.strategy.elasticToActor(this.darkPlayer!, 0.2, 0.2);
+      this.camera.strategy.lockToActor(this.darkPlayer!);
     }
   }
 }

@@ -181,8 +181,7 @@ export class DarkPlayer extends Actor {
     this.kc.init();
 
     if (!this.scene) return;
-    //this.scene.camera.strategy.lockToActor(this);
-    this.scene.camera.strategy.elasticToActor(this, 0.1, 0.7);
+    this.scene.camera.strategy.lockToActor(this);
     this.scene.camera.zoom = 1.5;
   }
 

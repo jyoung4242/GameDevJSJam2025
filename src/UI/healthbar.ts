@@ -45,6 +45,10 @@ export class HealthBar extends ScreenElement {
       this.percent = 100;
     }
 
+    if (this.percent > 40) {
+      this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: greenHighlight }));
+      this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: greenLowLight }));
+    }
     if (this.percent <= 40) {
       this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: yellowHighlight }));
       this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: yellowLowLight }));

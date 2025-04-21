@@ -156,6 +156,7 @@ export class EnemyWaveManager {
     this.isWaveActive = false; // Set the wave active flag to false
     this.duration = 0; // Reset the duration
     this.isStartDelayConsumed = false; // Reset the start delay consumed flag
+
     (this.scene as GameScene).showEndOfWaveModal();
     this.gamePausedSignal.send([true]);
   }
@@ -170,20 +171,16 @@ export class EnemyWaveManager {
     this.batchIndex += 1; // Increment the batch index
     //pick new strategy
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
-    /*  console.log("spawn strategy", this.spawnStrategy);
-    console.log("enemy positions", enemyPositions);
-    console.log("batch index", this.batchIndex); */
 
     for (let i = 0; i < enemyPositions.length; i++) {
       let nextTile = enemyPositions[i]; // Get the next tile for spawning
       if (nextTile === undefined) continue; // Skip if the tile is undefined
       //find the tile at nextTile coordinates
+
       let tile = this.map?.tiles.find(tile => tile.pos.x === nextTile.x && tile.pos.y === nextTile.y);
       //BUG - somehow tile position is outside of level occasionally
-
       if (!tile) continue; // Skip if the tile is not found
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
-      //console.log("sending wave level", this.waveNumber);
 
       nextEnemy.waveLevel = this.waveNumber;
 
