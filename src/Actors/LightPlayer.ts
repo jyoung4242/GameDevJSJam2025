@@ -29,7 +29,7 @@ import {
   bowGuyHandsNormalIdleLeft,
   bowGuyHandsArmedIdleLeft,
 } from "../Animations/bowPlayerAnimations";
-import {bodyShadowSS, Resources, SFX_VOLUME} from "../resources";
+import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class LightPlayer extends Actor {
   //properties that change with progression
@@ -40,7 +40,7 @@ export class LightPlayer extends Actor {
 
   //strength
   attackPower: number = 1;
-  pickupDistance: number = 100;
+  pickupDistance: number = 50;
 
   //speed
   speed: number = 100;
@@ -368,6 +368,18 @@ export class LightPlayer extends Actor {
           console.log("setting idle animatino");
           this.isWalking = false;
           this.ac.set(`idle${this.directionFacing}`);
+        }
+      }
+    }
+
+    // Pickup Detection Logic
+
+    const listOfBlessings = this.scene?.entities.filter(entity => entity instanceof BlessingDrop);
+    if (listOfBlessings) {
+      for (let i = 0; i < listOfBlessings.length; i++) {
+        if (this.pos.distance(listOfBlessings[i].pos) < this.pickupDistance) {
+          let blessing = listOfBlessings[i] as BlessingDrop;
+          blessing.comeToActor(this);
         }
       }
     }

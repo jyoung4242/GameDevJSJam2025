@@ -20,7 +20,7 @@ import { DarkPlayer } from "./DarkPlayer";
 import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
-import {Resources, SFX_VOLUME} from "../resources";
+import { Resources, SFX_VOLUME } from "../resources";
 import { purpleGuyAnimation, purpleGuyArrowDeathAnimation, purpleGuySwordDeathAnimation } from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
