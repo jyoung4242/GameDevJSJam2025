@@ -86,6 +86,8 @@ export class DarkPlayer extends Actor {
   waveResetSignal: Signal = new Signal("waveReset");
   numenemies: number = 0;
 
+  isAlive: boolean = true;
+
   constructor() {
     super({
       width: 19,
@@ -179,7 +181,8 @@ export class DarkPlayer extends Actor {
     this.kc.init();
 
     if (!this.scene) return;
-    this.scene.camera.strategy.lockToActor(this);
+    //this.scene.camera.strategy.lockToActor(this);
+    this.scene.camera.strategy.elasticToActor(this, 0.1, 0.7);
     this.scene.camera.zoom = 1.5;
   }
 
@@ -369,6 +372,7 @@ export class DarkPlayer extends Actor {
         clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
       }
       Resources.sfxDeath.play(SFX_VOLUME);
+      this.isAlive = false;
       this.kill();
     }
   }

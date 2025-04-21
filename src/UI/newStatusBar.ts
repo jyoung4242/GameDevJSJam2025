@@ -131,10 +131,10 @@ export class NewStatusBar extends ScreenElement {
 
   UIUpdate(params: CustomEvent): void {
     const [key, data] = params.detail.params;
-    console.log("UIUpdate", key, data);
+    // console.log("UIUpdate", key, data);
 
     if (key === "enemyDefeated") {
-      console.log("enemyDefeated", data);
+      //console.log("enemyDefeated", data);
 
       if (data === "light") this.lightEnemiesDefeated += 1;
       if (data === "dark") this.darkEnemiesDefeated += 1;
@@ -146,7 +146,7 @@ export class NewStatusBar extends ScreenElement {
     } else if (key == "blessing") {
       this.blessingsCollected++;
     } else if (key == "batchsize") {
-      console.log("batchsize", data);
+      //console.log("batchsize", data);
 
       this.enemiesInWave = data;
       this.totalEnemiesDefeated = 0;

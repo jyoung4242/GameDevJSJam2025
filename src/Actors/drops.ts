@@ -1,4 +1,4 @@
-import { Actor, CollisionType, Color, EasingFunctions, Engine, Graphic, GraphicsGroup, vec, Vector } from "excalibur";
+import { Actor, CollisionType, Color, EasingFunctions, Engine, Graphic, GraphicsGroup, ParallelActions, vec, Vector } from "excalibur";
 import { dropsCollisionGroup } from "../Lib/colliderGroups";
 import { pickupSS, Resources } from "../resources";
 import { LightPlayer } from "./LightPlayer";
@@ -7,6 +7,7 @@ import { DarkPlayer } from "./DarkPlayer";
 export class BlessingDrop extends Actor {
   bouncingchild: Actor;
   lightPlayerInstance: LightPlayer | null = null;
+  lifetime: number = 10000;
 
   constructor(pos: Vector) {
     super({
@@ -20,16 +21,32 @@ export class BlessingDrop extends Actor {
     this.bouncingchild = new BouncingChild(pickupSS.getSprite(1, 0));
     this.addChild(this.bouncingchild);
     this.graphics.use(Resources.pickupshadow.toSprite());
+    setInterval(() => this.lifeTik(), 1000);
+  }
+
+  lifeTik() {
+    this.lifetime -= 1000;
+    if (this.lifetime <= 4000) {
+      this.actions.blink(400, 400);
+    }
+    if (this.lifetime <= 0) {
+      this.kill();
+    }
   }
 
   comeToActor(playertoMeet: LightPlayer) {
     this.actions.clearActions();
     this.actions.meet(playertoMeet, 150);
   }
+
+  onPreUpdate(engine: Engine, elapsed: number): void {
+    this.bouncingchild.graphics.isVisible = this.graphics.isVisible;
+  }
 }
 
 export class SoulDrop extends Actor {
   bouncingchild: Actor;
+  lifetime: number = 10000;
   constructor(pos: Vector) {
     super({
       radius: 8,
@@ -42,11 +59,26 @@ export class SoulDrop extends Actor {
     this.bouncingchild = new BouncingChild(pickupSS.getSprite(0, 0));
     this.addChild(this.bouncingchild);
     this.graphics.use(Resources.pickupshadow.toSprite());
+    setInterval(() => this.lifeTik(), 1000);
+  }
+
+  lifeTik() {
+    this.lifetime -= 1000;
+    if (this.lifetime <= 4000) {
+      this.actions.blink(400, 400);
+    }
+    if (this.lifetime <= 0) {
+      this.kill();
+    }
   }
 
   comeToActor(playertoMeet: DarkPlayer) {
     this.actions.clearActions();
     this.actions.meet(playertoMeet, 150);
+  }
+
+  onPreUpdate(engine: Engine, elapsed: number): void {
+    this.bouncingchild.graphics.isVisible = this.graphics.isVisible;
   }
 }
 

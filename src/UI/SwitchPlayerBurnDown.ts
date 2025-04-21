@@ -2,6 +2,8 @@ import { Color, Engine, Graphic, GraphicsGroup, ImageSource, Rectangle, ScreenEl
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
 import { Resources } from "../resources";
+import { DarkPlayer } from "../Actors/DarkPlayer";
+import { LightPlayer } from "../Actors/LightPlayer";
 
 export class Burndown extends ScreenElement {
   burnDownSignal: Signal = new Signal("burnDown");
@@ -10,6 +12,7 @@ export class Burndown extends ScreenElement {
   percent: number;
   child: ScreenElement;
   scene: GameScene;
+  isActive = true;
   constructor(public position: Vector, maxVal: number, scene: GameScene) {
     let dims = vec(Resources.timebar.width, Resources.timebar.height);
     const innerRect = new Rectangle({ width: dims.x - 2, height: dims.y / 2, color: Color.Green });
@@ -24,6 +27,7 @@ export class Burndown extends ScreenElement {
     this.child.graphics.use(innerRect);
     this.addChild(this.child);
     this.burnDownSignal.listen(() => {
+      if (!this.isActive) return;
       this.currentVal--;
       this.percent = (this.currentVal / this.maxVal) * 100;
 
@@ -42,6 +46,16 @@ export class Burndown extends ScreenElement {
         this.percent = 100;
       }
     });
+  }
+
+  onPreUpdate(engine: Engine, elapsed: number): void {
+    //check players status .isAlive
+    let players = this.scene?.entities.filter(e => e instanceof DarkPlayer || e instanceof LightPlayer);
+    if (players && players?.length < 2) {
+      // this means we need to 'disable' the bar
+      this.isActive = false;
+      this.graphics.isVisible = false;
+    }
   }
 }
 

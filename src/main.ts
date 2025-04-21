@@ -7,6 +7,7 @@ import { model, template } from "./UI/UI";
 import { GameScene } from "./Scenes/game";
 import { loader } from "./resources";
 import { IntroScene } from "./Scenes/Intro";
+import { GameOver } from "./Scenes/gameOver";
 
 await UI.create(document.body, model, template).attached;
 
@@ -20,6 +21,7 @@ const game = new Engine({
   scenes: {
     intro: { scene: new IntroScene() },
     game: { scene: new GameScene() },
+    gameOver: { scene: new GameOver() },
   },
   pixelRatio: 2, // the pixel ratio of the game
 });

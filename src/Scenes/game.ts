@@ -33,12 +33,17 @@ export class GameScene extends Scene {
   pauseGameSignal = new Signal("pauseGame");
   endOfWaveModal: EndOFWaveModal | undefined;
   touchMap: Map<string, (data: any) => void> = new Map();
+  scheduleGameOver: boolean = false;
+  scheculedGameOverTik: number = 0;
 
   constructor() {
     super();
   }
 
   onActivate(context: SceneActivationContext<unknown>): void {
+    this.scheduleGameOver = false;
+    this.scheculedGameOverTik = 0;
+
     // Add Tilemap
     this.arena = day2Tilemap;
     this.add(this.arena);
@@ -99,7 +104,17 @@ export class GameScene extends Scene {
   }
 
   onPreUpdate(engine: any, delta: number): void {
+    if (this.scheduleGameOver) this.scheculedGameOverTik++;
+    if (this.scheculedGameOverTik > 300) {
+      this.engine.goToScene("gameOver");
+    }
+
     this.enemyWaveManager?.update(delta);
+
+    if (!this.darkPlayer?.isAlive && !this.lightPlayer?.isAlive) {
+      this.scheduleGameOver = true;
+      this.enemyWaveManager!.isWaveActive = false;
+    }
   }
 
   stateUpdate(params: CustomEvent) {
@@ -108,8 +123,6 @@ export class GameScene extends Scene {
   }
 
   showEndOfWaveModal() {
-    //this.darkPlayer?.disableTouch();
-    //this.lightPlayer?.disableTouch();
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
@@ -137,20 +150,19 @@ export class GameScene extends Scene {
     } else {
       (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "lightPlayer" as keyof typeof this.touchMap;
     }
-
-    //this.darkPlayer?.enableTouch();
-    //this.lightPlayer?.enableTouch();
   }
 
   switchPlayerFocus() {
     if (this.darkPlayer?.isPlayerActive && !this.lightPlayer?.isPlayerActive) {
       this.darkPlayer!.isPlayerActive = false;
       this.lightPlayer!.isPlayerActive = true;
-      this.camera.strategy.lockToActor(this.lightPlayer!);
+      //this.camera.strategy.lockToActor(this.lightPlayer!);
+      this.camera.strategy.elasticToActor(this.lightPlayer!, 0.2, 0.2);
     } else {
       this.darkPlayer!.isPlayerActive = true;
       this.lightPlayer!.isPlayerActive = false;
-      this.camera.strategy.lockToActor(this.darkPlayer!);
+      //this.camera.strategy.lockToActor(this.darkPlayer!);
+      this.camera.strategy.elasticToActor(this.darkPlayer!, 0.2, 0.2);
     }
   }
 }

@@ -88,6 +88,7 @@ export class LightPlayer extends Actor {
   fireDamage: number = 1; // Damage dealt by the bullet
   isFiring: boolean = false;
   isWaveActive: boolean = false;
+  isAlive: boolean = true;
   constructor() {
     super({
       radius: 10,
@@ -392,6 +393,7 @@ export class LightPlayer extends Actor {
         clearInterval(this.fireIntervalHandler); // Clear the fire interval handler
       }
       Resources.sfxDeath.play(SFX_VOLUME);
+      this.isAlive = false;
       this.kill();
     }
   }

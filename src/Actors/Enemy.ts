@@ -101,6 +101,7 @@ export class Enemy extends Actor {
   }
 
   set waveLevel(level: number) {
+    if (this._waveLevel === level) return;
     this._waveLevel = level;
     this.maxHP = level;
     this.speed = this.speed + level;
@@ -132,11 +133,20 @@ export class Enemy extends Actor {
 
   onInitialize() {
     this.swordDeathAnimation.events.on("end", () => {
-      console.log("animation end event");
+      //console.log("animation end event");
     });
     this.arrowDeathAnimation.events.on("end", () => {
-      console.log("animation end event");
+      //console.log("animation end event");
     });
+  }
+
+  setAffinity(affinity: "dark" | "light") {
+    this.affinity = affinity;
+    if (affinity == "dark") {
+      this.graphic.tint = Color.fromHex("#888888").darken(0.1);
+    } else {
+      this.graphic.tint = Color.fromHex("#888888").lighten(0.9);
+    }
   }
 
   reset() {
@@ -175,11 +185,11 @@ export class Enemy extends Actor {
   }
 
   pain(deathBy: "sword" | "arrow") {
-    console.log("starting death", this);
-
     this.actions.clearActions();
     this.state = "death";
+
     this.collider.clear();
+
     Resources.sfxEnemyKilled.play(SFX_VOLUME);
     const engine = this.scene?.engine;
     if (engine) {
@@ -193,7 +203,7 @@ export class Enemy extends Actor {
     if (this.state === "death") {
       if (this.swordDeathAnimation.done) {
         this.checkDrop();
-        console.log("checking animation end ", this);
+
         this.UISignal.send(["enemyDefeated", this.affinity]);
         this.actions.clearActions();
         this.scene?.remove(this); // Remove the enemy from the scene
@@ -201,7 +211,7 @@ export class Enemy extends Actor {
       }
       if (this.arrowDeathAnimation.done) {
         this.checkDrop();
-        console.log("checking animation end ", this);
+
         this.UISignal.send(["enemyDefeated", this.affinity]);
         this.actions.clearActions();
         this.scene?.remove(this); // Remove the enemy from the scene
@@ -209,47 +219,37 @@ export class Enemy extends Actor {
       }
       return;
     }
+
     this.graphics.use(this.graphic);
+
     //get actions
     const currentActions = this.actions.getQueue();
     const meetAction = currentActions.getActions().find(action => action instanceof Meet);
     let closestTarget;
     if (!meetAction) {
-      if (this.lightTarget && this.darkTarget) {
+      if (this.lightTarget?.isAlive && this.darkTarget?.isAlive) {
         //find closest target
         closestTarget =
           this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
-      } else if (this.lightTarget) closestTarget = this.lightTarget;
-      else if (this.darkTarget) closestTarget = this.darkTarget;
+      } else if (this.lightTarget?.isAlive) closestTarget = this.lightTarget;
+      else if (this.darkTarget?.isAlive) closestTarget = this.darkTarget;
       if (!closestTarget) return;
       this.currentTarget = closestTarget;
       this.actions.meet(closestTarget, this.speed);
     } else {
       //already chasing player
       //get target, confirm they are still viable
-      let ents = this.scene?.entities;
-      let indexOfTarget = ents?.find(ent => ent == this.currentTarget);
-      if (!indexOfTarget) {
-        //find another target
-        if (this.lightTarget && this.darkTarget) {
-          closestTarget =
-            this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
-        } else if (this.lightTarget) {
-          closestTarget = this.lightTarget;
-        } else {
-          closestTarget = this.darkTarget;
-        }
-        this.currentTarget = closestTarget;
-        this.actions.clearActions();
-        this.actions.meet(closestTarget!, this.speed);
+      if (this.currentTarget?.isAlive) {
+        return;
       }
-    }
+      console.log("lost target", this.currentTarget);
 
-    if (this.lightTarget && this.darkTarget) {
-      let closestTarget =
-        this.lightTarget.pos.distance(this.pos) < this.darkTarget.pos.distance(this.pos) ? this.lightTarget : this.darkTarget;
+      this.actions.clearActions();
+      if (this.lightTarget?.isAlive) this.currentTarget = this.lightTarget;
+      else if (this.darkTarget?.isAlive) this.currentTarget = this.darkTarget;
+      console.log("new target", this.currentTarget);
 
-      this.actions.meet(closestTarget, this.speed); // Move towards the closest target
+      this.actions.meet(closestTarget!, this.speed);
     }
   }
 }

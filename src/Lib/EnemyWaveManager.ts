@@ -15,7 +15,7 @@ import { LightPlayer } from "../Actors/LightPlayer";
 import { DarkPlayer } from "../Actors/DarkPlayer";
 import { GameScene } from "../Scenes/game";
 
-let SPAWN_FREQUENCY = 18000; // Frequency in milliseconds
+let SPAWN_FREQUENCY = 10000; // Frequency in milliseconds
 let START_OF_WAVE_TIME = 5;
 
 const SpawnStrategy = {
@@ -55,6 +55,8 @@ export class EnemyWaveManager {
 
   endOfWaveInterval: any;
   monitorSpawning: boolean = false;
+  enemyKillCount: number = 0;
+  enemyRemovedCount: number = 0;
 
   WaveTimer: any; // Timer for wave management
   isWaveActive: boolean = false; // Flag to check if a wave is active
@@ -72,11 +74,15 @@ export class EnemyWaveManager {
   }
 
   endOfWave = (override: boolean = false) => {
-    if ((this.monitorSpawning && this.lastBatchSpawnedFlag) || override) {
-      let ents = this.scene.entities;
+    console.log("enemy kill count", this.enemyKillCount);
+    console.log("enemy removed count", this.enemyRemovedCount);
+    console.log("enemy count", this.enemyCount);
+    if ((this.monitorSpawning && this.lastBatchSpawnedFlag && this.isWaveActive) || override) {
+      //let ents = this.scene.entities;
 
-      let enemies = ents.filter(ent => ent instanceof Enemy);
-      if (enemies.length == 0) {
+      //let enemies = ents.filter(ent => ent instanceof Enemy);
+
+      if (this.enemyKillCount + this.enemyRemovedCount >= this.enemyCount) {
         this.isWaveActive = false;
         this.monitorSpawning = false;
         //end wave
@@ -88,9 +94,22 @@ export class EnemyWaveManager {
   init() {
     this.enemyPool = new RentalPool(this.makeEnemy, this.cleanUpEnemy, 500);
     this.isWaveActive = false; // Set the wave active flag to true
+
+    this.stateSignal.listen((params: CustomEvent) => {
+      const [key, data] = params.detail.params;
+
+      if (key === "enemyDefeated") {
+        this.enemyKillCount += 1;
+      } else if (key === "playerDamaged") {
+        this.enemyRemovedCount += 1;
+      }
+    });
   }
 
   waveTik = () => {
+    if (this.lastBatchSpawnedFlag) {
+      return;
+    }
     if (!this.isWaveActive) return; // Check if the wave is active
     this.duration += 1; // Increment the wave duration
 
@@ -106,6 +125,10 @@ export class EnemyWaveManager {
   };
 
   startWave() {
+    console.log("starting wave");
+
+    this.enemyKillCount = 0;
+    this.enemyRemovedCount = 0;
     this.waveNumber += 1; // Increment the wave number
     this.isWaveActive = true; // Set the wave active flag to true
     this.spawnEnabled = true;
@@ -117,9 +140,11 @@ export class EnemyWaveManager {
     this.batchIndex = 0;
     this.monitorSpawning = false;
 
+    console.log("start of wave: ", this.enemyCount, this.batchSize);
+
     //TODO -debug remove later
-    //this.batchSize = [2]; //debug
-    //this.enemyCount = 2;
+    //this.batchSize = [2, 2, 2]; //debug
+    //this.enemyCount = 6;
 
     this.stateSignal.send(["batchsize", this.enemyCount]); // Send the wave duration signal
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
@@ -136,6 +161,8 @@ export class EnemyWaveManager {
   }
 
   spawnEnemies() {
+    //console.trace("spawning enemies");
+
     let enemyPositions = spawnStrategyMap[this.spawnStrategy].getSpawnPositions(
       this.batchSize[this.batchIndex],
       this.map as IsometricMap
@@ -143,25 +170,41 @@ export class EnemyWaveManager {
     this.batchIndex += 1; // Increment the batch index
     //pick new strategy
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy
-
-    //check if completed spawning
-    if (this.batchIndex == this.batchSize.length) {
-      this.lastBatchSpawnedFlag = true;
-    }
+    /*  console.log("spawn strategy", this.spawnStrategy);
+    console.log("enemy positions", enemyPositions);
+    console.log("batch index", this.batchIndex); */
 
     for (let i = 0; i < enemyPositions.length; i++) {
       let nextTile = enemyPositions[i]; // Get the next tile for spawning
       if (nextTile === undefined) continue; // Skip if the tile is undefined
       //find the tile at nextTile coordinates
       let tile = this.map?.tiles.find(tile => tile.pos.x === nextTile.x && tile.pos.y === nextTile.y);
+      //BUG - somehow tile position is outside of level occasionally
 
       if (!tile) continue; // Skip if the tile is not found
-
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
+      //console.log("sending wave level", this.waveNumber);
+
       nextEnemy.waveLevel = this.waveNumber;
+
+      // For managing if one of the players are dead,
+      // logic here is that that the opposite affinity
+      // will only produce drops for the alive player
+      if (!this.lightPlayer.isAlive) {
+        nextEnemy.setAffinity("dark");
+      } else if (!this.darkPlayer.isAlive) {
+        nextEnemy.setAffinity("light");
+      }
+
       nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy
+
       this.scene.add(nextEnemy);
       this.monitorSpawning = true;
+      //check if completed spawning
+    }
+    if (this.batchIndex == this.batchSize.length) {
+      console.log("setting last batch spawned flag");
+      this.lastBatchSpawnedFlag = true;
     }
   }
 
@@ -176,7 +219,7 @@ export class EnemyWaveManager {
   }
 
   update(elapsed: number) {
-    if (this.spawnEnabled && this.isStartDelayConsumed) {
+    if (this.spawnEnabled && this.isStartDelayConsumed && !this.lastBatchSpawnedFlag) {
       this.spawnInterval -= elapsed;
       if (this.spawnInterval <= 0) {
         this.spawnInterval = SPAWN_FREQUENCY; // Reset the spawn interval
@@ -185,3 +228,12 @@ export class EnemyWaveManager {
     }
   }
 }
+
+function isOnMap(map: IsometricMap, enemy: Enemy) {
+  const mapWidth = map.columns * map.tileWidth;
+  const mapHeight = map.rows * map.tileHeight;
+
+  return enemy.pos.x >= 0 && enemy.pos.x <= mapWidth - enemy.width && enemy.pos.y >= 0 && enemy.pos.y - enemy.height <= mapHeight;
+}
+
+function getTile() {}
