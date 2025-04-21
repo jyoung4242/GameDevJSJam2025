@@ -20,8 +20,9 @@ export class WeaponActor extends Actor {
   isColliding: boolean = false;
   others: Enemy[] = [];
   numenemies: number = 0;
+  isPlayerActive: boolean;
 
-  constructor(animationSet: any, direction: "Left" | "Right", resetCallback: () => void) {
+  constructor(animationSet: any, direction: "Left" | "Right", isPlayerActive: boolean, resetCallback: () => void) {
     super({
       width: 42,
       height: 30,
@@ -43,6 +44,7 @@ export class WeaponActor extends Actor {
       if (this.resetCallback) this.resetCallback();
       this.kill();
     });
+    this.isPlayerActive = isPlayerActive;
   }
 
   onInitialize(engine: Engine): void {
@@ -52,7 +54,8 @@ export class WeaponActor extends Actor {
     this.addComponent(this.ac);
     const animationState: "attackLeft" | "attackRight" = (this.state + this.directionfacing) as "attackLeft" | "attackRight";
     this.ac!.set(animationState as "attackLeft" | "attackRight");
-    Resources.sfxSwordSwing.play(SFX_VOLUME);
+    const reducedInactivePlayerVolume = SFX_VOLUME - 0.25;
+    Resources.sfxSwordSwing.play(this.isPlayerActive ? SFX_VOLUME : reducedInactivePlayerVolume );
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
