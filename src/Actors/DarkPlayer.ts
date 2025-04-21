@@ -146,11 +146,11 @@ export class DarkPlayer extends Actor {
     this.addChild(new ActivePlayerTik(this));
     this.waveResetSignal.listen((params: CustomEvent) => (this.numenemies = 0));
     this.gamePausedSignal.listen((params: CustomEvent) => {
-      console.log("darkplayer getting game paused");
+      //console.log("darkplayer getting game paused");
       this.isWaveActive = !params.detail.params[0];
     });
     this.progressionSignal.listen((params: CustomEvent) => {
-      console.log("darkplayer getting progression", params.detail.params);
+      //console.log("darkplayer getting progression", params.detail.params);
 
       const progression = params.detail.params[0];
       switch (progression) {
@@ -158,19 +158,19 @@ export class DarkPlayer extends Actor {
           this.maxHP += 1;
           this.currentHP = this.maxHP;
           this.regenRate = Math.floor(this.regenRate * 0.95);
-          console.log("new health stats dark: ", this.maxHP, this.currentHP, this.regenRate);
+          //console.log("new health stats dark: ", this.maxHP, this.currentHP, this.regenRate);
 
           break;
         case "speed":
           this.fireInterval = Math.floor(this.fireInterval * 0.95);
           this.speed = Math.floor(this.speed * 1.05);
-          console.log("new speed stats dark: ", this.fireInterval, this.speed);
+          //console.log("new speed stats dark: ", this.fireInterval, this.speed);
 
           break;
         case "strength":
           this.fireDamage += 1;
           this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
-          console.log("new strength stats dark: ", this.fireDamage, this.pickupDistance);
+          //console.log("new strength stats dark: ", this.fireDamage, this.pickupDistance);
 
           break;
       }

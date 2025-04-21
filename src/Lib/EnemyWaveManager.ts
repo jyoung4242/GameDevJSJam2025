@@ -74,9 +74,9 @@ export class EnemyWaveManager {
   }
 
   endOfWave = (override: boolean = false) => {
-    console.log("enemy kill count", this.enemyKillCount);
-    console.log("enemy removed count", this.enemyRemovedCount);
-    console.log("enemy count", this.enemyCount);
+    //console.log("enemy kill count", this.enemyKillCount);
+    //console.log("enemy removed count", this.enemyRemovedCount);
+    //console.log("enemy count", this.enemyCount);
     if ((this.monitorSpawning && this.lastBatchSpawnedFlag && this.isWaveActive) || override) {
       //let ents = this.scene.entities;
 
@@ -125,7 +125,7 @@ export class EnemyWaveManager {
   };
 
   startWave() {
-    console.log("starting wave");
+    //console.log("starting wave");
 
     this.enemyKillCount = 0;
     this.enemyRemovedCount = 0;
@@ -140,7 +140,7 @@ export class EnemyWaveManager {
     this.batchIndex = 0;
     this.monitorSpawning = false;
 
-    console.log("start of wave: ", this.enemyCount, this.batchSize);
+    //console.log("start of wave: ", this.enemyCount, this.batchSize);
 
     //TODO -debug remove later
     //this.batchSize = [2, 2, 2]; //debug
@@ -203,7 +203,7 @@ export class EnemyWaveManager {
       //check if completed spawning
     }
     if (this.batchIndex == this.batchSize.length) {
-      console.log("setting last batch spawned flag");
+      //console.log("setting last batch spawned flag");
       this.lastBatchSpawnedFlag = true;
     }
   }

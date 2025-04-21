@@ -242,14 +242,11 @@ export class Enemy extends Actor {
       if (this.currentTarget?.isAlive) {
         return;
       }
-      console.log("lost target", this.currentTarget);
 
       this.actions.clearActions();
       if (this.lightTarget?.isAlive) this.currentTarget = this.lightTarget;
       else if (this.darkTarget?.isAlive) this.currentTarget = this.darkTarget;
-      console.log("new target", this.currentTarget);
-
-      this.actions.meet(closestTarget!, this.speed);
+      this.actions.meet(this.currentTarget!, this.speed);
     }
   }
 }

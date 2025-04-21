@@ -147,12 +147,12 @@ export class LightPlayer extends Actor {
     this.addChild(new ActivePlayerTik(this));
     this.waveResetSignal.listen((params: CustomEvent) => (this.numenemies = 0));
     this.gamePausedSignal.listen((params: CustomEvent) => {
-      console.log("game paused", params.detail.params[0]);
+      //console.log("game paused", params.detail.params[0]);
 
       this.isWaveActive = !params.detail.params[0];
     });
     this.progressionSignal.listen((params: CustomEvent) => {
-      console.log("lightplayer getting progression", params.detail.params);
+      //console.log("lightplayer getting progression", params.detail.params);
 
       const progression = params.detail.params[0];
       switch (progression) {
@@ -160,19 +160,19 @@ export class LightPlayer extends Actor {
           this.maxHP += 1;
           this.currentHP = this.maxHP;
           this.regenRate = Math.floor(this.regenRate * 0.95);
-          console.log("new health stats light: ", this.maxHP, this.currentHP, this.regenRate);
+          //console.log("new health stats light: ", this.maxHP, this.currentHP, this.regenRate);
 
           break;
         case "speed":
           this.fireInterval = Math.floor(this.fireInterval * 0.95);
           this.speed = Math.floor(this.speed * 1.05);
-          console.log("new speed stats light: ", this.fireInterval, this.speed);
+          //console.log("new speed stats light: ", this.fireInterval, this.speed);
 
           break;
         case "strength":
           this.fireDamage += 1;
           this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
-          console.log("new strength stats light: ", this.fireDamage, this.pickupDistance);
+          // console.log("new strength stats light: ", this.fireDamage, this.pickupDistance);
 
           break;
       }
@@ -366,7 +366,7 @@ export class LightPlayer extends Actor {
         }
       } else {
         if (this.isWalking === true) {
-          console.log("setting idle animatino");
+          // console.log("setting idle animatino");
           this.isWalking = false;
           this.ac.set(`idle${this.directionFacing}`);
         }
