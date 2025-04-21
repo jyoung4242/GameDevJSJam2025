@@ -11,6 +11,7 @@ import { getCenterOfTileMap } from "../Lib/Util";
 import { EndOFWaveModal } from "../UI/EndOfWaveModal";
 import { NewStatusBar } from "../UI/newStatusBar";
 import { TouchSystem } from "../Lib/TouchSystem";
+import {Resources, SFX_VOLUME} from "../resources";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -166,5 +167,6 @@ export class GameScene extends Scene {
       this.lightPlayer!.isPlayerActive = false;
       this.camera.strategy.lockToActor(this.darkPlayer!);
     }
+    Resources.sfxPlayerSwitch.play(SFX_VOLUME);
   }
 }
