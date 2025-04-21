@@ -1,9 +1,13 @@
-import { Actor, CollisionType, Color, EasingFunctions, Graphic, GraphicsGroup, vec, Vector } from "excalibur";
+import { Actor, CollisionType, Color, EasingFunctions, Engine, Graphic, GraphicsGroup, vec, Vector } from "excalibur";
 import { dropsCollisionGroup } from "../Lib/colliderGroups";
 import { pickupSS, Resources } from "../resources";
+import { LightPlayer } from "./LightPlayer";
+import { DarkPlayer } from "./DarkPlayer";
 
 export class BlessingDrop extends Actor {
   bouncingchild: Actor;
+  lightPlayerInstance: LightPlayer | null = null;
+
   constructor(pos: Vector) {
     super({
       radius: 8,
@@ -16,6 +20,11 @@ export class BlessingDrop extends Actor {
     this.bouncingchild = new BouncingChild(pickupSS.getSprite(1, 0));
     this.addChild(this.bouncingchild);
     this.graphics.use(Resources.pickupshadow.toSprite());
+  }
+
+  comeToActor(playertoMeet: LightPlayer) {
+    this.actions.clearActions();
+    this.actions.meet(playertoMeet, 150);
   }
 }
 
@@ -33,6 +42,11 @@ export class SoulDrop extends Actor {
     this.bouncingchild = new BouncingChild(pickupSS.getSprite(0, 0));
     this.addChild(this.bouncingchild);
     this.graphics.use(Resources.pickupshadow.toSprite());
+  }
+
+  comeToActor(playertoMeet: DarkPlayer) {
+    this.actions.clearActions();
+    this.actions.meet(playertoMeet, 150);
   }
 }
 

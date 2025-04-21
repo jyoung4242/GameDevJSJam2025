@@ -37,7 +37,7 @@ export class DarkPlayer extends Actor {
 
   //strength
   attackPower: number = 2;
-  pickupDistance: number = 150;
+  pickupDistance: number = 50;
 
   //speed
   speed: number = 80;
@@ -252,6 +252,7 @@ export class DarkPlayer extends Actor {
     const currentActions = this.actions.getQueue();
     const followAction = currentActions.getActions().find(action => action instanceof Follow);
 
+    //Companion Follow Logic
     if (!this.isPlayerActive && this.partner && this.partner.pos.distance(this.pos) > 25 && !followAction) {
       this.actions.follow(this.partner, 50);
     } else if (this.isPlayerActive && followAction) {
@@ -283,8 +284,10 @@ export class DarkPlayer extends Actor {
       }
     }
 
+    //HealthBar Logic
     this.HealthBar?.setPercent((this.currentHP / this.maxHP) * 100);
 
+    //Keyboard Control Logic
     if (this.kc.keyEnable) {
       this.isKeyboardActive = true;
       this.isJoystickActive = false;
@@ -345,6 +348,19 @@ export class DarkPlayer extends Actor {
       }
     }
 
+    // Pickup Detection Logic
+
+    const listOfSouls = this.scene?.entities.filter(entity => entity instanceof SoulDrop);
+    if (listOfSouls) {
+      for (let i = 0; i < listOfSouls.length; i++) {
+        if (this.pos.distance(listOfSouls[i].pos) < this.pickupDistance) {
+          let soul = listOfSouls[i] as SoulDrop;
+          soul.comeToActor(this);
+        }
+      }
+    }
+
+    // Player Death Logic
     if (this.currentHP <= 0) {
       if (this.isPlayerActive) {
         (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
