@@ -28,4 +28,4 @@ const game = new Engine({
 
 await game.start(loader);
 
-game.goToScene("intro");
+game.goToScene("game");
