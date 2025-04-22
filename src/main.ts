@@ -12,7 +12,7 @@ import { GameOver } from "./Scenes/gameOver";
 await UI.create(document.body, model, template).attached;
 let resizeTimeout: number | undefined;
 
-/* window.addEventListener("resize", () => {
+window.addEventListener("resize", () => {
   console.log("resize");
 
   clearTimeout(resizeTimeout);
@@ -20,7 +20,7 @@ let resizeTimeout: number | undefined;
     const inIframe = window.self !== window.top;
     location.reload();
   }, 500);
-}); */
+});
 
 function sizingReload() {}
 
