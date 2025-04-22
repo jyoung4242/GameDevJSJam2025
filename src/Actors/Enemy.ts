@@ -104,7 +104,7 @@ export class Enemy extends Actor {
     if (this._waveLevel === level) return;
     this._waveLevel = level;
     this.maxHP = level;
-    this.speed = this.speed + level;
+    this.speed = this.speed + level * 2;
     this.attackPower *= level * 0.1;
     //get current scale
     const currentScale = this.scale;
