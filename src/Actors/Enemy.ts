@@ -104,12 +104,12 @@ export class Enemy extends Actor {
     if (this._waveLevel === level) return;
     this._waveLevel = level;
     this.maxHP = level;
-    this.speed = this.speed + level;
+    this.speed = this.speed + level * 2;
     this.attackPower *= level * 0.1;
     //get current scale
     const currentScale = this.scale;
     //increase scale by 5%
-    this.scale = currentScale.add(vec(0.05, 0.05));
+    //this.scale = currentScale.add(vec(0.05, 0.05));
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
@@ -121,7 +121,7 @@ export class Enemy extends Actor {
     if (other.owner instanceof DarkPlayer || other.owner instanceof LightPlayer) {
       (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
       this.scene?.remove(this); // Remove the enemy from the scene
-      other.owner.currentHP -= 2; // Decrease the player's health by 1
+      other.owner.currentHP -= this.attackPower; // Decrease the player's health by 1
       const engine = other.owner.scene?.engine;
       if (engine) {
         actorFlashWhite(engine, other.owner, 150);

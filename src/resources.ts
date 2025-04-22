@@ -40,14 +40,15 @@ import whitetik from "./Assets/TimeBar/time-bar-white-tick.png";
 import activePlayerTik from "./Assets/active-arrow.png";
 import loadingScreenLogo from "./Assets/LoadingScreen/logo.png";
 import loadingScreenExcalibur from "./Assets/LoadingScreen/excalibur.png";
-import enemyKilledSfx from './Assets/Sfx/sfx-enemy-kill.mp3';
-import swordSwingSfx from './Assets/Sfx/sfx-sword-swing.mp3';
-import shootArrowSfx from './Assets/Sfx/sfx-shoot-arrow.mp3';
-import playerHurtSfx from './Assets/Sfx/sfx-player-hurt.mp3';
-import generalPickupSfx from './Assets/Sfx/sfx-pickup-general.mp3';
-import deathSfx from './Assets/Sfx/sfx-death.mp3';
-import playerSwitchSfx from './Assets/Sfx/sfx-player-switch.mp3';
-
+import enemyKilledSfx from "./Assets/Sfx/sfx-enemy-kill.mp3";
+import swordSwingSfx from "./Assets/Sfx/sfx-sword-swing.mp3";
+import shootArrowSfx from "./Assets/Sfx/sfx-shoot-arrow.mp3";
+import playerHurtSfx from "./Assets/Sfx/sfx-player-hurt.mp3";
+import generalPickupSfx from "./Assets/Sfx/sfx-pickup-general.mp3";
+import deathSfx from "./Assets/Sfx/sfx-death.mp3";
+import playerSwitchSfx from "./Assets/Sfx/sfx-player-switch.mp3";
+import spectrum from "./Assets/spectrum2.png";
+import cursor from "./Assets/cursor.png";
 
 
 export const Resources = {
@@ -89,6 +90,8 @@ export const Resources = {
   redtik: new ImageSource(redtik),
   whitetik: new ImageSource(whitetik),
   activePlayerTik: new ImageSource(activePlayerTik),
+  spectrum: new ImageSource(spectrum),
+  cursor: new ImageSource(cursor),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),

@@ -143,8 +143,8 @@ export class EnemyWaveManager {
     //console.log("start of wave: ", this.enemyCount, this.batchSize);
 
     //TODO -debug remove later
-    //this.batchSize = [2, 2, 2]; //debug
-    //this.enemyCount = 6;
+    //this.batchSize = [2]; //debug
+    //this.enemyCount = 2;
 
     this.stateSignal.send(["batchsize", this.enemyCount]); // Send the wave duration signal
     this.spawnStrategy = this.rng.pickOne(Object.keys(spawnStrategyMap) as Array<keyof typeof SpawnStrategy>); // Randomly select a spawn strategy

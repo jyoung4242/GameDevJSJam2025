@@ -1,4 +1,4 @@
-import { Actor, CollisionType, Engine, vec } from "excalibur";
+import { Actor, CollisionType, Engine, Scene, vec } from "excalibur";
 import { AnimationComponent } from "../Components/AnimationComponent";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 
@@ -21,12 +21,14 @@ export class BowWeaponActor extends Actor {
     this.pos = vec(0, 0);
     this.animationSet = animationSet;
     this.animationSet["attackLeft"].events.on("end", () => {
-      if (this.resetCallback) this.resetCallback();
+      //console.log("killing weapon left");
       this.kill();
+      if (this.resetCallback) this.resetCallback();
     });
     this.animationSet["attackRight"].events.on("end", () => {
-      if (this.resetCallback) this.resetCallback();
+      //console.log("killing weapon right");
       this.kill();
+      if (this.resetCallback) this.resetCallback();
     });
   }
 
@@ -35,6 +37,11 @@ export class BowWeaponActor extends Actor {
     this.addComponent(this.ac);
     const animationState: "attackLeft" | "attackRight" = (this.state + this.directionfacing) as "attackLeft" | "attackRight";
     this.ac!.set(animationState as "attackLeft" | "attackRight");
+  }
+
+  onPreKill(scene: Scene): void {
+    this.animationSet["attackLeft"].events.off("end");
+    this.animationSet["attackRight"].events.off("end");
   }
 
   get animationframe() {

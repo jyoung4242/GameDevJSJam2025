@@ -15,6 +15,8 @@ export class TouchSystem {
   private _lastState: JoystickState = "idle";
   private _controlMap: Map<string, (data: any) => void> = new Map();
   private _activeTouchReceiver: keyof typeof this._controlMap | null = null;
+  private _holdTimeout: number | null = null;
+  private _holdTriggered: boolean = false;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -61,6 +63,15 @@ export class TouchSystem {
       this._isDown = true;
       this._lastEvent = e;
 
+      this._holdTriggered = false;
+
+      // Start hold timer
+      this.clearHoldTimeout();
+      this._holdTimeout = window.setTimeout(() => {
+        this._holdTriggered = true;
+        this.notifyHold();
+      }, 500); // 500ms hold threshold
+
       // Start the update interval for joystick data
       this.clearUpdateInterval();
       this._updateInterval = window.setInterval(() => {
@@ -78,8 +89,16 @@ export class TouchSystem {
     this._lastDirection = { x: 0, y: 0 };
     this._lastEvent = e;
     this.clearUpdateInterval();
+    this.clearHoldTimeout();
     // Notify idle state when joystick is released
     this.notifyJoystickChange("idle");
+  }
+
+  private clearHoldTimeout() {
+    if (this._holdTimeout) {
+      window.clearTimeout(this._holdTimeout);
+      this._holdTimeout = null;
+    }
   }
 
   onMove(evt: PointerEvent) {
@@ -88,6 +107,11 @@ export class TouchSystem {
     this._currentPos = evt.worldPos.clone();
     this._moveDelta = this._currentPos.sub(this._gestureStartPos);
     this._lastEvent = evt;
+
+    if (!this._holdTriggered && this._moveDelta.magnitude > 10) {
+      // Cancel hold if the user moves significantly
+      this.clearHoldTimeout();
+    }
 
     if (this._lastState === "active") {
       const distance = this._moveDelta.magnitude;
@@ -158,6 +182,19 @@ export class TouchSystem {
     }
 
     this._lastState = state;
+  }
+
+  private notifyHold() {
+    if (!this._activeTouchReceiver) return;
+    //@ts-ignore
+    const callback = this._controlMap.get(this._activeTouchReceiver);
+    if (!callback) return;
+
+    (callback as Function)({
+      type: "hold",
+      state: "hold",
+      rawEvent: this._lastEvent || undefined,
+    });
   }
 
   private notifyJoystickChange = (state: JoystickState, direction = { x: 0, y: 0 }, distance = 0) => {
