@@ -51,6 +51,8 @@ export class DarkPlayer extends Actor {
 
   timer: Timer | undefined = undefined;
 
+  switchLock: boolean = false;
+
   jc: JoystickComponent = new JoystickComponent();
   kc: KeyBoardControlComponent = new KeyBoardControlComponent();
   ac: AnimationComponent<"idleLeft" | "idleRight" | "walkLeft" | "walkRight"> = new AnimationComponent({
@@ -321,6 +323,11 @@ export class DarkPlayer extends Actor {
         this.vel.y = -this.speed;
       } else if (keys.includes("ArrowDown")) {
         this.vel.y = this.speed;
+      }
+
+      if (keys.includes("Space") && !this.switchLock && this.isPlayerActive) {
+        this.switchLock = true;
+        (this.scene as GameScene).switchPlayerFocus();
       }
 
       if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {

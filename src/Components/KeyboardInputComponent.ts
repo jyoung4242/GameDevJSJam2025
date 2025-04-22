@@ -1,4 +1,4 @@
-import { Component, Entity } from "excalibur";
+import { Component, Entity, Keys } from "excalibur";
 
 export class KeyBoardControlComponent extends Component {
   private _heldKeys: string[] = [];
@@ -16,13 +16,15 @@ export class KeyBoardControlComponent extends Component {
     window.addEventListener("keydown", event => {
       if (!this._heldKeys.includes(event.key)) {
         if (!this.keyEnable) return;
-        this._heldKeys.push(event.key);
+
+        this._heldKeys.push(event.code);
+        // this._heldKeys.push(event.key);
       }
     });
 
     window.addEventListener("keyup", event => {
       if (!this.keyEnable) this.keyEnable = true;
-      const index = this._heldKeys.indexOf(event.key);
+      const index = this._heldKeys.indexOf(event.code);
       if (index > -1) {
         this._heldKeys.splice(index, 1);
       }
