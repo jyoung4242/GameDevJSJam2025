@@ -14,14 +14,15 @@ export function isInnerEdgeTile(index: number, width: number, height: number): b
 
 export function getEnemiesToSpawn(level: number): number {
   // Basic formula: base amount + (scaling factor * level)
-  const baseEnemies = 55;
+  const baseEnemies = 75;
   const scalingFactor = 25;
+  const randomBonus = Math.floor(Math.random() * 25) + 1; // Random bonus between 1 and 10
 
-  return Math.floor(baseEnemies + level * scalingFactor);
+  return Math.floor(baseEnemies + level * scalingFactor + randomBonus);
 }
 
 export function getNumberOfBatches(numEnemies: number): number[] {
-  const batchCount = Math.max(3, Math.floor(numEnemies / 15)); // Adjust this scale as needed
+  const batchCount = Math.max(3, Math.floor(numEnemies / 10)); // Adjust this scale as needed
   let weights = Array.from({ length: batchCount }, (_, i) => i + 1); // e.g. [1, 2, 3, 4, ...]
   const totalWeight = weights.reduce((sum, w) => sum + w, 0);
 

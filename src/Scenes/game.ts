@@ -109,8 +109,8 @@ export class GameScene extends Scene {
     //this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
     this.add(this.statusBar);
     this.stateSignal.listen(this.stateUpdate.bind(this));
-    this.burnDown = new Burndown(vec(1, screenHeight - 12), 25, this);
-    this.add(this.burnDown);
+    /* this.burnDown = new Burndown(vec(1, screenHeight - 12), 25, this);
+    this.add(this.burnDown); */
 
     this.balanceUI = new Balance(this);
     this.add(this.balanceUI);

@@ -7,11 +7,25 @@
 - [x] clear out wave data for each wave
 - [x] clean up game over status
 - [x] manage players dying
-- [ ] add 'balance' UI to modal
+- [x] add 'balance' UI to modal
 - [x] on strength progression for sword
 - [x] on strength progression for arrows, mulitple staggard arrows
 - [x] max out upgrades
 - [x] swap player effect
 - [x] lose intro scene
 - [x] lose camera elastic
-- [ ] balance UI widget in realtime on HUD
+- [x] balance UI widget in realtime on HUD
+
+# features
+
+- [x] Scoring system
+- [] save high score
+
+# juice
+
+- [] PP for switching effect
+
+# bug todo
+
+- [] window resizing
+- [] spawing off of map

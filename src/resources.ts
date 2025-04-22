@@ -47,6 +47,8 @@ import deathSfx from "./Assets/Sfx/sfx-death.mp3";
 import playerSwitchSfx from "./Assets/Sfx/sfx-player-switch.mp3";
 import spectrum from "./Assets/spectrum2.png";
 import cursor from "./Assets/cursor.png";
+import goldmedal from "./Assets/goldmedal.png";
+import silvermedal from "./Assets/silvermedal.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -89,6 +91,8 @@ export const Resources = {
   activePlayerTik: new ImageSource(activePlayerTik),
   spectrum: new ImageSource(spectrum),
   cursor: new ImageSource(cursor),
+  goldmedal: new ImageSource(goldmedal),
+  silvermedal: new ImageSource(silvermedal),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),

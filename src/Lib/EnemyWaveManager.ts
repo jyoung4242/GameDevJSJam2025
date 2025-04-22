@@ -16,7 +16,7 @@ import { DarkPlayer } from "../Actors/DarkPlayer";
 import { GameScene } from "../Scenes/game";
 
 let SPAWN_FREQUENCY = 10000; // Frequency in milliseconds
-let START_OF_WAVE_TIME = 5;
+let START_OF_WAVE_TIME = 3;
 
 const SpawnStrategy = {
   RANDOM: "RANDOM",

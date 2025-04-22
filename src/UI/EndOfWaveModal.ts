@@ -28,6 +28,7 @@ import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
 type ProgressionType = "constitution" | "strength" | "speed";
 
 export class EndOFWaveModal extends ScreenElement {
+  overallScore: number = 0;
   engine: Engine;
   scaleAnimation: ScreenElement;
   resetSignal: Signal = new Signal("waveReset");
@@ -45,6 +46,8 @@ export class EndOFWaveModal extends ScreenElement {
   balancePlayerKills: Label;
   balanceEnemyDefeatRate: Label;
   myWidth: number;
+  waveScoreLabel: Label;
+  overallScoreLabel: Label;
 
   heartButton: ProgressionButtons | undefined;
   flexButton: ProgressionButtons | undefined;
@@ -124,6 +127,8 @@ export class EndOFWaveModal extends ScreenElement {
     this.balancePickups = LabelFactory.create(vec(225, 88), "0");
     this.balancePlayerKills = LabelFactory.create(vec(225, 125), "0");
     this.balanceEnemyDefeatRate = LabelFactory.create(vec(231, 165), "0");
+    this.waveScoreLabel = LabelFactory.create(vec(myWidth / 2 + 50, 97), "0", true);
+    this.overallScoreLabel = LabelFactory.create(vec(myWidth / 2 + 50, 149), "0", true);
 
     this.addChild(this.lightEnemiesScore);
     this.addChild(this.darkEnemiesScore);
@@ -137,6 +142,8 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(this.balancePickups);
     this.addChild(this.balancePlayerKills);
     this.addChild(this.balanceEnemyDefeatRate);
+    this.addChild(this.waveScoreLabel);
+    this.addChild(this.overallScoreLabel);
 
     this.addChild(ScreenElementFactory.create(vec(110, 45), cancelPurpledudeSS.getSprite(1, 0), vec(0.75, 0.75)));
     this.addChild(ScreenElementFactory.create(vec(40, 45), cancelPurpledudeSS.getSprite(0, 0), vec(0.75, 0.75)));
@@ -150,6 +157,8 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(180, 85), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
     this.addChild(ScreenElementFactory.create(vec(180, 125), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
     this.addChild(ScreenElementFactory.create(vec(180, 165), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
+    this.addChild(ScreenElementFactory.create(vec(300, 150), Resources.goldmedal.toSprite(), vec(1.5, 1.5)));
+    this.addChild(ScreenElementFactory.create(vec(300, 100), Resources.silvermedal.toSprite(), vec(1.5, 1.5)));
 
     this.balanceCursorStartingPos = myWidth / 2 - 5;
     this.balanceCursor = ScreenElementFactory.create(
@@ -200,7 +209,6 @@ export class EndOFWaveModal extends ScreenElement {
     this.balancePlayerKills.text = `${balancePlayerKills}`;
 
     // this calculation needs to be a percentage
-
     //test for zero
     if (this.uiData.totalEnemies == 0) {
       this.balanceEnemyDefeatRate.text = `0%`;
@@ -211,9 +219,37 @@ export class EndOFWaveModal extends ScreenElement {
       this.balanceEnemyDefeatRate.text = `${balanceEnemyDefeatRate}%`;
     }
 
+    const baseScore = this.uiData.totalEnemies - this.uiData.totalEnemiesRemoved;
+    let enemyAffinityBalanceBonus = 100 - 10 * Math.abs(this.uiData.darkEnemiesDefeated - this.uiData.lightEnemiesDefeated);
+    let pickupsAffinityBalanceBonus = 100 - 10 * Math.abs(this.uiData.blessingsCollected - this.uiData.soulsCollected);
+    let playerAffinityBalanceBonus = 100 - 1 * Math.abs(this.uiData.bowPlayerScore - this.uiData.swordPlayerScore);
+
+    if (enemyAffinityBalanceBonus < 0) enemyAffinityBalanceBonus = 0;
+    if (pickupsAffinityBalanceBonus < 0) pickupsAffinityBalanceBonus = 0;
+    if (playerAffinityBalanceBonus < 0) playerAffinityBalanceBonus = 0;
+
+    const thisRoundScore = baseScore + enemyAffinityBalanceBonus + pickupsAffinityBalanceBonus + playerAffinityBalanceBonus;
+    this.waveScoreLabel.text = `${thisRoundScore}`;
+    this.showScoreTransfer(thisRoundScore);
     scene.add(this);
 
     this.resetSignal.send([]);
+  }
+
+  saveHighScore() {
+    //TODO
+  }
+
+  showScoreTransfer(roundscore: number) {
+    setTimeout(() => {
+      let scoreInterval = setInterval(() => {
+        roundscore -= 1;
+        this.overallScore += 1;
+        this.waveScoreLabel.text = `${roundscore}`;
+        this.overallScoreLabel.text = `${this.overallScore}`;
+        if (roundscore == 0) clearInterval(scoreInterval);
+      }, 25);
+    }, 1000);
   }
 
   hide(scene: Scene) {
@@ -282,21 +318,21 @@ class ScreenElementFactory extends ScreenElement {
 }
 
 class LabelFactory extends Label {
-  constructor(pos: Vector, text: string) {
+  constructor(pos: Vector, text: string, makeBig: boolean = false) {
     super({
       pos,
       text,
       font: new Font({
         family: "Arial",
-        size: 20,
+        size: makeBig == true ? 32 : 20,
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
     });
   }
 
-  static create(pos: Vector, text: string) {
-    return new LabelFactory(pos, text);
+  static create(pos: Vector, text: string, makeBig: boolean = false) {
+    return new LabelFactory(pos, text, makeBig);
   }
 }
 
