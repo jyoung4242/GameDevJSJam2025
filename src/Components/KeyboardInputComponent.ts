@@ -14,7 +14,7 @@ export class KeyBoardControlComponent extends Component {
 
   init() {
     window.addEventListener("keydown", event => {
-      if (!this._heldKeys.includes(event.key)) {
+      if (!this._heldKeys.includes(event.code)) {
         if (!this.keyEnable) return;
 
         this._heldKeys.push(event.code);

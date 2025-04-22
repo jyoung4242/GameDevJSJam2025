@@ -6,6 +6,8 @@ import overlay from "./Assets/ground-overlays-16px.png";
 import fence from "./Assets/fence-tile-32px.png";
 import tree from "./Assets/tree-80x.png";
 import purpleGuy from "./Assets/Enemies/purple-guy-body-sheet-32px.png";
+import purpleGuyDark from "./Assets/Enemies/purple-guy-dark-sheet-32px.png";
+import purpleGuyLight from "./Assets/Enemies/purple-guy-light-sheet-32px.png";
 import purpleShadow from "./Assets/Enemies/purple-guy-shadow-32px.png";
 import lifebar from "./Assets/lifebar-32x16px.png";
 import buttonUp from "./Assets/button_rectangle_depth_gradient.png";
@@ -93,6 +95,8 @@ export const Resources = {
   cursor: new ImageSource(cursor),
   goldmedal: new ImageSource(goldmedal),
   silvermedal: new ImageSource(silvermedal),
+  purpleGuyDark: new ImageSource(purpleGuyDark),
+  purpleGuyLight: new ImageSource(purpleGuyLight),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),
@@ -167,6 +171,24 @@ export const overlaySS = SpriteSheet.fromImageSource({
 
 export const purpleGuySS = SpriteSheet.fromImageSource({
   image: Resources.purpleGuy,
+  grid: {
+    rows: 3,
+    columns: 5,
+    spriteHeight: 32,
+    spriteWidth: 32,
+  },
+});
+export const purpleGuyDarkSS = SpriteSheet.fromImageSource({
+  image: Resources.purpleGuyDark,
+  grid: {
+    rows: 3,
+    columns: 5,
+    spriteHeight: 32,
+    spriteWidth: 32,
+  },
+});
+export const purpleGuyLightSS = SpriteSheet.fromImageSource({
+  image: Resources.purpleGuyLight,
   grid: {
     rows: 3,
     columns: 5,

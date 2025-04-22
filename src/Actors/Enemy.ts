@@ -1,12 +1,10 @@
 import {
   Actor,
   Animation,
-  Circle,
   Collider,
   ColliderComponent,
   CollisionContact,
   CollisionType,
-  Color,
   Engine,
   GraphicsGroup,
   Meet,
@@ -21,13 +19,22 @@ import { LightPlayer } from "./LightPlayer";
 import { BlessingDrop, SoulDrop } from "./drops";
 import { GameScene } from "../Scenes/game";
 import { Resources, SFX_VOLUME } from "../resources";
-import { purpleGuyAnimation, purpleGuyArrowDeathAnimation, purpleGuySwordDeathAnimation } from "../Animations/purpleGuyAnimation";
+import {
+  purpleGuyArrowDeathAnimation,
+  purpleGuySwordDeathAnimation,
+  purpleGuyDarkAnimation,
+  purpleGuyLightAnimation,
+} from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
 
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
 
 export class Enemy extends Actor {
+  lightGG: GraphicsGroup;
+  darkGG: GraphicsGroup;
+  currentGraphic: GraphicsGroup;
+
   //properties that change with progression
   //constitution
   currentHP: number = 1;
@@ -46,7 +53,7 @@ export class Enemy extends Actor {
   lightTarget: LightPlayer | undefined;
   darkTarget: DarkPlayer | undefined;
   currentTarget: LightPlayer | DarkPlayer | undefined = undefined;
-  graphic: GraphicsGroup;
+  //graphic: GraphicsGroup;
   UISignal: Signal = new Signal("stateUpdate");
   progressionSignal: Signal = new Signal("progressionUpdate");
   swordDeathAnimation = purpleGuySwordDeathAnimation.clone();
@@ -64,11 +71,8 @@ export class Enemy extends Actor {
       collisionType: CollisionType.Active,
       collisionGroup: EnemyCollisionGroup,
     });
-    const randomFirstFrame = Math.floor(Math.random() * 5); //0 - 4
-    const animation = purpleGuyAnimation.clone();
-    animation.goToFrame(randomFirstFrame);
 
-    const enemyGraphicGroup = new GraphicsGroup({
+    this.darkGG = new GraphicsGroup({
       useAnchor: true,
       members: [
         {
@@ -76,28 +80,47 @@ export class Enemy extends Actor {
           offset: vec(0, 0),
         },
         {
-          graphic: animation,
+          graphic: purpleGuyDarkAnimation,
+          offset: vec(0, 0),
+        },
+      ],
+    });
+    this.lightGG = new GraphicsGroup({
+      useAnchor: true,
+      members: [
+        {
+          graphic: Resources.purpleShadow.toSprite(),
+          offset: vec(0, 0),
+        },
+        {
+          graphic: purpleGuyLightAnimation,
           offset: vec(0, 0),
         },
       ],
     });
 
-    this.graphic = enemyGraphicGroup;
-
-    // setup default states
-    this.startingGraphic = enemyGraphicGroup.clone();
-    this.startingAnimation = animation.clone();
+    let animation;
+    if (enemyRNG.bool()) {
+      this.affinity = "light";
+      this.currentGraphic = this.lightGG.clone();
+      this.graphics.use(this.currentGraphic);
+      animation = purpleGuyLightAnimation;
+      this.startingAnimation = purpleGuyLightAnimation.clone();
+    } else {
+      this.affinity = "dark";
+      this.currentGraphic = this.darkGG.clone();
+      this.graphics.use(this.currentGraphic);
+      animation = purpleGuyDarkAnimation;
+      this.startingAnimation = purpleGuyDarkAnimation.clone();
+    }
+    this.startingGraphic = this.currentGraphic.clone();
     this.startingCollider = this.collider.clone();
+
+    const randomFirstFrame = Math.floor(Math.random() * 5); //0 - 4
+    animation.goToFrame(randomFirstFrame);
 
     this.lightTarget = lightPlayer;
     this.darkTarget = darkPlayer;
-    this.graphics.use(this.graphic);
-    if (enemyRNG.bool()) {
-      this.affinity = "light";
-      this.graphic.tint = Color.fromHex("#888888").lighten(0.9);
-    } else {
-      this.graphic.tint = Color.fromHex("#888888").darken(0.1);
-    }
   }
 
   set waveLevel(level: number) {
@@ -143,17 +166,19 @@ export class Enemy extends Actor {
   setAffinity(affinity: "dark" | "light") {
     this.affinity = affinity;
     if (affinity == "dark") {
-      this.graphic.tint = Color.fromHex("#888888").darken(0.1);
+      this.currentGraphic = this.darkGG.clone();
     } else {
-      this.graphic.tint = Color.fromHex("#888888").lighten(0.9);
+      this.currentGraphic = this.lightGG.clone();
     }
+    this.graphics.use(this.currentGraphic);
+    //const randomFirstFrame = Math.floor(Math.random() * 5); //0 - 4
+    //(this.currentGraphic.members[1] as Animation).goToFrame(randomFirstFrame);
   }
 
   reset() {
+    //removing all graphics
     const currentGraphicsNames = this.graphics.getNames();
     currentGraphicsNames.forEach(grp => this.graphics.remove(grp));
-    this.graphics.use(this.startingGraphic.clone());
-    this.graphic.members[1] = this.startingAnimation.clone();
     this.swordDeathAnimation.reset();
     this.arrowDeathAnimation.reset();
     this.state = "default";
@@ -161,11 +186,9 @@ export class Enemy extends Actor {
     this.body.collisionType = CollisionType.Active;
 
     if (enemyRNG.bool()) {
-      this.affinity = "light";
-      this.graphic.tint = Color.fromHex("#888888").lighten(0.9);
+      this.setAffinity("light");
     } else {
-      this.affinity = "dark";
-      this.graphic.tint = Color.fromHex("#888888").darken(0.1);
+      this.setAffinity("dark");
     }
   }
 
@@ -196,7 +219,7 @@ export class Enemy extends Actor {
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {
-        this.graphic.members[1] = deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation;
+        this.currentGraphic.members[1] = deathBy === "sword" ? this.swordDeathAnimation : this.arrowDeathAnimation;
       });
     }
   }
@@ -222,7 +245,7 @@ export class Enemy extends Actor {
       return;
     }
 
-    this.graphics.use(this.graphic);
+    this.graphics.use(this.currentGraphic);
 
     //get actions
     const currentActions = this.actions.getQueue();

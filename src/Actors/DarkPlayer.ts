@@ -349,16 +349,17 @@ export class DarkPlayer extends Actor {
 
     if (this.isPlayerActive && this.isKeyboardActive) {
       let keys = this.kc.keys;
+      console.log(keys);
 
-      if (keys.includes("ArrowLeft")) {
+      if (keys.includes("ArrowLeft") || keys.includes("KeyA")) {
         this.vel.x = -this.speed;
-      } else if (keys.includes("ArrowRight")) {
+      } else if (keys.includes("ArrowRight") || keys.includes("KeyD")) {
         this.vel.x = this.speed;
       }
 
-      if (keys.includes("ArrowUp")) {
+      if (keys.includes("ArrowUp") || keys.includes("KeyW")) {
         this.vel.y = -this.speed;
-      } else if (keys.includes("ArrowDown")) {
+      } else if (keys.includes("ArrowDown") || keys.includes("KeyS")) {
         this.vel.y = this.speed;
       }
 
@@ -367,10 +368,10 @@ export class DarkPlayer extends Actor {
         (this.scene as GameScene).switchPlayerFocus();
       }
 
-      if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {
+      if (!keys.includes("ArrowLeft") && !keys.includes("KeyA") && !keys.includes("ArrowRight") && !keys.includes("KeyD")) {
         this.vel.x = 0;
       }
-      if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
+      if (!keys.includes("ArrowUp") && !keys.includes("KeyW") && !keys.includes("ArrowDown") && !keys.includes("KeyS")) {
         this.vel.y = 0;
       }
 

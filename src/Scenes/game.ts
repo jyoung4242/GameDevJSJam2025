@@ -236,7 +236,7 @@ export class GameScene extends Scene {
     let killsBalance = this.hudData.lightkills - this.hudData.darkkills;
     let blessingsBalance = this.hudData.blessings - this.hudData.souls;
     let axeBalance = this.hudData.bowkills - this.hudData.axeKills;
-    console.log("balance kills:", killsBalance, "balance blessings:", blessingsBalance, "balance axe:", axeBalance);
+    //console.log("balance kills:", killsBalance, "balance blessings:", blessingsBalance, "balance axe:", axeBalance);
 
     return killsBalance + blessingsBalance + axeBalance;
   }
