@@ -73,6 +73,7 @@ export class LightPlayer extends Actor {
   weaponChild: BowWeaponActor | undefined;
   closestEnemy: Enemy | undefined;
   timer: Timer | undefined = undefined;
+  switchLock: boolean = false;
 
   handChild: HandsActor = new HandsActor({
     idleNormalLeft: bowGuyHandsNormalIdleLeft,
@@ -351,6 +352,11 @@ export class LightPlayer extends Actor {
       }
       if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
         this.vel.y = 0;
+      }
+
+      if (keys.includes("Space") && !this.switchLock && this.isPlayerActive) {
+        this.switchLock = true;
+        (this.scene as GameScene).switchPlayerFocus();
       }
 
       if (this.vel.x != 0 || this.vel.y != 0) {

@@ -159,17 +159,14 @@ export class GameScene extends Scene {
 
   switchPlayerFocus() {
     let nextActivePlayer: DarkPlayer | LightPlayer | undefined = undefined;
+    console.trace("switchPlayerFocus");
 
     Resources.sfxPlayerSwitch.play(SFX_VOLUME);
 
     if (this.darkPlayer?.isPlayerActive && !this.lightPlayer?.isPlayerActive) {
       nextActivePlayer = this.lightPlayer;
-      this.darkPlayer!.isPlayerActive = false;
-      this.lightPlayer!.isPlayerActive = true;
     } else {
       nextActivePlayer = this.darkPlayer;
-      this.darkPlayer!.isPlayerActive = true;
-      this.lightPlayer!.isPlayerActive = false;
     }
 
     this.engine.timescale = 0.1;
@@ -178,6 +175,15 @@ export class GameScene extends Scene {
       this.camera.zoomOverTime(1.5, 100).then(() => {
         this.engine.timescale = 1;
         this.camera.strategy.lockToActor(nextActivePlayer!);
+        this.lightPlayer!.switchLock = false;
+        this.darkPlayer!.switchLock = false;
+        if (nextActivePlayer instanceof DarkPlayer) {
+          this.darkPlayer!.isPlayerActive = true;
+          this.lightPlayer!.isPlayerActive = false;
+        } else {
+          this.darkPlayer!.isPlayerActive = false;
+          this.lightPlayer!.isPlayerActive = true;
+        }
       });
     });
     this.camera.move(nextActivePlayer!.pos, 200);
