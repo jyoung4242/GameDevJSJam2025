@@ -1,5 +1,5 @@
 // resources.ts
-import {Engine, ImageSource, Loader, Sound, Sprite, SpriteSheet} from "excalibur";
+import { Engine, ImageSource, Loader, Sound, Sprite, SpriteSheet } from "excalibur";
 import tilesetDay1 from "./Assets/baseTilesDay1.png";
 import groundDay2 from "./Assets/ground-sheet-64x48px.png";
 import overlay from "./Assets/ground-overlays-16px.png";
@@ -40,8 +40,6 @@ import bluetik from "./Assets/TimeBar/time-bar-blue-tick.png";
 import redtik from "./Assets/TimeBar/time-bar-red-tick.png";
 import whitetik from "./Assets/TimeBar/time-bar-white-tick.png";
 import activePlayerTik from "./Assets/active-arrow.png";
-import loadingScreenLogo from "./Assets/LoadingScreen/logo.png";
-import loadingScreenExcalibur from "./Assets/LoadingScreen/excalibur.png";
 import enemyKilledSfx from "./Assets/Sfx/sfx-enemy-kill.mp3";
 import swordSwingSfx from "./Assets/Sfx/sfx-sword-swing.mp3";
 import shootArrowSfx from "./Assets/Sfx/sfx-shoot-arrow.mp3";
@@ -53,7 +51,7 @@ import spectrum from "./Assets/spectrum2.png";
 import cursor from "./Assets/cursor.png";
 import goldmedal from "./Assets/goldmedal.png";
 import silvermedal from "./Assets/silvermedal.png";
-
+import { CustomLoader } from "./Loader/CustomLoader";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -289,43 +287,6 @@ export const bowSS = SpriteSheet.fromImageSource({
     spriteWidth: 32,
   },
 });
-
-/* TODO BEFORE MERGE - move to own file */
-
-class CustomLoader extends Loader {
-  logoImage = new ImageSource(loadingScreenLogo);
-  excaliburImage = new ImageSource(loadingScreenExcalibur);
-  pxScale = 4;
-
-  initLoadingScreen() {
-    this.logoImage.load();
-    this.excaliburImage.load();
-  }
-
-  onDraw(ctx: CanvasRenderingContext2D) {
-
-    const { width, height } = ctx.canvas;
-
-
-    ctx.fillStyle = "#0f0b0e";
-    ctx.fillRect(0,0,width,height);
-    ctx.imageSmoothingEnabled = false;
-    if (this.logoImage.isLoaded()) {
-      const logoWidth = 96 * this.pxScale;
-      const logoHeight = 112 * this.pxScale;
-
-      ctx.drawImage(this.logoImage.image, width / 2 - logoWidth / 2, height / 2 - logoHeight / 2, logoWidth, logoHeight);
-    }
-
-    if (this.excaliburImage.isLoaded()) {
-      const imgWidth = 57 * this.pxScale;
-      const imgHeight = 11 * this.pxScale;
-      /* TODO - this should go to "bottom right" of the screen, but the canvas edge is not necessarily in view */
-      const offsetTop = 150 * this.pxScale;
-      ctx.drawImage(this.excaliburImage.image, width / 2 - imgWidth / 2, height / 2 - imgHeight + offsetTop / 2, imgWidth, imgHeight);
-    }
-  }
-}
 
 //export const loader = new Loader();
 export const loader = new CustomLoader();
