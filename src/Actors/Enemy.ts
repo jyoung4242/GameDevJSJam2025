@@ -158,6 +158,7 @@ export class Enemy extends Actor {
     this.arrowDeathAnimation.reset();
     this.state = "default";
     this.collider = this.startingCollider.clone();
+    this.body.collisionType = CollisionType.Active;
 
     if (enemyRNG.bool()) {
       this.affinity = "light";
@@ -189,6 +190,7 @@ export class Enemy extends Actor {
     this.state = "death";
 
     this.collider.clear();
+    this.body.collisionType = CollisionType.Passive;
 
     Resources.sfxEnemyKilled.play(SFX_VOLUME);
     const engine = this.scene?.engine;
