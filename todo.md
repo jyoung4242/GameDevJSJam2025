@@ -9,9 +9,9 @@
 - [x] manage players dying
 - [ ] add 'balance' UI to modal
 - [ ] on strength progression for sword
-- [ ] on strength progression for arrows, mulitple staggard arrows
+- [x] on strength progression for arrows, mulitple staggard arrows
 - [ ] max out upgrades
-- [ ] swap player effect
-- [ ] lose intro scene
-- [ ] lose camera elastic
-- [ ]
+- [x] swap player effect
+- [x] lose intro scene
+- [x] lose camera elastic
+- [ ] balance UI widget in realtime on HUD

@@ -12,6 +12,7 @@ import { EndOFWaveModal } from "../UI/EndOfWaveModal";
 import { NewStatusBar } from "../UI/newStatusBar";
 import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
+import { BowWeaponActor } from "../Actors/nonCollidingWeapon";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -21,6 +22,12 @@ export class GameScene extends Scene {
   sceneTouchManger: TouchSystem | undefined;
   burnDown: Burndown | undefined;
   enemyWaveManager: EnemyWaveManager | undefined;
+  pregressionSignal = new Signal("progressionUpdate");
+  progressionStates = {
+    health: 0,
+    strength: 0,
+    speed: 0,
+  };
   gameState = {
     waveNumber: 0,
     enemiesRemaining: 0,
@@ -95,6 +102,26 @@ export class GameScene extends Scene {
     //this.endOfWaveModal = new EndOFWaveModal(context.engine);
     //this doesn't get added until needed
 
+    this.pregressionSignal.listen((params: CustomEvent) => {
+      const progressType = params.detail.params[0];
+      console.log("progress type: ", progressType);
+
+      switch (progressType) {
+        case "constitution":
+          this.progressionStates.health++;
+          if (this.progressionStates.health > 2) this.progressionStates.health = 2;
+          break;
+        case "strength":
+          this.progressionStates.strength++;
+          if (this.progressionStates.strength > 2) this.progressionStates.strength = 2;
+          break;
+        case "speed":
+          this.progressionStates.speed++;
+          if (this.progressionStates.speed > 2) this.progressionStates.speed = 2;
+          break;
+      }
+    });
+
     //start things off
     this.enemyWaveManager?.startWave();
     //this.enemyWaveManager?.endOfWave(true);
@@ -131,9 +158,14 @@ export class GameScene extends Scene {
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
+    console.log(
+      "end of wave entity report: ",
+      this.entities.filter(entity => entity instanceof BowWeaponActor)
+    );
+
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;
-    setTimeout(() => this.endOfWaveModal?.show(this, this.statusBar!.getUIState(), this.getPlayerData()), 500);
+    setTimeout(() => this.endOfWaveModal?.show(this, this.statusBar!.getUIState(), this.getPlayerData(), this.progressionStates), 500);
   }
 
   getPlayerData() {
@@ -159,7 +191,7 @@ export class GameScene extends Scene {
 
   switchPlayerFocus() {
     let nextActivePlayer: DarkPlayer | LightPlayer | undefined = undefined;
-    console.trace("switchPlayerFocus");
+    //console.trace("switchPlayerFocus");
 
     Resources.sfxPlayerSwitch.play(SFX_VOLUME);
 

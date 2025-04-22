@@ -1,10 +1,10 @@
-import { Actor, Collider, CollisionContact, CollisionType, Engine, Side, vec, Vector } from "excalibur";
+import { Actor, Collider, CollisionContact, CollisionType, Engine, Scene, Side, vec, Vector } from "excalibur";
 import { AnimationComponent } from "../Components/AnimationComponent";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";
 import { Signal } from "../Lib/Signals";
 import { GameScene } from "../Scenes/game";
-import {Resources, SFX_VOLUME} from "../resources";
+import { Resources, SFX_VOLUME } from "../resources";
 import { DarkPlayer } from "./DarkPlayer";
 
 export class WeaponActor extends Actor {
@@ -47,15 +47,24 @@ export class WeaponActor extends Actor {
     this.isPlayerActive = isPlayerActive;
   }
 
+  onPreKill(scene: Scene): void {
+    this.animationSet["attackLeft"].events.off("end");
+    this.animationSet["attackRight"].events.off("end");
+  }
+
+  makeBig() {
+    this.scale = vec(1.5, 1.5);
+  }
+
   onInitialize(engine: Engine): void {
-    if (this.directionfacing == "Left") this.pos = new Vector(this.leftVector.x+4, this.leftVector.y+2);
-    else this.pos = new Vector(this.rightVector.x-4, this.rightVector.y+2);
+    if (this.directionfacing == "Left") this.pos = new Vector(this.leftVector.x + 4, this.leftVector.y + 2);
+    else this.pos = new Vector(this.rightVector.x - 4, this.rightVector.y + 2);
     this.ac = new AnimationComponent(this.animationSet);
     this.addComponent(this.ac);
     const animationState: "attackLeft" | "attackRight" = (this.state + this.directionfacing) as "attackLeft" | "attackRight";
     this.ac!.set(animationState as "attackLeft" | "attackRight");
     const reducedInactivePlayerVolume = SFX_VOLUME - 0.25;
-    Resources.sfxSwordSwing.play(this.isPlayerActive ? SFX_VOLUME : reducedInactivePlayerVolume );
+    Resources.sfxSwordSwing.play(this.isPlayerActive ? SFX_VOLUME : reducedInactivePlayerVolume);
   }
 
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {

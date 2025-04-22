@@ -23,6 +23,7 @@ import { scaleAnimation } from "../Animations/scale";
 import { bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, swordSS } from "../resources";
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
+import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
 
 type ProgressionType = "constitution" | "strength" | "speed";
 
@@ -146,10 +147,17 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(180, 125), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
     this.addChild(ScreenElementFactory.create(vec(180, 165), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
 
+    this.addChild(ScreenElementFactory.create(vec(myWidth / 2 - 144, 250), Resources.spectrum.toSprite(), vec(1.0, 1.0)));
+    this.addChild(ScreenElementFactory.create(vec(myWidth / 2 - 5, 240), Resources.cursor.toSprite(), vec(1.5, 1.5)));
+
     //#endregion
   }
 
-  show(scene: Scene, data: any, getPlayerData: any) {
+  show(scene: Scene, data: any, getPlayerData: any, progressionstates: any) {
+    // (progressionstates.health >= 2) (this.heartButton as ProgressionButtons).updateEnable(false);
+    if (progressionstates.strength >= 2) (this.flexButton as ProgressionButtons).updateEnable(false);
+    if (progressionstates.speed >= 2) (this.clockButton as ProgressionButtons).updateEnable(false);
+
     this.uiData.lightEnemiesDefeated = data.lightEnemiesDefeated;
     this.uiData.darkEnemiesDefeated = data.darkEnemiesDefeated;
     this.uiData.blessingsCollected = data.blessingsCollected;
@@ -287,6 +295,8 @@ class ProgressionButtons extends ScreenElement {
 
   type: ProgressionType;
 
+  enabled: boolean = true;
+
   upGraphicGroup: GraphicsGroup;
   downGraphicGroup: GraphicsGroup;
   subUp: Subscription | undefined;
@@ -349,13 +359,24 @@ class ProgressionButtons extends ScreenElement {
     });
   }
 
+  updateEnable(state: boolean) {
+    this.enabled = state;
+    if (this.enabled == false) {
+      const currentGraphics = this.graphics.current;
+      //@ts-ignore
+      if (currentGraphics) currentGraphics.tint = Color.Gray;
+    }
+  }
+
   onInitialize = (engine: Engine): void => {};
 
   onDown(): void {
+    if (!this.enabled) return;
     this.graphics.use(this.downGraphicGroup);
   }
 
   onUp(): void {
+    if (!this.enabled) return;
     (this.scene as GameScene).hideEndOfWaveModal();
     this.graphics.use(this.upGraphicGroup);
     this.progressionSignal.send([this.type]);

@@ -36,7 +36,7 @@ export class DarkPlayer extends Actor {
   regenRate: number = 1000;
 
   //strength
-  attackPower: number = 2;
+  attackPower: number = 1;
   pickupDistance: number = 50;
 
   //speed
@@ -78,7 +78,8 @@ export class DarkPlayer extends Actor {
 
   exp: number = 0;
   fireIntervalHandler: any;
-
+  weaponchild: WeaponActor | undefined;
+  weaponchild2: WeaponActor | undefined;
   fireDamage: number = 3;
   isJoystickActive: boolean = true;
   isKeyboardActive: boolean = false;
@@ -160,20 +161,25 @@ export class DarkPlayer extends Actor {
       const progression = params.detail.params[0];
       switch (progression) {
         case "constitution":
-          this.maxHP += 1;
+          this.maxHP += 10;
+          if (this.maxHP > 50) this.maxHP = 50;
           this.currentHP = this.maxHP;
-          this.regenRate = Math.floor(this.regenRate * 0.95);
+          //this.regenRate = Math.floor(this.regenRate * 0.95);
           //console.log("new health stats dark: ", this.maxHP, this.currentHP, this.regenRate);
 
           break;
         case "speed":
-          this.fireInterval = Math.floor(this.fireInterval * 0.95);
-          this.speed = Math.floor(this.speed * 1.05);
+          this.fireInterval = Math.floor(this.fireInterval * 0.75);
+          this.speed += 25;
+          this.timer?.cancel();
+          this.timer = new Timer({ fcn: () => this.fire(), repeats: true, interval: this.fireInterval });
+          this.scene?.add(this.timer);
+          this.timer.start();
           //console.log("new speed stats dark: ", this.fireInterval, this.speed);
 
           break;
         case "strength":
-          this.fireDamage += 1;
+          this.attackPower++;
           this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
           //console.log("new strength stats dark: ", this.fireDamage, this.pickupDistance);
 
@@ -226,6 +232,12 @@ export class DarkPlayer extends Actor {
 
   joystickCallback = (data: any) => {
     if (!this.isPlayerActive || !this.isJoystickActive) return;
+
+    if (data.state === "hold") {
+      this.switchLock = true;
+      (this.scene as GameScene).switchPlayerFocus();
+    }
+
     if (data.state === "active") {
       if (data.direction.x < 0) this.directionFacing = "Left";
       else this.directionFacing = "Right";
@@ -248,20 +260,45 @@ export class DarkPlayer extends Actor {
 
   fire() {
     if (!this.isWaveActive) return;
-    this.addChild(
-      new WeaponActor(
-        { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
-        this.directionFacing,
-        this.isPlayerActive,
-        this.releaseWeapon
-      )
+
+    this.weaponchild = new WeaponActor(
+      { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
+      this.directionFacing,
+      this.isPlayerActive,
+      this.releaseWeapon
     );
+    this.addChild(this.weaponchild);
     this.handChild.attackState = "Attack";
     this.handChild.direction = this.directionFacing;
+
+    if (this.attackPower >= 2) {
+      let ScndDirection: "Left" | "Right" = this.directionFacing == "Left" ? "Right" : "Left";
+      this.weaponchild2 = new WeaponActor(
+        { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
+        ScndDirection,
+        this.isPlayerActive,
+        this.releaseWeapon
+      );
+      this.addChild(this.weaponchild2);
+    }
+
+    if (this.attackPower > 2) {
+      //change colliders and graphics of both weapons.
+
+      this.weaponchild.makeBig();
+      this.weaponchild2!.makeBig();
+    }
   }
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
+
+    if (this.weaponchild) {
+      //console.log("releasing weapon AXE");
+
+      this.removeChild(this.weaponchild);
+      this.weaponchild = undefined;
+    }
   };
 
   onPreUpdate(engine: Engine, elapsed: number): void {

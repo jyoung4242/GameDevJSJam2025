@@ -1,4 +1,18 @@
-import { Actor, Collider, CollisionContact, CollisionType, Color, Engine, Follow, Side, Timer, vec, Vector } from "excalibur";
+import {
+  Actor,
+  Collider,
+  CollisionContact,
+  CollisionType,
+  Color,
+  Engine,
+  Follow,
+  Side,
+  Timer,
+  toDegrees,
+  toRadians,
+  vec,
+  Vector,
+} from "excalibur";
 import { JoystickComponent } from "../Components/TouchControlComponent";
 import { playerCollisionGroup } from "../Lib/colliderGroups";
 import { HealthBar } from "../UI/healthbar";
@@ -113,7 +127,7 @@ export class LightPlayer extends Actor {
     this.handChild.direction = "Right";
     this.addChild(this.handChild);
 
-    this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
+    //this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
 
     const shadow = new Actor({
       width: 48,
@@ -159,20 +173,30 @@ export class LightPlayer extends Actor {
       const progression = params.detail.params[0];
       switch (progression) {
         case "constitution":
-          this.maxHP += 1;
+          this.maxHP += 10;
+          if (this.maxHP > 35) this.maxHP = 35;
           this.currentHP = this.maxHP;
+          //this.regenRate = Math.floor(this.regenRate * 0.95);
           this.regenRate = Math.floor(this.regenRate * 0.95);
           //console.log("new health stats light: ", this.maxHP, this.currentHP, this.regenRate);
 
           break;
         case "speed":
-          this.fireInterval = Math.floor(this.fireInterval * 0.95);
-          this.speed = Math.floor(this.speed * 1.05);
+          this.fireInterval = Math.floor(this.fireInterval * 0.75);
+          this.timer?.cancel();
+          this.timer = new Timer({
+            fcn: () => this.fire(),
+            repeats: true,
+            interval: this.fireInterval,
+          });
+          this.scene!.add(this.timer);
+          this.timer.start();
+          this.speed += 25;
           //console.log("new speed stats light: ", this.fireInterval, this.speed);
 
           break;
         case "strength":
-          this.fireDamage += 1;
+          this.attackPower += 1;
           this.pickupDistance = Math.floor(this.pickupDistance * 1.05);
           // console.log("new strength stats light: ", this.fireDamage, this.pickupDistance);
 
@@ -243,7 +267,12 @@ export class LightPlayer extends Actor {
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
+    //ensure you're removing child
+    if (this.children.includes(this.weaponChild!)) {
+      console.log("removing weapon bow");
 
+      this.removeChild(this.weaponChild!);
+    }
     this.weaponChild = undefined;
   };
 
@@ -256,9 +285,13 @@ export class LightPlayer extends Actor {
   }
 
   joystickCallback = (data: any) => {
-    console.log("here", this.isPlayerActive, this.isJoystickActive);
-
     if (!this.isPlayerActive || !this.isJoystickActive) return;
+
+    if (data.state === "hold") {
+      this.switchLock = true;
+      (this.scene as GameScene).switchPlayerFocus();
+    }
+
     if (data.state === "active") {
       if (data.direction.x < 0) this.directionFacing = "Left";
       else this.directionFacing = "Right";
@@ -286,8 +319,60 @@ export class LightPlayer extends Actor {
       //check animation frame
       let currentFrame = this.weaponChild.animationframe;
       if (currentFrame == 1) {
-        let bullet = new LightBullet(this.pos, this.closestEnemy, this.fireDamage, this);
+        // basic bullet
+        let zeroAngle = this.closestEnemy.pos.sub(this.pos).toAngle();
+        let SndAngle = toRadians(7.5);
+        let TrdAngle = toRadians(15);
+        /* console.log("attack power: ", this.attackPower);
+        console.log("zero angle: ", toDegrees(zeroAngle), zeroAngle);
+        console.log("closest enemy vector:", this.closestEnemy.pos.x, this.closestEnemy.pos.y); */
+
+        let bullet = new LightBullet(this.pos, this.closestEnemy.pos, this.fireDamage, this, true);
+        /* console.log("adding 1st bullet"); */
         this.scene?.add(bullet);
+
+        // level 2 bullets
+        if (this.attackPower >= 2) {
+          let anglePositive = zeroAngle + SndAngle;
+          let angleNegative = zeroAngle - SndAngle;
+          /*  console.log("angle positive: ", toDegrees(anglePositive), anglePositive);
+          console.log("angle negative: ", toDegrees(angleNegative), angleNegative); */
+
+          let newPositiveVector = this.pos.add(vec(Math.cos(anglePositive), Math.sin(anglePositive)));
+          let newNegativeVector = this.pos.add(vec(Math.cos(angleNegative), Math.sin(angleNegative)));
+
+          /* console.log("newPositiveVector: ", newPositiveVector);
+          console.log("newNegativeVector: ", newNegativeVector); */
+
+          let arrow2 = new LightBullet(this.pos, newPositiveVector, this.fireDamage, this, false);
+          //console.log("adding 2nd bullet");
+          let arrow3 = new LightBullet(this.pos, newNegativeVector, this.fireDamage, this, false);
+          //console.log("adding 3rdnd bullet");
+          this.scene?.add(arrow2);
+          this.scene?.add(arrow3);
+        }
+
+        //level 3 bullets
+        if (this.attackPower >= 3) {
+          let anglePositive = zeroAngle + TrdAngle;
+          let angleNegative = zeroAngle - TrdAngle;
+          /*  console.log("angle positive: ", toDegrees(anglePositive), anglePositive);
+          console.log("angle negative: ", toDegrees(angleNegative), angleNegative); */
+
+          let newPositiveVector = this.pos.add(vec(Math.cos(anglePositive), Math.sin(anglePositive)));
+          let newNegativeVector = this.pos.add(vec(Math.cos(angleNegative), Math.sin(angleNegative)));
+
+          /* console.log("newPositiveVector: ", newPositiveVector);
+          console.log("newNegativeVector: ", newNegativeVector); */
+
+          let arrow2 = new LightBullet(this.pos, newPositiveVector, this.fireDamage, this, false);
+          //console.log("adding 2nd bullet");
+          let arrow3 = new LightBullet(this.pos, newNegativeVector, this.fireDamage, this, false);
+          //console.log("adding 3rdnd bullet");
+          this.scene?.add(arrow2);
+          this.scene?.add(arrow3);
+        }
+
         this.closestEnemy = undefined;
         this.isFiring = false;
       }
