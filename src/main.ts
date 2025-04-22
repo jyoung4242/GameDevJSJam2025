@@ -8,6 +8,7 @@ import { GameScene } from "./Scenes/game";
 import { loader } from "./resources";
 import { IntroScene } from "./Scenes/Intro";
 import { GameOver } from "./Scenes/gameOver";
+import { ShockWavePostProcessor } from "./Shaders/shockwave";
 
 await UI.create(document.body, model, template).attached;
 let resizeTimeout: number | undefined;
@@ -40,5 +41,7 @@ const game = new Engine({
 });
 
 await game.start(loader);
+
+export const shockWavePP = new ShockWavePostProcessor();
 
 game.goToScene("game");

@@ -15,7 +15,7 @@ export class CustomLoader extends Loader {
 
   onDraw(ctx: CanvasRenderingContext2D) {
     const { width, height } = ctx.canvas;
-    console.log("width", width, "height", height);
+    //console.log("width", width, "height", height);
 
     const canvasHeight = this.engine.canvasHeight / this.engine.pixelRatio;
     const canvasWidth = this.engine.canvasWidth / this.engine.pixelRatio;

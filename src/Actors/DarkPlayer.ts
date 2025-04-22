@@ -349,7 +349,6 @@ export class DarkPlayer extends Actor {
 
     if (this.isPlayerActive && this.isKeyboardActive) {
       let keys = this.kc.keys;
-      console.log(keys);
 
       if (keys.includes("ArrowLeft") || keys.includes("KeyA")) {
         this.vel.x = -this.speed;

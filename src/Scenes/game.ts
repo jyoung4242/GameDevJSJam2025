@@ -14,6 +14,7 @@ import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
 import { BowWeaponActor } from "../Actors/nonCollidingWeapon";
 import { Balance } from "../UI/Balance";
+import { shockWavePP } from "../main";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -68,6 +69,9 @@ export class GameScene extends Scene {
     this.scheduleGameOver = false;
     this.scheculedGameOverTik = 0;
 
+    shockWavePP.init(this);
+    context.engine.graphicsContext.addPostProcessor(shockWavePP);
+
     // Add Tilemap
     this.arena = day2Tilemap;
     this.add(this.arena);
@@ -117,7 +121,7 @@ export class GameScene extends Scene {
 
     this.enemyDefeatedSignal.listen((params: CustomEvent) => {
       const [event, affinity, weapon] = params.detail.params;
-      console.log("enemyDefeatedSignal", affinity, weapon);
+      //console.log("enemyDefeatedSignal", affinity, weapon);
       if (affinity === "light") this.hudData.lightkills += 1;
       else this.hudData.darkkills += 1;
 
@@ -127,7 +131,7 @@ export class GameScene extends Scene {
 
     this.UISignal.listen((params: CustomEvent) => {
       const [typeOfDrop] = params.detail.params;
-      console.log("UISignal", typeOfDrop);
+      //console.log("UISignal", typeOfDrop);
 
       if (typeOfDrop === "blessing") this.hudData.blessings += 1;
       else if (typeOfDrop === "soul") this.hudData.souls += 1;
@@ -135,7 +139,7 @@ export class GameScene extends Scene {
 
     this.pregressionSignal.listen((params: CustomEvent) => {
       const progressType = params.detail.params[0];
-      console.log("progress type: ", progressType);
+      //console.log("progress type: ", progressType);
 
       switch (progressType) {
         case "constitution":
@@ -191,10 +195,10 @@ export class GameScene extends Scene {
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
-    console.log(
+    /*  console.log(
       "end of wave entity report: ",
       this.entities.filter(entity => entity instanceof BowWeaponActor)
-    );
+    ); */
 
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;
@@ -259,6 +263,15 @@ export class GameScene extends Scene {
       this.camera.zoomOverTime(1.5, 100).then(() => {
         this.engine.timescale = 1;
         this.camera.strategy.lockToActor(nextActivePlayer!);
+        console.log("shockwave");
+
+        shockWavePP.triggerShockWave(
+          nextActivePlayer!.pos,
+          1000, // duration
+          100, // speed
+          400, // max radius
+          100 // thickness
+        );
         this.lightPlayer!.switchLock = false;
         this.darkPlayer!.switchLock = false;
         if (nextActivePlayer instanceof DarkPlayer) {
