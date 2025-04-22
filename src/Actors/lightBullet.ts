@@ -12,6 +12,7 @@ export class LightBullet extends Actor {
   damage: number;
   owner: LightPlayer;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
+  enemyDefeatedSignal: Signal = new Signal("enemyDefeated");
   constructor(startingpos: Vector, enemyVector: Vector, damage: number, player: LightPlayer, public playSFX: boolean) {
     super({
       width: 16,
@@ -41,7 +42,7 @@ export class LightBullet extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
-      //this.UISignal.send(["enemyDefeated", enemy.affinity]);
+      this.enemyDefeatedSignal.send(["enemyDefeatedSignal", enemy.affinity, "bow"]);
       if (enemy.state == "death") return;
       enemy.pain("arrow");
       (this.owner as LightPlayer).numenemies++;

@@ -61,6 +61,10 @@ export class EndOFWaveModal extends ScreenElement {
     bowPlayerScore: number;
   };
 
+  balance: number = 0;
+  balanceCursorStartingPos: number = 0;
+  balanceCursor: ScreenElement | undefined;
+
   constructor(engine: Engine) {
     let contentArea = engine.screen.contentArea;
     let myWidth = contentArea.right - contentArea.left - 20;
@@ -147,16 +151,24 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(180, 125), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
     this.addChild(ScreenElementFactory.create(vec(180, 165), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
 
+    this.balanceCursorStartingPos = myWidth / 2 - 5;
+    this.balanceCursor = ScreenElementFactory.create(
+      vec(this.balanceCursorStartingPos, 240),
+      Resources.cursor.toSprite(),
+      vec(1.5, 1.5)
+    );
     this.addChild(ScreenElementFactory.create(vec(myWidth / 2 - 144, 250), Resources.spectrum.toSprite(), vec(1.0, 1.0)));
-    this.addChild(ScreenElementFactory.create(vec(myWidth / 2 - 5, 240), Resources.cursor.toSprite(), vec(1.5, 1.5)));
+    this.addChild(this.balanceCursor);
 
     //#endregion
   }
 
-  show(scene: Scene, data: any, getPlayerData: any, progressionstates: any) {
+  show(scene: Scene, data: any, getPlayerData: any, progressionstates: any, balance: number) {
     // (progressionstates.health >= 2) (this.heartButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.strength >= 2) (this.flexButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.speed >= 2) (this.clockButton as ProgressionButtons).updateEnable(false);
+    this.balance = balance;
+    this.balanceCursor!.pos = vec(this.balanceCursorStartingPos + this.balance * 2, 240);
 
     this.uiData.lightEnemiesDefeated = data.lightEnemiesDefeated;
     this.uiData.darkEnemiesDefeated = data.darkEnemiesDefeated;

@@ -8,9 +8,9 @@
 - [x] clean up game over status
 - [x] manage players dying
 - [ ] add 'balance' UI to modal
-- [ ] on strength progression for sword
+- [x] on strength progression for sword
 - [x] on strength progression for arrows, mulitple staggard arrows
-- [ ] max out upgrades
+- [x] max out upgrades
 - [x] swap player effect
 - [x] lose intro scene
 - [x] lose camera elastic

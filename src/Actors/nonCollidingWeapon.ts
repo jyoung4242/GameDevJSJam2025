@@ -21,12 +21,12 @@ export class BowWeaponActor extends Actor {
     this.pos = vec(0, 0);
     this.animationSet = animationSet;
     this.animationSet["attackLeft"].events.on("end", () => {
-      console.log("killing weapon left");
+      //console.log("killing weapon left");
       this.kill();
       if (this.resetCallback) this.resetCallback();
     });
     this.animationSet["attackRight"].events.on("end", () => {
-      console.log("killing weapon right");
+      //console.log("killing weapon right");
       this.kill();
       if (this.resetCallback) this.resetCallback();
     });

@@ -16,6 +16,7 @@ export class WeaponActor extends Actor {
   leftVector = vec(-25, 0);
   rightVector = vec(25, 0);
   UISignal: Signal = new Signal("stateUpdate");
+  enemyDefeatedSignal: Signal = new Signal("enemyDefeated");
   waveResetSignal: Signal = new Signal("waveReset");
   isColliding: boolean = false;
   others: Enemy[] = [];
@@ -90,6 +91,7 @@ export class WeaponActor extends Actor {
     if (this.isColliding && this.ac?.currentFrame == 2) {
       this.others.forEach((enemy: Enemy) => {
         if (enemy.state == "death") return;
+        this.enemyDefeatedSignal.send(["enemyDefeated", enemy.affinity, "axe"]);
         (this.parent as DarkPlayer).numenemies++;
         enemy.pain("sword");
       });

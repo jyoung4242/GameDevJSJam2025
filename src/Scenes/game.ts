@@ -1,5 +1,5 @@
 import { UI, UIView } from "@peasy-lib/peasy-ui";
-import { IsometricMap, Scene, SceneActivationContext, vec } from "excalibur";
+import { IsometricMap, Scene, SceneActivationContext, ScreenElement, vec } from "excalibur";
 import { DarkPlayer } from "../Actors/DarkPlayer";
 import { LightPlayer } from "../Actors/LightPlayer";
 import { EnemyWaveManager } from "../Lib/EnemyWaveManager";
@@ -13,6 +13,7 @@ import { NewStatusBar } from "../UI/newStatusBar";
 import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
 import { BowWeaponActor } from "../Actors/nonCollidingWeapon";
+import { Balance } from "../UI/Balance";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -23,6 +24,19 @@ export class GameScene extends Scene {
   burnDown: Burndown | undefined;
   enemyWaveManager: EnemyWaveManager | undefined;
   pregressionSignal = new Signal("progressionUpdate");
+  enemyDefeatedSignal = new Signal("enemyDefeated");
+  UISignal = new Signal("stateUpdate");
+  balanceUI: ScreenElement | undefined;
+
+  hudData = {
+    lightkills: 0,
+    darkkills: 0,
+    blessings: 0,
+    souls: 0,
+    axeKills: 0,
+    bowkills: 0,
+  };
+
   progressionStates = {
     health: 0,
     strength: 0,
@@ -98,9 +112,26 @@ export class GameScene extends Scene {
     this.burnDown = new Burndown(vec(1, screenHeight - 12), 25, this);
     this.add(this.burnDown);
 
-    //last thing loaded
-    //this.endOfWaveModal = new EndOFWaveModal(context.engine);
-    //this doesn't get added until needed
+    this.balanceUI = new Balance(this);
+    this.add(this.balanceUI);
+
+    this.enemyDefeatedSignal.listen((params: CustomEvent) => {
+      const [event, affinity, weapon] = params.detail.params;
+      console.log("enemyDefeatedSignal", affinity, weapon);
+      if (affinity === "light") this.hudData.lightkills += 1;
+      else this.hudData.darkkills += 1;
+
+      if (weapon === "axe") this.hudData.axeKills += 1;
+      else this.hudData.bowkills += 1;
+    });
+
+    this.UISignal.listen((params: CustomEvent) => {
+      const [typeOfDrop] = params.detail.params;
+      console.log("UISignal", typeOfDrop);
+
+      if (typeOfDrop === "blessing") this.hudData.blessings += 1;
+      else if (typeOfDrop === "soul") this.hudData.souls += 1;
+    });
 
     this.pregressionSignal.listen((params: CustomEvent) => {
       const progressType = params.detail.params[0];
@@ -141,6 +172,8 @@ export class GameScene extends Scene {
 
     this.enemyWaveManager?.update(delta);
 
+    (this.balanceUI as Balance).updateBalance(this.getBalanceValue());
+
     if (!this.darkPlayer?.isAlive && !this.lightPlayer?.isAlive) {
       this.scheduleGameOver = true;
       this.isEndOfWaveModalEnabled = false;
@@ -165,7 +198,17 @@ export class GameScene extends Scene {
 
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;
-    setTimeout(() => this.endOfWaveModal?.show(this, this.statusBar!.getUIState(), this.getPlayerData(), this.progressionStates), 500);
+    setTimeout(
+      () =>
+        this.endOfWaveModal?.show(
+          this,
+          this.statusBar!.getUIState(),
+          this.getPlayerData(),
+          this.progressionStates,
+          this.getBalanceValue()
+        ),
+      500
+    );
   }
 
   getPlayerData() {
@@ -187,6 +230,15 @@ export class GameScene extends Scene {
     } else {
       (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "lightPlayer" as keyof typeof this.touchMap;
     }
+  }
+
+  getBalanceValue() {
+    let killsBalance = this.hudData.lightkills - this.hudData.darkkills;
+    let blessingsBalance = this.hudData.blessings - this.hudData.souls;
+    let axeBalance = this.hudData.bowkills - this.hudData.axeKills;
+    console.log("balance kills:", killsBalance, "balance blessings:", blessingsBalance, "balance axe:", axeBalance);
+
+    return killsBalance + blessingsBalance + axeBalance;
   }
 
   switchPlayerFocus() {
