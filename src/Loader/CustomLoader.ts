@@ -1,7 +1,6 @@
 import { Loader, ImageSource } from "excalibur";
 import loadingScreenLogo from "../Assets/LoadingScreen/logo.png";
 import loadingScreenExcalibur from "../Assets/LoadingScreen/excalibur.png";
-import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
 
 export class CustomLoader extends Loader {
   logoImage = new ImageSource(loadingScreenLogo);

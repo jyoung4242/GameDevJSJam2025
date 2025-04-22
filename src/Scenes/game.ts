@@ -268,7 +268,7 @@ export class GameScene extends Scene {
         shockWavePP.triggerShockWave(
           nextActivePlayer!.pos,
           1000, // duration
-          100, // speed
+          10, // speed
           400, // max radius
           100 // thickness
         );
