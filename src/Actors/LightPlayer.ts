@@ -256,6 +256,8 @@ export class LightPlayer extends Actor {
   }
 
   joystickCallback = (data: any) => {
+    console.log("here", this.isPlayerActive, this.isJoystickActive);
+
     if (!this.isPlayerActive || !this.isJoystickActive) return;
     if (data.state === "active") {
       if (data.direction.x < 0) this.directionFacing = "Left";

@@ -180,9 +180,11 @@ export class GameScene extends Scene {
         if (nextActivePlayer instanceof DarkPlayer) {
           this.darkPlayer!.isPlayerActive = true;
           this.lightPlayer!.isPlayerActive = false;
+          this.sceneTouchManger!.activeTouchReceiver = "darkPlayer" as keyof typeof this.touchMap;
         } else {
           this.darkPlayer!.isPlayerActive = false;
           this.lightPlayer!.isPlayerActive = true;
+          this.sceneTouchManger!.activeTouchReceiver = "lightPlayer" as keyof typeof this.touchMap;
         }
       });
     });
