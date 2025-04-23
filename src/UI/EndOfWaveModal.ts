@@ -236,10 +236,6 @@ export class EndOFWaveModal extends ScreenElement {
     this.resetSignal.send([]);
   }
 
-  saveHighScore() {
-    //TODO
-  }
-
   showScoreTransfer(roundscore: number) {
     setTimeout(() => {
       let scoreInterval = setInterval(() => {

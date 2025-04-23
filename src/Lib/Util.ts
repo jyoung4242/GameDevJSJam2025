@@ -53,3 +53,11 @@ export function formatDuration(seconds: number): string {
   const remainingSeconds = seconds % 60;
   return `Time: ${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
+
+export function saveHighScore(score: number) {
+  localStorage.setItem("Axe&ArrowHighscore", score.toString());
+}
+
+export function getHighScore() {
+  return localStorage.getItem("Axe&ArrowHighscore");
+}
