@@ -267,13 +267,6 @@ export class LightPlayer extends Actor {
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
-    //ensure you're removing child
-    if (this.children.includes(this.weaponChild!)) {
-      console.log("removing weapon bow");
-
-      this.removeChild(this.weaponChild!);
-    }
-    this.weaponChild = undefined;
   };
 
   disableTouch() {
@@ -456,12 +449,12 @@ export class LightPlayer extends Actor {
           this.isWalking = true;
           this.ac.set(`walk${this.directionFacing}`);
         } else {
-          if (this.oldXVelocity < 0 && this.vel.x > 0) {
+          if (this.oldXVelocity <= 0 && this.vel.x > 0) {
             this.directionFacing = "Right";
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
             this.handChild.direction = this.directionFacing;
-          } else if (this.oldXVelocity > 0 && this.vel.x < 0) {
+          } else if (this.oldXVelocity >= 0 && this.vel.x < 0) {
             this.directionFacing = "Left";
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);

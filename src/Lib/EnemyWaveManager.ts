@@ -193,6 +193,17 @@ export class EnemyWaveManager {
         nextEnemy.setAffinity("light");
       }
 
+      if (
+        tile.pos.x < 0 ||
+        tile.pos.x > this.map!.columns * this.map!.tileWidth ||
+        tile.pos.y < 0 ||
+        tile.pos.y > this.map!.rows * this.map!.tileHeight
+      ) {
+        console.log("tile position: ", tile.pos.x, tile.pos.y);
+        console.log("map size: ", this.map!.columns * this.map!.tileWidth, this.map!.rows * this.map!.tileHeight);
+        console.error("TILE POSITION OUT OF BOUNDS", tile, nextEnemy);
+      }
+
       nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy
 
       this.scene.add(nextEnemy);

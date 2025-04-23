@@ -265,8 +265,10 @@ export class DarkPlayer extends Actor {
       { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
       this.directionFacing,
       this.isPlayerActive,
-      this.releaseWeapon
+      this.releaseWeapon,
+      this.scene as GameScene
     );
+
     this.addChild(this.weaponchild);
     this.handChild.attackState = "Attack";
     this.handChild.direction = this.directionFacing;
@@ -277,8 +279,10 @@ export class DarkPlayer extends Actor {
         { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
         ScndDirection,
         this.isPlayerActive,
-        this.releaseWeapon
+        this.releaseWeapon,
+        this.scene as GameScene
       );
+
       this.addChild(this.weaponchild2);
     }
 
@@ -292,13 +296,6 @@ export class DarkPlayer extends Actor {
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
-
-    if (this.weaponchild) {
-      //console.log("releasing weapon AXE");
-
-      this.removeChild(this.weaponchild);
-      this.weaponchild = undefined;
-    }
   };
 
   onPreUpdate(engine: Engine, elapsed: number): void {
@@ -376,7 +373,6 @@ export class DarkPlayer extends Actor {
       }
 
       if (this.vel.x != 0 || this.vel.y != 0) {
-        //console.log("keypress code, ", this.vel, this.isWalking, this.directionFacing);
         if (this.isWalking === false) {
           // if idle, and starting to walk
           if (this.vel.x > 0) this.directionFacing = "Right";
@@ -387,18 +383,14 @@ export class DarkPlayer extends Actor {
           this.ac.set(`walk${this.directionFacing}`);
         } else {
           // if walking already
-          console.log("already walking", this.oldXVelocity, this.vel.x);
 
           //if the x direction changes while walking
           if (this.oldXVelocity <= 0 && this.vel.x > 0) {
-            console.log("changed direction to Right");
-
             this.directionFacing = "Right";
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
           } else if (this.oldXVelocity >= 0 && this.vel.x < 0) {
-            console.log("changed direction to Left");
             this.directionFacing = "Left";
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;
