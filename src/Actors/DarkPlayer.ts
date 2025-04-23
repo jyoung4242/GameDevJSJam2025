@@ -349,7 +349,7 @@ export class DarkPlayer extends Actor {
 
     if (this.isPlayerActive && this.isKeyboardActive) {
       let keys = this.kc.keys;
-      console.log(keys);
+      //console.log(keys);
 
       if (keys.includes("ArrowLeft") || keys.includes("KeyA")) {
         this.vel.x = -this.speed;
@@ -376,6 +376,7 @@ export class DarkPlayer extends Actor {
       }
 
       if (this.vel.x != 0 || this.vel.y != 0) {
+        //console.log("keypress code, ", this.vel, this.isWalking, this.directionFacing);
         if (this.isWalking === false) {
           // if idle, and starting to walk
           if (this.vel.x > 0) this.directionFacing = "Right";
@@ -386,14 +387,18 @@ export class DarkPlayer extends Actor {
           this.ac.set(`walk${this.directionFacing}`);
         } else {
           // if walking already
+          console.log("already walking", this.oldXVelocity, this.vel.x);
 
           //if the x direction changes while walking
-          if (this.oldXVelocity < 0 && this.vel.x > 0) {
+          if (this.oldXVelocity <= 0 && this.vel.x > 0) {
+            console.log("changed direction to Right");
+
             this.directionFacing = "Right";
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
-          } else if (this.oldXVelocity > 0 && this.vel.x < 0) {
+          } else if (this.oldXVelocity >= 0 && this.vel.x < 0) {
+            console.log("changed direction to Left");
             this.directionFacing = "Left";
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;

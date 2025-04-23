@@ -182,6 +182,10 @@ export class GameScene extends Scene {
     }
   }
 
+  getHighScore() {
+    return this.highScore;
+  }
+
   stateUpdate(params: CustomEvent) {
     const [key, data] = params.detail.params;
     this.gameState[key as keyof typeof this.gameState] = data;
