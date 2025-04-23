@@ -82,11 +82,11 @@ for (const tile of day2Tilemap.tiles) {
         members: [
           {
             graphic: groundSS.getSprite(0, 0),
-            offset: vec(0, 16),
+            offset: vec(0, 10),
           },
           {
             graphic: Resources.tree.toSprite(),
-            offset: vec(-6, -24),
+            offset: vec(-6, -30),
           },
         ],
       });

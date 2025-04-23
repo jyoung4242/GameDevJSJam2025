@@ -156,7 +156,7 @@ export const groundSS = SpriteSheet.fromImageSource({
     rows: 10,
     columns: 5,
     spriteWidth: 64,
-    spriteHeight: 32,
+    spriteHeight: 38,
   },
 });
 
