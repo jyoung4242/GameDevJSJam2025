@@ -80,6 +80,7 @@ export class LightPlayer extends Actor {
   progressionSignal: Signal = new Signal("progressionUpdate");
   waveResetSignal: Signal = new Signal("waveReset");
   numenemies: number = 0;
+  numEnemiesWhileActive: number = 0;
   directionFacing: "Left" | "Right" = "Right";
   isWalking: boolean = false;
   oldXVelocity: number = 0;
@@ -421,24 +422,18 @@ export class LightPlayer extends Actor {
 
     if (this.isPlayerActive && this.isKeyboardActive) {
       let keys = this.kc.keys;
+      //console.log(keys);
 
-      if (keys.includes("ArrowLeft")) {
+      if (keys.includes("ArrowLeft") || keys.includes("KeyA")) {
         this.vel.x = -this.speed;
-      } else if (keys.includes("ArrowRight")) {
+      } else if (keys.includes("ArrowRight") || keys.includes("KeyD")) {
         this.vel.x = this.speed;
       }
 
-      if (keys.includes("ArrowUp")) {
+      if (keys.includes("ArrowUp") || keys.includes("KeyW")) {
         this.vel.y = -this.speed;
-      } else if (keys.includes("ArrowDown")) {
+      } else if (keys.includes("ArrowDown") || keys.includes("KeyS")) {
         this.vel.y = this.speed;
-      }
-
-      if (!keys.includes("ArrowLeft") && !keys.includes("ArrowRight")) {
-        this.vel.x = 0;
-      }
-      if (!keys.includes("ArrowUp") && !keys.includes("ArrowDown")) {
-        this.vel.y = 0;
       }
 
       if (keys.includes("Space") && !this.switchLock && this.isPlayerActive) {
@@ -446,6 +441,12 @@ export class LightPlayer extends Actor {
         (this.scene as GameScene).switchPlayerFocus();
       }
 
+      if (!keys.includes("ArrowLeft") && !keys.includes("KeyA") && !keys.includes("ArrowRight") && !keys.includes("KeyD")) {
+        this.vel.x = 0;
+      }
+      if (!keys.includes("ArrowUp") && !keys.includes("KeyW") && !keys.includes("ArrowDown") && !keys.includes("KeyS")) {
+        this.vel.y = 0;
+      }
       if (this.vel.x != 0 || this.vel.y != 0) {
         // if idle, and starting to walk
         if (this.isWalking === false) {

@@ -121,8 +121,10 @@ export class GameScene extends Scene {
       if (affinity === "light") this.hudData.lightkills += 1;
       else this.hudData.darkkills += 1;
 
-      if (weapon === "axe") this.hudData.axeKills += 1;
-      else this.hudData.bowkills += 1;
+      /* if (weapon === "axe") this.hudData.axeKills += 1;
+      else this.hudData.bowkills += 1; */
+      this.hudData.axeKills = this.darkPlayer?.numEnemiesWhileActive as number;
+      this.hudData.bowkills = this.lightPlayer?.numEnemiesWhileActive as number;
     });
 
     this.UISignal.listen((params: CustomEvent) => {
@@ -191,10 +193,10 @@ export class GameScene extends Scene {
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
-    console.log(
+    /* console.log(
       "end of wave entity report: ",
       this.entities.filter(entity => entity instanceof BowWeaponActor)
-    );
+    ); */
 
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;
@@ -213,8 +215,8 @@ export class GameScene extends Scene {
 
   getPlayerData() {
     return {
-      darkNumberOfEnemiesDefeated: (this.darkPlayer as DarkPlayer).numenemies,
-      lightNumberOfEnemiesDefeated: (this.lightPlayer as LightPlayer).numenemies,
+      darkNumberOfEnemiesDefeated: (this.darkPlayer as DarkPlayer).numEnemiesWhileActive,
+      lightNumberOfEnemiesDefeated: (this.lightPlayer as LightPlayer).numEnemiesWhileActive,
     };
   }
 

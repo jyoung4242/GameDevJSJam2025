@@ -42,10 +42,11 @@ export class LightBullet extends Actor {
   onCollisionStart(self: Collider, other: Collider, side: Side, contact: CollisionContact): void {
     if (other.owner instanceof Enemy) {
       const enemy = other.owner as Enemy;
-      this.enemyDefeatedSignal.send(["enemyDefeatedSignal", enemy.affinity, "bow"]);
       if (enemy.state == "death") return;
       enemy.pain("arrow");
       (this.owner as LightPlayer).numenemies++;
+      if ((this.owner as LightPlayer).isPlayerActive) (this.owner as LightPlayer).numEnemiesWhileActive++;
+      this.enemyDefeatedSignal.send(["enemyDefeatedSignal", enemy.affinity, "bow"]);
     }
   }
 }
