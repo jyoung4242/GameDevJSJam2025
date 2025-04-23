@@ -17,7 +17,7 @@ export class Balance extends ScreenElement {
   onInitialize(engine: Engine): void {
     this.graphics.use(Resources.spectrum.toSprite());
     const screen = engine.currentScene.engine.screen.contentArea;
-    this.pos = vec(screen.width / 2 - 144, screen.height - 15);
+    this.pos = vec(screen.width / 2 - 144, screen.height - 34);
   }
 
   updateBalance(newBalance: number) {
@@ -31,14 +31,14 @@ export class Balance extends ScreenElement {
     /* console.log("balance", this.balance);
     console.log("currentCursorPos", currentCursorPos); */
 
-    this.cursor!.pos = vec(this.startingPosX + this.balance * 2, -10);
+    this.cursor!.pos = vec(this.startingPosX + this.balance * 2, 8);
   }
 }
 
 export class Cursor extends ScreenElement {
   constructor() {
     super();
-    this.pos = vec(144 - 5, -10);
+    this.pos = vec(144 - 5, 8);
   }
 
   onInitialize(engine: Engine): void {
