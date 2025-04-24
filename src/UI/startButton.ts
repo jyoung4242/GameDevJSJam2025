@@ -50,7 +50,7 @@ export class StartModalButton extends ScreenElement {
 
     this.on("pointerup", () => {
       this.graphics.use(this.upGraphic);
-      engine.goToScene("game");
+      window.location.reload();
       this.buttonText.pos = this.buttonText.pos.add(vec(0, -4));
     });
 

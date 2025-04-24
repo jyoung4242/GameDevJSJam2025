@@ -49,7 +49,7 @@ export class LightPlayer extends Actor {
   name = "LightPlayer";
   //properties that change with progression
   //constitution
-  currentHP: number = 15;
+  currentHP: number = 4;
   maxHP: number = 15;
   regenRate: number = 1000;
 
@@ -484,7 +484,8 @@ export class LightPlayer extends Actor {
     }
 
     if (this.currentHP <= 0) {
-      if (this.isPlayerActive) {
+      this.timer?.cancel();
+      if (this.isPlayerActive && this.partner?.isAlive) {
         (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
       }
       if (this.fireIntervalHandler) {
