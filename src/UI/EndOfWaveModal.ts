@@ -20,7 +20,7 @@ import {
 } from "excalibur";
 import { NextWaveButton, StartModalButton } from "./startButton";
 import { scaleAnimation } from "../Animations/scale";
-import { bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, swordSS } from "../resources";
+import {bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, SFX_VOLUME, swordSS} from "../resources";
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
 import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
@@ -244,7 +244,11 @@ export class EndOFWaveModal extends ScreenElement {
         this.overallScore += 1;
         this.waveScoreLabel.text = `${roundscore}`;
         this.overallScoreLabel.text = `${this.overallScore}`;
-        if (roundscore == 0) clearInterval(scoreInterval);
+        Resources.sfxUptickScore.play(SFX_VOLUME);
+        if (roundscore == 0) {
+          clearInterval(scoreInterval);
+          Resources.sfxFinalScoreUptick.play(SFX_VOLUME);
+        }
       }, 25);
     }, 1000);
   }
