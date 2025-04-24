@@ -13,6 +13,15 @@ export class HealthBar extends ScreenElement {
   child1: ScreenElement;
   child2: ScreenElement;
 
+  greenRectHighlight = new Rectangle({ width: 26, height: 1, color: greenHighlight });
+  greenRectLowLight = new Rectangle({ width: 26, height: 1, color: greenLowLight });
+
+  yellowRectHighlight = new Rectangle({ width: 26, height: 1, color: yellowHighlight });
+  yellowRectLowLight = new Rectangle({ width: 26, height: 1, color: yellowLowLight });
+
+  redRectHighlight = new Rectangle({ width: 26, height: 1, color: redHighlight });
+  redRectLowLight = new Rectangle({ width: 26, height: 1, color: redLowLight });
+
   constructor(public dims: Vector, public position: Vector, public maxVal: number) {
     const topBar = new Rectangle({ width: 26, height: 1, color: greenHighlight });
     const bottomBar = new Rectangle({ width: 26, height: 1, color: greenLowLight });
@@ -46,16 +55,16 @@ export class HealthBar extends ScreenElement {
     }
 
     if (this.percent > 40) {
-      this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: greenHighlight }));
-      this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: greenLowLight }));
+      this.child1.graphics.use(this.greenRectHighlight);
+      this.child2.graphics.use(this.greenRectLowLight);
     }
     if (this.percent <= 40) {
-      this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: yellowHighlight }));
-      this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: yellowLowLight }));
+      this.child1.graphics.use(this.yellowRectHighlight);
+      this.child2.graphics.use(this.yellowRectLowLight);
     }
     if (this.percent <= 15) {
-      this.child1.graphics.use(new Rectangle({ width: 26, height: 1, color: redHighlight }));
-      this.child2.graphics.use(new Rectangle({ width: 26, height: 1, color: redLowLight }));
+      this.child1.graphics.use(this.redRectHighlight);
+      this.child2.graphics.use(this.redRectLowLight);
     }
 
     this.child1.scale.x = this.percent / 100;
