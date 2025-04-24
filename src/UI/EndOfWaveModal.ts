@@ -72,7 +72,7 @@ export class EndOFWaveModal extends ScreenElement {
   constructor(engine: Engine) {
     let contentArea = engine.screen.contentArea;
     let myWidth = contentArea.right - contentArea.left - 20;
-    let myHeight = contentArea.bottom - contentArea.top - 20;
+    let myHeight = contentArea.bottom - contentArea.top - 100;
     let position = new Vector(10, 10);
 
     super({
@@ -128,8 +128,8 @@ export class EndOFWaveModal extends ScreenElement {
     this.balancePickups = LabelFactory.create(vec(225, 88), "0");
     this.balancePlayerKills = LabelFactory.create(vec(225, 125), "0");
     this.balanceEnemyDefeatRate = LabelFactory.create(vec(231, 165), "0");
-    this.waveScoreLabel = LabelFactory.create(vec(myWidth / 2 + 50, 97), "0", true);
-    this.overallScoreLabel = LabelFactory.create(vec(myWidth / 2 + 50, 149), "0", true);
+    this.waveScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 97), "0", true);
+    this.overallScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 149), "0", true);
 
     this.addChild(this.lightEnemiesScore);
     this.addChild(this.darkEnemiesScore);
@@ -161,25 +161,29 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(300, 150), Resources.goldmedal.toSprite(), vec(1.5, 1.5)));
     this.addChild(ScreenElementFactory.create(vec(300, 100), Resources.silvermedal.toSprite(), vec(1.5, 1.5)));
 
-    this.balanceCursorStartingPos = myWidth / 2 - 5;
-    this.balanceCursor = ScreenElementFactory.create(
-      vec(this.balanceCursorStartingPos, 240),
-      Resources.cursor.toSprite(),
-      vec(1.5, 1.5)
-    );
-    this.addChild(ScreenElementFactory.create(vec(myWidth / 2 - 144, 250), Resources.spectrum.toSprite(), vec(1.0, 1.0)));
-    this.addChild(this.balanceCursor);
-
     //#endregion
   }
 
   show(scene: Scene, data: any, getPlayerData: any, progressionstates: any, balance: number) {
-    // (progressionstates.health >= 2) (this.heartButton as ProgressionButtons).updateEnable(false);
-    if (progressionstates.strength >= 2) (this.flexButton as ProgressionButtons).updateEnable(false);
-    if (progressionstates.speed >= 2) (this.clockButton as ProgressionButtons).updateEnable(false);
+    this.progressionStates = progressionstates;
 
-    this.balance = balance;
-    this.balanceCursor!.pos = vec(this.balanceCursorStartingPos + this.balance * 2, 240);
+    if (!this.clockButton) {
+      this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed");
+      this.addChild(this.clockButton);
+    }
+    this.clockButton.updateEnable(false);
+
+    if (!this.heartButton) {
+      this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), "constitution");
+      this.addChild(this.heartButton);
+    }
+    this.heartButton.updateEnable(false);
+
+    if (!this.flexButton) {
+      this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), "strength");
+      this.addChild(this.flexButton);
+    }
+    this.flexButton.updateEnable(false);
 
     this.uiData.lightEnemiesDefeated = data.lightEnemiesDefeated;
     this.uiData.darkEnemiesDefeated = data.darkEnemiesDefeated;
@@ -249,6 +253,10 @@ export class EndOFWaveModal extends ScreenElement {
         if (roundscore == 0) {
           clearInterval(scoreInterval);
           Resources.sfxFinalScoreUptick.play(SFX_VOLUME);
+
+          (this.heartButton as ProgressionButtons).updateEnable(true);
+          if (this.progressionStates.strength < 2) (this.flexButton as ProgressionButtons).updateEnable(true);
+          if (this.progressionStates.speed < 2) (this.clockButton as ProgressionButtons).updateEnable(true);
         }
       }, 25);
     }, 1000);
@@ -256,23 +264,6 @@ export class EndOFWaveModal extends ScreenElement {
 
   hide(scene: Scene) {
     scene.remove(this);
-  }
-
-  onAdd(engine: Engine): void {
-    this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed", () => {
-      //console.log("clock");
-    });
-    this.addChild(this.clockButton);
-
-    this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), "constitution", () => {
-      //console.log("heart");
-    });
-    this.addChild(this.heartButton);
-
-    this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), "strength", () => {
-      //console.log("flex");
-    });
-    this.addChild(this.flexButton);
   }
 
   handleTouchControls(data: any) {
@@ -356,7 +347,7 @@ class ProgressionButtons extends ScreenElement {
   subDown: Subscription | undefined;
   progressionSignal: Signal = new Signal("progressionUpdate");
 
-  constructor(icon: Sprite, position: Vector, type: ProgressionType, public callback: () => void) {
+  constructor(icon: Sprite, position: Vector, type: ProgressionType) {
     super({ width: 80, height: 48, pos: position, z: 2002, anchor: Vector.Half, color: Color.fromHex("#2bb2ea") });
     this.type = type;
     this.pointer.useGraphicsBounds = false;
@@ -419,7 +410,9 @@ class ProgressionButtons extends ScreenElement {
       //@ts-ignore
       if (currentGraphics) currentGraphics.tint = Color.Gray;
     } else {
-      this.graphics.use(this.upGraphicGroup);
+      let currentGraphics = this.graphics.current;
+      //@ts-ignore
+      if (currentGraphics) currentGraphics.tint = null;
     }
   }
 
