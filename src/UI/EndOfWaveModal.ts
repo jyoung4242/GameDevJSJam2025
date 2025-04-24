@@ -30,7 +30,7 @@ type ProgressionType = "constitution" | "strength" | "speed";
 
 export class EndOFWaveModal extends ScreenElement {
   progressionStates: any;
-  overallScore: number = 642;
+  overallScore: number = 0;
   engine: Engine;
   scaleAnimation: ScreenElement;
   resetSignal: Signal = new Signal("waveReset");
@@ -75,7 +75,7 @@ export class EndOFWaveModal extends ScreenElement {
   constructor(engine: Engine) {
     let contentArea = engine.screen.contentArea;
     let myWidth = contentArea.right - contentArea.left - 20;
-    let myHeight = contentArea.bottom - contentArea.top - 100;
+    let myHeight = contentArea.bottom - contentArea.top - 80;
     let position = new Vector(10, 10);
 
     super({
@@ -133,7 +133,7 @@ export class EndOFWaveModal extends ScreenElement {
     this.balanceEnemyDefeatRate = LabelFactory.create(vec(231, 165), "0");
     this.waveScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 97), "0", 32);
     this.overallScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 149), "0", 32);
-    this.highscoreLabel = LabelFactory.create(vec(50, myHeight - 20), `Highscore: ${this.highScore} `, 12);
+    this.highscoreLabel = LabelFactory.create(vec(50, myHeight - 20), `${this.highScore} `, 12);
 
     this.addChild(this.lightEnemiesScore);
     this.addChild(this.darkEnemiesScore);
@@ -167,6 +167,10 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(300, 100), Resources.silvermedal.toSprite(), vec(1.5, 1.5)));
 
     //#endregion
+  }
+
+  getOverallScore() {
+    return this.overallScore;
   }
 
   show(scene: Scene, data: any, getPlayerData: any, progressionstates: any, balance: number) {

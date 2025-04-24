@@ -129,7 +129,7 @@ export class Enemy extends Actor {
     this._waveLevel = level;
     this.maxHP = level;
     this.speed = this.speed + level * 2;
-    this.attackPower *= level * 0.1;
+    this.attackPower += level / 2;
     //get current scale
     const currentScale = this.scale;
     //increase scale by 5%

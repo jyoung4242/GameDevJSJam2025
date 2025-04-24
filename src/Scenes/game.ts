@@ -170,7 +170,7 @@ export class GameScene extends Scene {
   onPreUpdate(engine: any, delta: number): void {
     if (this.scheduleGameOver) this.scheculedGameOverTik++;
     if (this.scheculedGameOverTik > 300) {
-      this.engine.goToScene("gameOver", { sceneActivationData: { score: 0 } });
+      this.engine.goToScene("gameOver", { sceneActivationData: { score: this.endOfWaveModal?.getOverallScore() } });
     }
 
     this.enemyWaveManager?.update(delta);
