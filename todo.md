@@ -39,3 +39,8 @@
 - [x] check if current total score is higher than recorded highscore
 - [x] pass score and highscore to gameover scene
 - [x] on EOW modal, the cursor needs adjusted
+
+- [] updated lifebars
+- [] spawning animation
+- [] scoring clarity
+- [] balance impact

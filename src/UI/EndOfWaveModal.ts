@@ -12,18 +12,16 @@ import {
   Scene,
   ScreenElement,
   Sprite,
-  PointerEvent,
   Subscription,
   TextAlign,
   vec,
   Vector,
 } from "excalibur";
-import { NextWaveButton, StartModalButton } from "./startButton";
+
 import { scaleAnimation } from "../Animations/scale";
 import { bowSS, cancelPurpledudeSS, pickupSS, purpleGuySS, Resources, scaleSS, SFX_VOLUME, swordSS } from "../resources";
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
-import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
 import { getHighScore, saveHighScore } from "../Lib/Util";
 
 type ProgressionType = "constitution" | "strength" | "speed";
@@ -165,7 +163,7 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(180, 165), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
     this.addChild(ScreenElementFactory.create(vec(300, 150), Resources.goldmedal.toSprite(), vec(1.5, 1.5)));
     this.addChild(ScreenElementFactory.create(vec(300, 100), Resources.silvermedal.toSprite(), vec(1.5, 1.5)));
-    this.addChild(ScreenElementFactory.create(vec(10, myHeight - 20), Resources.goldstar.toSprite(), vec(1.5, 1.5)));
+    this.addChild(ScreenElementFactory.create(vec(10, myHeight - 25), Resources.goldstar.toSprite(), vec(1.5, 1.5)));
 
     //#endregion
   }
@@ -177,6 +175,7 @@ export class EndOFWaveModal extends ScreenElement {
   show(scene: Scene, data: any, getPlayerData: any, progressionstates: any, balance: number) {
     this.progressionStates = progressionstates;
     this.highScore = getHighScore() ?? "0";
+    this.highscoreLabel.text = `${this.highScore} `;
     console.log("highscore", this.highScore);
 
     if (!this.clockButton) {

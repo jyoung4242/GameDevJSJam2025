@@ -119,11 +119,9 @@ export class GameScene extends Scene {
     this.enemyDefeatedSignal.listen((params: CustomEvent) => {
       const [event, affinity, weapon] = params.detail.params;
       //console.log("enemyDefeatedSignal", affinity, weapon);
-      if (affinity === "light") this.hudData.lightkills += 1;
-      else this.hudData.darkkills += 1;
+      if (affinity === "light" && weapon === "axe") this.hudData.lightkills += 1;
+      else if (affinity === "dark" && weapon === "bow") this.hudData.darkkills += 1;
 
-      /* if (weapon === "axe") this.hudData.axeKills += 1;
-      else this.hudData.bowkills += 1; */
       this.hudData.axeKills = this.darkPlayer?.numEnemiesWhileActive as number;
       this.hudData.bowkills = this.lightPlayer?.numEnemiesWhileActive as number;
     });
@@ -198,11 +196,6 @@ export class GameScene extends Scene {
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
-    /* console.log(
-      "end of wave entity report: ",
-      this.entities.filter(entity => entity instanceof BowWeaponActor)
-    ); */
-
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;
     setTimeout(
@@ -243,9 +236,8 @@ export class GameScene extends Scene {
     let killsBalance = this.hudData.lightkills - this.hudData.darkkills;
     let blessingsBalance = this.hudData.blessings - this.hudData.souls;
     let axeBalance = this.hudData.bowkills - this.hudData.axeKills;
-    //console.log("balance kills:", killsBalance, "balance blessings:", blessingsBalance, "balance axe:", axeBalance);
 
-    return killsBalance + blessingsBalance + axeBalance;
+    return blessingsBalance + axeBalance;
   }
 
   switchPlayerFocus() {

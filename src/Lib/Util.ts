@@ -48,27 +48,51 @@ export function getEnemiesToSpawn(level: number): number {
 }
 
 export function getNumberOfBatches(numEnemies: number): number[] {
-  const batchCount = Math.floor(Math.random() * 12) + 2;
+  const batchCount = Math.floor(Math.random() * 6) + 5; // 4 to 8
+  const fixedCount = 4; // Number of early batches to fix
+  const fixedPercentage = 0.35; // Portion of enemies reserved for fixed batches
 
-  // Add a base weight to all batches to avoid too-light initial batches
-  const baseWeight = 1.5;
-  let weights = Array.from({ length: batchCount }, (_, i) => baseWeight + i);
+  const fixedEnemies = Math.floor(numEnemies * fixedPercentage);
+  const variableEnemies = numEnemies - fixedEnemies;
 
-  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-  let batches = weights.map(w => Math.floor((w / totalWeight) * numEnemies));
+  // Split fixed enemies evenly (or customize if you want)
+  const fixedBatches = Array.from({ length: fixedCount }, () => Math.floor(fixedEnemies / fixedCount));
 
-  // Fix rounding errors to match the exact number of enemies
-  let currentTotal = batches.reduce((sum, n) => sum + n, 0);
-  let diff = numEnemies - currentTotal;
-
-  let index = 0;
-  while (diff !== 0) {
-    batches[index % batchCount] += diff > 0 ? 1 : -1;
-    diff += diff > 0 ? -1 : 1;
-    index++;
+  // Fix rounding diff from above
+  let fixedTotal = fixedBatches.reduce((sum, n) => sum + n, 0);
+  let fixedDiff = fixedEnemies - fixedTotal;
+  let fixIndex = 0;
+  while (fixedDiff !== 0) {
+    fixedBatches[fixIndex % fixedCount] += fixedDiff > 0 ? 1 : -1;
+    fixedDiff += fixedDiff > 0 ? -1 : 1;
+    fixIndex++;
   }
 
-  return batches;
+  //console.log("fixedBatches", fixedBatches);
+
+  // Create weights for remaining batches
+  const variableCount = batchCount - fixedCount;
+  const baseWeight = 1.5;
+  const weightGrowth = 1.5;
+  const weights = Array.from({ length: variableCount }, (_, i) => baseWeight + i * weightGrowth);
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+
+  let variableBatches = weights.map(w => Math.floor((w / totalWeight) * variableEnemies));
+
+  // Fix rounding error
+  let variableTotal = variableBatches.reduce((sum, n) => sum + n, 0);
+  let variableDiff = variableEnemies - variableTotal;
+  let varIndex = 0;
+  while (variableDiff !== 0) {
+    variableBatches[varIndex % variableCount] += variableDiff > 0 ? 1 : -1;
+    variableDiff += variableDiff > 0 ? -1 : 1;
+    varIndex++;
+  }
+
+  //console.log("variableBatches", variableBatches);
+
+  const final = [...fixedBatches, ...variableBatches];
+  return final;
 }
 
 export function getCenterOfTileMap(tilemap: IsometricMap): Vector {
