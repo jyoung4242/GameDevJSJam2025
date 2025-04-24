@@ -1,11 +1,13 @@
 import { Loader, ImageSource, Vector } from "excalibur";
 import loadingScreenLogo from "../Assets/LoadingScreen/logo.png";
 import loadingScreenExcalibur from "../Assets/LoadingScreen/excalibur.png";
+import { getHighScore } from "../Lib/Util";
 
 export class CustomLoader extends Loader {
   logoImage = new ImageSource(loadingScreenLogo);
   excaliburImage = new ImageSource(loadingScreenExcalibur);
   pxScale = 3;
+  highScore = "0";
 
   constructor() {
     super();
@@ -14,6 +16,7 @@ export class CustomLoader extends Loader {
   initLoadingScreen() {
     this.logoImage.load();
     this.excaliburImage.load();
+    this.highScore = getHighScore() ?? "0";
   }
 
   onDraw(ctx: CanvasRenderingContext2D) {
@@ -37,6 +40,14 @@ export class CustomLoader extends Loader {
       const imgHeight = 11 * this.pxScale;
       const offsetTop = 150 * this.pxScale;
       ctx.drawImage(this.excaliburImage.image, canvasWidth / 2 - imgWidth / 2, canvasHeight - imgHeight - 20, imgWidth, imgHeight);
+    }
+
+    if (this.highScore) {
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`High Score: ${this.highScore}`, 100, 100);
     }
   }
 }

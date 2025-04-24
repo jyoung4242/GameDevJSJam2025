@@ -49,7 +49,7 @@ export class LightPlayer extends Actor {
   name = "LightPlayer";
   //properties that change with progression
   //constitution
-  currentHP: number = 15;
+  currentHP: number = 1;
   maxHP: number = 15;
   regenRate: number = 1000;
 

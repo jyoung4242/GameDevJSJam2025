@@ -28,14 +28,14 @@
 
 # bug todo
 
-- [] Move starting button
+- [x] Move starting button
 - [] window resizing
 - [x] spawing off of map
 - [x] fixed keys
 - [x] fixed arrow dude death
-- [] update end of wave modal graphics
-- [] fix spawning batch sizes
-- [] lockout upgrade buttons till score completed
+- [x] update end of wave modal graphics
+- [x] fix spawning batch sizes
+- [x] lockout upgrade buttons till score completed
 - [] check if current total score is higher than recorded highscore
 - [] pass score and highscore to gameover scene
-- [] on EOW modal, the cursor needs adjusted
+- [x] on EOW modal, the cursor needs adjusted
