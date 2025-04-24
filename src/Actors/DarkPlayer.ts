@@ -29,6 +29,7 @@ import { LightPlayer } from "./LightPlayer";
 import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class DarkPlayer extends Actor {
+  name = "DarkPlayer";
   //properties that change with progression
   //constitution
   currentHP: number = 25;
@@ -266,8 +267,10 @@ export class DarkPlayer extends Actor {
       { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
       this.directionFacing,
       this.isPlayerActive,
-      this.releaseWeapon
+      this.releaseWeapon,
+      this.scene as GameScene
     );
+
     this.addChild(this.weaponchild);
     this.handChild.attackState = "Attack";
     this.handChild.direction = this.directionFacing;
@@ -278,8 +281,10 @@ export class DarkPlayer extends Actor {
         { attackLeft: swordSlashAnimationLeft, attackRight: swordSlashAnimationRight },
         ScndDirection,
         this.isPlayerActive,
-        this.releaseWeapon
+        this.releaseWeapon,
+        this.scene as GameScene
       );
+
       this.addChild(this.weaponchild2);
     }
 
@@ -293,13 +298,6 @@ export class DarkPlayer extends Actor {
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
-
-    if (this.weaponchild) {
-      //console.log("releasing weapon AXE");
-
-      this.removeChild(this.weaponchild);
-      this.weaponchild = undefined;
-    }
   };
 
   onPreUpdate(engine: Engine, elapsed: number): void {
@@ -389,12 +387,12 @@ export class DarkPlayer extends Actor {
           // if walking already
 
           //if the x direction changes while walking
-          if (this.oldXVelocity < 0 && this.vel.x > 0) {
+          if (this.oldXVelocity <= 0 && this.vel.x > 0) {
             this.directionFacing = "Right";
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
-          } else if (this.oldXVelocity > 0 && this.vel.x < 0) {
+          } else if (this.oldXVelocity >= 0 && this.vel.x < 0) {
             this.directionFacing = "Left";
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;
@@ -423,7 +421,8 @@ export class DarkPlayer extends Actor {
 
     // Player Death Logic
     if (this.currentHP <= 0) {
-      if (this.isPlayerActive) {
+      this.timer?.cancel();
+      if (this.isPlayerActive && this.partner?.isAlive) {
         (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
       }
       if (this.fireIntervalHandler) {

@@ -46,6 +46,7 @@ import {
 import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class LightPlayer extends Actor {
+  name = "LightPlayer";
   //properties that change with progression
   //constitution
   currentHP: number = 15;
@@ -268,13 +269,6 @@ export class LightPlayer extends Actor {
 
   releaseWeapon = () => {
     this.handChild.attackState = "Normal";
-    //ensure you're removing child
-    if (this.children.includes(this.weaponChild!)) {
-      console.log("removing weapon bow");
-
-      this.removeChild(this.weaponChild!);
-    }
-    this.weaponChild = undefined;
   };
 
   disableTouch() {
@@ -447,6 +441,7 @@ export class LightPlayer extends Actor {
       if (!keys.includes("ArrowUp") && !keys.includes("KeyW") && !keys.includes("ArrowDown") && !keys.includes("KeyS")) {
         this.vel.y = 0;
       }
+
       if (this.vel.x != 0 || this.vel.y != 0) {
         // if idle, and starting to walk
         if (this.isWalking === false) {
@@ -457,12 +452,12 @@ export class LightPlayer extends Actor {
           this.isWalking = true;
           this.ac.set(`walk${this.directionFacing}`);
         } else {
-          if (this.oldXVelocity < 0 && this.vel.x > 0) {
+          if (this.oldXVelocity <= 0 && this.vel.x > 0) {
             this.directionFacing = "Right";
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
             this.handChild.direction = this.directionFacing;
-          } else if (this.oldXVelocity > 0 && this.vel.x < 0) {
+          } else if (this.oldXVelocity >= 0 && this.vel.x < 0) {
             this.directionFacing = "Left";
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
@@ -491,7 +486,8 @@ export class LightPlayer extends Actor {
     }
 
     if (this.currentHP <= 0) {
-      if (this.isPlayerActive) {
+      this.timer?.cancel();
+      if (this.isPlayerActive && this.partner?.isAlive) {
         (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
       }
       if (this.fireIntervalHandler) {

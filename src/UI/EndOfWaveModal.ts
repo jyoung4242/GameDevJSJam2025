@@ -20,7 +20,7 @@ import {
 } from "excalibur";
 import { NextWaveButton, StartModalButton } from "./startButton";
 import { scaleAnimation } from "../Animations/scale";
-import { bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, swordSS } from "../resources";
+import {bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, SFX_VOLUME, swordSS} from "../resources";
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
 import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
@@ -176,6 +176,7 @@ export class EndOFWaveModal extends ScreenElement {
     // (progressionstates.health >= 2) (this.heartButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.strength >= 2) (this.flexButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.speed >= 2) (this.clockButton as ProgressionButtons).updateEnable(false);
+
     this.balance = balance;
     this.balanceCursor!.pos = vec(this.balanceCursorStartingPos + this.balance * 2, 240);
 
@@ -236,10 +237,6 @@ export class EndOFWaveModal extends ScreenElement {
     this.resetSignal.send([]);
   }
 
-  saveHighScore() {
-    //TODO
-  }
-
   showScoreTransfer(roundscore: number) {
     setTimeout(() => {
       let scoreInterval = setInterval(() => {
@@ -247,7 +244,11 @@ export class EndOFWaveModal extends ScreenElement {
         this.overallScore += 1;
         this.waveScoreLabel.text = `${roundscore}`;
         this.overallScoreLabel.text = `${this.overallScore}`;
-        if (roundscore == 0) clearInterval(scoreInterval);
+        Resources.sfxUptickScore.play(SFX_VOLUME);
+        if (roundscore == 0) {
+          clearInterval(scoreInterval);
+          Resources.sfxFinalScoreUptick.play(SFX_VOLUME);
+        }
       }, 25);
     }, 1000);
   }
@@ -258,17 +259,17 @@ export class EndOFWaveModal extends ScreenElement {
 
   onAdd(engine: Engine): void {
     this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed", () => {
-      console.log("clock");
+      //console.log("clock");
     });
     this.addChild(this.clockButton);
 
     this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), "constitution", () => {
-      console.log("heart");
+      //console.log("heart");
     });
     this.addChild(this.heartButton);
 
     this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), "strength", () => {
-      console.log("flex");
+      //console.log("flex");
     });
     this.addChild(this.flexButton);
   }
@@ -304,6 +305,7 @@ export class EndOFWaveModal extends ScreenElement {
 }
 
 class ScreenElementFactory extends ScreenElement {
+  name = "ScreenElementFactory";
   constructor(pos: Vector, graphic: Graphic, scale?: Vector) {
     super({
       pos,
@@ -318,6 +320,7 @@ class ScreenElementFactory extends ScreenElement {
 }
 
 class LabelFactory extends Label {
+  name = "LabelFactory";
   constructor(pos: Vector, text: string, makeBig: boolean = false) {
     super({
       pos,
@@ -337,6 +340,7 @@ class LabelFactory extends Label {
 }
 
 class ProgressionButtons extends ScreenElement {
+  name = "ProgressionButtons";
   upGraphic: NineSlice;
   downGraphic: NineSlice;
   icon: Graphic;

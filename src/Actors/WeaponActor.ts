@@ -8,6 +8,7 @@ import { Resources, SFX_VOLUME } from "../resources";
 import { DarkPlayer } from "./DarkPlayer";
 
 export class WeaponActor extends Actor {
+  name = "WeaponActor";
   ac: AnimationComponent<"attackLeft" | "attackRight"> | undefined;
   directionfacing: "Left" | "Right" = "Right";
   state: "idle" | "attack" = "attack";
@@ -23,7 +24,7 @@ export class WeaponActor extends Actor {
   numenemies: number = 0;
   isPlayerActive: boolean;
 
-  constructor(animationSet: any, direction: "Left" | "Right", isPlayerActive: boolean, resetCallback: () => void) {
+  constructor(animationSet: any, direction: "Left" | "Right", isPlayerActive: boolean, resetCallback: () => void, scene: Scene) {
     super({
       width: 42,
       height: 30,
@@ -31,21 +32,22 @@ export class WeaponActor extends Actor {
       collisionType: CollisionType.Passive,
       collisionGroup: weaponCollisionGroup,
     });
+    this.scene = scene;
     this.resetCallback = resetCallback;
     this.directionfacing = direction;
     if (this.directionfacing == "Left") this.pos = this.leftVector;
     else this.pos = this.rightVector;
     this.pos = this.rightVector;
     this.animationSet = animationSet;
-    this.animationSet["attackLeft"].events.on("end", () => {
-      if (this.resetCallback) this.resetCallback();
-      this.kill();
-    });
-    this.animationSet["attackRight"].events.on("end", () => {
-      if (this.resetCallback) this.resetCallback();
-      this.kill();
-    });
+
+    this.animationSet["attackLeft"].events.on("end", () => this.killMyWeapon.bind(this));
+    this.animationSet["attackRight"].events.on("end", this.killMyWeapon.bind(this));
     this.isPlayerActive = isPlayerActive;
+  }
+
+  killMyWeapon() {
+    if (this.resetCallback) this.resetCallback();
+    this.kill();
   }
 
   onPreKill(scene: Scene): void {

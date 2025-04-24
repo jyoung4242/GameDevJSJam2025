@@ -9,6 +9,7 @@ import { LightPlayer } from "./LightPlayer";
 const BULLET_SPEED = 300; // Speed of the bullet
 
 export class LightBullet extends Actor {
+  name = "LightBullet";
   damage: number;
   owner: LightPlayer;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
