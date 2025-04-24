@@ -20,6 +20,7 @@
 
 - [x] Scoring system
 - [] save high score
+- [] phantom touch joystick on screen
 
 # juice
 
@@ -27,6 +28,7 @@
 
 # bug todo
 
+- [] Move starting button
 - [] window resizing
 - [x] spawing off of map
 - [x] fixed keys
