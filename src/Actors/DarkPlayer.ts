@@ -32,7 +32,7 @@ export class DarkPlayer extends Actor {
   name = "DarkPlayer";
   //properties that change with progression
   //constitution
-  currentHP: number = 25;
+  currentHP: number = 4;
   maxHP: number = 25;
   regenRate: number = 1000;
 
@@ -420,7 +420,8 @@ export class DarkPlayer extends Actor {
 
     // Player Death Logic
     if (this.currentHP <= 0) {
-      if (this.isPlayerActive) {
+      this.timer?.cancel();
+      if (this.isPlayerActive && this.partner?.isAlive) {
         (this.scene as GameScene).switchPlayerFocus(); // Switch focus to the partner
       }
       if (this.fireIntervalHandler) {
