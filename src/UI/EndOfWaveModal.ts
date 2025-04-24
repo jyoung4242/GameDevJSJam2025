@@ -165,6 +165,7 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(ScreenElementFactory.create(vec(180, 165), scaleSS.getSprite(0, 0), vec(0.6, 0.6)));
     this.addChild(ScreenElementFactory.create(vec(300, 150), Resources.goldmedal.toSprite(), vec(1.5, 1.5)));
     this.addChild(ScreenElementFactory.create(vec(300, 100), Resources.silvermedal.toSprite(), vec(1.5, 1.5)));
+    this.addChild(ScreenElementFactory.create(vec(10, myHeight - 20), Resources.goldstar.toSprite(), vec(1.5, 1.5)));
 
     //#endregion
   }
@@ -176,6 +177,7 @@ export class EndOFWaveModal extends ScreenElement {
   show(scene: Scene, data: any, getPlayerData: any, progressionstates: any, balance: number) {
     this.progressionStates = progressionstates;
     this.highScore = getHighScore() ?? "0";
+    console.log("highscore", this.highScore);
 
     if (!this.clockButton) {
       this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed");
@@ -269,14 +271,16 @@ export class EndOFWaveModal extends ScreenElement {
           if (this.progressionStates.strength < 2) (this.flexButton as ProgressionButtons).updateEnable(true);
           if (this.progressionStates.speed < 2) (this.clockButton as ProgressionButtons).updateEnable(true);
 
-          console.log(this.overallScore, parseInt(this.highScore));
+          //console.log(this.overallScore, parseInt(this.highScore));
 
           if (this.overallScore > parseInt(this.highScore)) {
-            console.log("new high score");
+            //console.log("new high score");
 
             this.highScore = this.overallScore.toString();
             saveHighScore(this.overallScore);
-            this.highscoreLabel.text = `Highscore: ${this.highScore} `;
+            this.highscoreLabel.text = `${this.highScore} `;
+          } else {
+            this.highscoreLabel.text = `${this.highScore} `;
           }
         }
       }, 25);
