@@ -47,6 +47,10 @@ import playerHurtSfx from "./Assets/Sfx/sfx-player-hurt.mp3";
 import generalPickupSfx from "./Assets/Sfx/sfx-pickup-general.mp3";
 import deathSfx from "./Assets/Sfx/sfx-death.mp3";
 import playerSwitchSfx from "./Assets/Sfx/sfx-player-switch.mp3";
+import uptickScoreSfx from "./Assets/Sfx/sfx-uptick-score.mp3";
+import finalScoreUptickSfx from "./Assets/Sfx/sfx-final-score-uptick.mp3";
+
+
 import spectrum from "./Assets/spectrum2.png";
 import cursor from "./Assets/cursor.png";
 import goldmedal from "./Assets/goldmedal.png";
@@ -106,6 +110,8 @@ export const Resources = {
   sfxGeneralPickup: new Sound(generalPickupSfx),
   sfxDeath: new Sound(deathSfx),
   sfxPlayerSwitch: new Sound(playerSwitchSfx),
+  sfxUptickScore: new Sound(uptickScoreSfx),
+  sfxFinalScoreUptick: new Sound(finalScoreUptickSfx),
 };
 
 export const SFX_VOLUME = 0.3;
