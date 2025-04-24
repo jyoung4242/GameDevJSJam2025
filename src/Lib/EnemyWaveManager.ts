@@ -19,17 +19,17 @@ let SPAWN_FREQUENCY = 10000; // Frequency in milliseconds
 let START_OF_WAVE_TIME = 3;
 
 const SpawnStrategy = {
-  //RANDOM: "RANDOM",
-  //CIRCLE: "CIRCLE",
+  RANDOM: "RANDOM",
+  CIRCLE: "CIRCLE",
   EDGES: "EDGES",
-  //CLUSTER: "CLUSTER",
+  CLUSTER: "CLUSTER",
 } as const;
 
 const spawnStrategyMap: Record<keyof typeof SpawnStrategy, SpawnPositionStrategy> = {
-  //RANDOM: new RandomSpawnStrategy(),
-  //CIRCLE: new CircleSpawnStrategy(),
+  RANDOM: new RandomSpawnStrategy(),
+  CIRCLE: new CircleSpawnStrategy(),
   EDGES: new EdgesSpawnStrategy(),
-  //CLUSTER: new ClusterSpawnStrategy(),
+  CLUSTER: new ClusterSpawnStrategy(),
 };
 
 export class EnemyWaveManager {
@@ -176,7 +176,6 @@ export class EnemyWaveManager {
       //find the tile at nextTile coordinates
 
       let tile = this.map?.tiles.find(tile => tile.pos.x === nextTile.x && tile.pos.y === nextTile.y);
-      //BUG - somehow tile position is outside of level occasionally
       if (!tile) continue; // Skip if the tile is not found
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
 

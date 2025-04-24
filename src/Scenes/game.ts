@@ -196,10 +196,10 @@ export class GameScene extends Scene {
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
 
-    console.log(
+    /* console.log(
       "end of wave entity report: ",
       this.entities.filter(entity => entity instanceof BowWeaponActor)
-    );
+    ); */
 
     (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
     (this.sceneTouchManger as TouchSystem).modalShowing = true;

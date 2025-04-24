@@ -13,7 +13,7 @@ export interface SpawnPositionStrategy {
 export class RandomSpawnStrategy implements SpawnPositionStrategy {
   rng: Random = new Random(Date.now()); // Initialize with a seed for reproducibility
   getSpawnPositions(count: number, map: IsometricMap): { x: number; y: number }[] {
-    console.log("random");
+    //console.log("random");
     let positions: { x: number; y: number }[] = [];
 
     for (let i = 0; i < count; i++) {
@@ -41,7 +41,7 @@ export class RandomSpawnStrategy implements SpawnPositionStrategy {
 // Example: Circle
 export class CircleSpawnStrategy implements SpawnPositionStrategy {
   getSpawnPositions(count: number, map: IsometricMap): { x: number; y: number }[] {
-    console.log("circle");
+    //console.log("circle");
     let mapWidth = map.columns;
     let mapHeight = map.rows;
 
@@ -67,7 +67,7 @@ export class CircleSpawnStrategy implements SpawnPositionStrategy {
 export class EdgesSpawnStrategy implements SpawnPositionStrategy {
   rng: Random = new Random(Date.now()); // Initialize with a seed for reproducibility
   getSpawnPositions(count: number, map: IsometricMap): { x: number; y: number }[] {
-    console.log("edges");
+    //console.log("edges");
     const positions: { x: number; y: number }[] = [];
 
     //const edges = map.tiles.filter((tile, index) => isInnerEdgeTile(index, map.columns, map.rows));
@@ -75,7 +75,7 @@ export class EdgesSpawnStrategy implements SpawnPositionStrategy {
     let edgeIndexes = getInnerRingIndexes(map.columns, map.rows);
     const edges = map.tiles.filter((tile, index) => edgeIndexes.includes(index));
 
-    console.log("edges", edges);
+    //console.log("edges", edges);
 
     for (let i = 0; i < count; i++) {
       const tile = this.rng.pickOne(edges); // Pick a random edge tile
@@ -91,7 +91,7 @@ export class ClusterSpawnStrategy implements SpawnPositionStrategy {
   rng: Random = new Random();
 
   getSpawnPositions(count: number, map: IsometricMap): { x: number; y: number }[] {
-    console.log("cluster");
+    //console.log("cluster");
 
     const positions: { x: number; y: number }[] = [];
     const quadCoords = {

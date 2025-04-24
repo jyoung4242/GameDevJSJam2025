@@ -176,7 +176,6 @@ export class EndOFWaveModal extends ScreenElement {
     // (progressionstates.health >= 2) (this.heartButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.strength >= 2) (this.flexButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.speed >= 2) (this.clockButton as ProgressionButtons).updateEnable(false);
-    console.log(this.balance);
 
     this.balance = balance;
     this.balanceCursor!.pos = vec(this.balanceCursorStartingPos + this.balance * 2, 240);
@@ -256,17 +255,17 @@ export class EndOFWaveModal extends ScreenElement {
 
   onAdd(engine: Engine): void {
     this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed", () => {
-      console.log("clock");
+      //console.log("clock");
     });
     this.addChild(this.clockButton);
 
     this.heartButton = new ProgressionButtons(Resources.heart.toSprite(), vec(this.myWidth - 75, 45), "constitution", () => {
-      console.log("heart");
+      //console.log("heart");
     });
     this.addChild(this.heartButton);
 
     this.flexButton = new ProgressionButtons(Resources.flex.toSprite(), vec(this.myWidth - 75, 100), "strength", () => {
-      console.log("flex");
+      //console.log("flex");
     });
     this.addChild(this.flexButton);
   }
