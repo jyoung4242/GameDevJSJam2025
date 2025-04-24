@@ -20,7 +20,7 @@ import {
 } from "excalibur";
 import { NextWaveButton, StartModalButton } from "./startButton";
 import { scaleAnimation } from "../Animations/scale";
-import {bowSS, cancelPurpledudeSS, purpleGuySS, Resources, scaleSS, SFX_VOLUME, swordSS} from "../resources";
+import { bowSS, cancelPurpledudeSS, pickupSS, purpleGuySS, Resources, scaleSS, SFX_VOLUME, swordSS } from "../resources";
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
 import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
@@ -28,6 +28,7 @@ import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
 type ProgressionType = "constitution" | "strength" | "speed";
 
 export class EndOFWaveModal extends ScreenElement {
+  progressionStates: any;
   overallScore: number = 0;
   engine: Engine;
   scaleAnimation: ScreenElement;
@@ -147,8 +148,8 @@ export class EndOFWaveModal extends ScreenElement {
 
     this.addChild(ScreenElementFactory.create(vec(110, 45), cancelPurpledudeSS.getSprite(1, 0), vec(0.75, 0.75)));
     this.addChild(ScreenElementFactory.create(vec(40, 45), cancelPurpledudeSS.getSprite(0, 0), vec(0.75, 0.75)));
-    this.addChild(ScreenElementFactory.create(vec(44, 90), Resources.blessing.toSprite(), vec(1.4, 1.4)));
-    this.addChild(ScreenElementFactory.create(vec(115, 90), Resources.soul.toSprite(), vec(1.4, 1.4)));
+    this.addChild(ScreenElementFactory.create(vec(44, 90), pickupSS.getSprite(1, 0), vec(1.4, 1.4)));
+    this.addChild(ScreenElementFactory.create(vec(115, 90), pickupSS.getSprite(0, 0), vec(1.4, 1.4)));
     this.addChild(ScreenElementFactory.create(vec(21, 105), swordSS.getSprite(0, 0), vec(1.0, 1.0)));
     this.addChild(ScreenElementFactory.create(vec(105, 119), bowSS.getSprite(0, 0), vec(1.0, 1.0)));
     this.addChild(ScreenElementFactory.create(vec(38, 165), purpleGuySS.getSprite(0, 0), vec(0.75, 0.75)));
@@ -414,9 +415,11 @@ class ProgressionButtons extends ScreenElement {
   updateEnable(state: boolean) {
     this.enabled = state;
     if (this.enabled == false) {
-      const currentGraphics = this.graphics.current;
+      let currentGraphics = this.graphics.current;
       //@ts-ignore
       if (currentGraphics) currentGraphics.tint = Color.Gray;
+    } else {
+      this.graphics.use(this.upGraphicGroup);
     }
   }
 
