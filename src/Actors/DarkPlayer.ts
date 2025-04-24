@@ -29,6 +29,7 @@ import { LightPlayer } from "./LightPlayer";
 import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class DarkPlayer extends Actor {
+  name = "DarkPlayer";
   //properties that change with progression
   //constitution
   currentHP: number = 25;
