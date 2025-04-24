@@ -47,7 +47,7 @@ export function getEnemiesToSpawn(level: number): number {
   return Math.floor(baseEnemies + level * scalingFactor + randomBonus);
 }
 
-export function getNumberOfBatches(numEnemies: number): number[] {
+/* export function getNumberOfBatches(numEnemies: number): number[] {
   const batchCount = Math.max(3, Math.floor(numEnemies / 10)); // Adjust this scale as needed
   let weights = Array.from({ length: batchCount }, (_, i) => i + 1); // e.g. [1, 2, 3, 4, ...]
   const totalWeight = weights.reduce((sum, w) => sum + w, 0);
@@ -65,6 +65,30 @@ export function getNumberOfBatches(numEnemies: number): number[] {
       batches[i] += diff > 0 ? 1 : -1;
       diff += diff > 0 ? -1 : 1;
     }
+  }
+
+  return batches;
+} */
+
+export function getNumberOfBatches(numEnemies: number): number[] {
+  const batchCount = Math.max(3, Math.floor(numEnemies / 10));
+
+  // Add a base weight to all batches to avoid too-light initial batches
+  const baseWeight = 1.5;
+  let weights = Array.from({ length: batchCount }, (_, i) => baseWeight + i);
+
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+  let batches = weights.map(w => Math.floor((w / totalWeight) * numEnemies));
+
+  // Fix rounding errors to match the exact number of enemies
+  let currentTotal = batches.reduce((sum, n) => sum + n, 0);
+  let diff = numEnemies - currentTotal;
+
+  let index = 0;
+  while (diff !== 0) {
+    batches[index % batchCount] += diff > 0 ? 1 : -1;
+    diff += diff > 0 ? -1 : 1;
+    index++;
   }
 
   return batches;
