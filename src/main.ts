@@ -5,7 +5,7 @@ import { UI } from "@peasy-lib/peasy-ui";
 import { Engine, DisplayMode, Color } from "excalibur";
 import { model, template } from "./UI/UI";
 import { GameScene } from "./Scenes/game";
-import { loader } from "./resources";
+import {BGM_VOLUME, loader, Resources} from "./resources";
 import { IntroScene } from "./Scenes/Intro";
 import { GameOver } from "./Scenes/gameOver";
 
@@ -38,3 +38,6 @@ const game = new Engine({
 await game.start(loader);
 
 game.goToScene("game");
+
+Resources.musicOverworld.loop = true;
+Resources.musicOverworld.play(BGM_VOLUME);
