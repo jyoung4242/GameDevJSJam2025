@@ -23,7 +23,6 @@ const SpawnStrategy = {
   CIRCLE: "CIRCLE",
   EDGES: "EDGES",
   CLUSTER: "CLUSTER",
-  //RANDOM_OFFSCREEN: "RANDOM_OFFSCREEN",
 } as const;
 
 const spawnStrategyMap: Record<keyof typeof SpawnStrategy, SpawnPositionStrategy> = {
@@ -31,7 +30,6 @@ const spawnStrategyMap: Record<keyof typeof SpawnStrategy, SpawnPositionStrategy
   CIRCLE: new CircleSpawnStrategy(),
   EDGES: new EdgesSpawnStrategy(),
   CLUSTER: new ClusterSpawnStrategy(),
-  //RANDOM_OFFSCREEN: new RandomOffscreenSpawnStrategy(),
 };
 
 export class EnemyWaveManager {
@@ -50,7 +48,7 @@ export class EnemyWaveManager {
   waveNumber: number = 0; // Current wave number
   batchSize: number[] = []; // Number of enemies to spawn in each batch
   batchIndex: number = 0; // Index for the current batch
-  spawnStrategy: keyof typeof SpawnStrategy = SpawnStrategy.RANDOM; // Strategy for spawning enemies
+  spawnStrategy: keyof typeof SpawnStrategy = SpawnStrategy.EDGES; // Strategy for spawning enemies
   lastBatchSpawnedFlag: boolean = false;
 
   endOfWaveInterval: any;
@@ -178,7 +176,6 @@ export class EnemyWaveManager {
       //find the tile at nextTile coordinates
 
       let tile = this.map?.tiles.find(tile => tile.pos.x === nextTile.x && tile.pos.y === nextTile.y);
-      //BUG - somehow tile position is outside of level occasionally
       if (!tile) continue; // Skip if the tile is not found
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
 

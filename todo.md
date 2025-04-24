@@ -28,4 +28,8 @@
 # bug todo
 
 - [] window resizing
-- [] spawing off of map
+- [x] spawing off of map
+- [x] fixed keys
+- [ ] fixed arrow dude death
+- [ ] update end of wave modal graphics
+- [ ] fix spawning batch sizes

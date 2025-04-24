@@ -9,7 +9,33 @@ export function isEdgeTile(index: number, width: number, height: number): boolea
 export function isInnerEdgeTile(index: number, width: number, height: number): boolean {
   const x = index % width;
   const y = Math.floor(index / width);
-  return x === 1 || x === width - 2 || y === 1 || y === height - 2;
+  return x == 2 && x <= width - 3 && y == 2 && y <= height - 3;
+}
+
+export function getInnerRingIndexes(width: number, height: number): number[] {
+  const indexes: number[] = [];
+
+  if (width <= 2 || height <= 2) {
+    return indexes; // no inner ring possible
+  }
+
+  // top edge (inner)
+  for (let x = 1; x < width - 1; x++) {
+    indexes.push(1 * width + x);
+  }
+
+  // side edges (inner), excluding corners already added
+  for (let y = 2; y < height - 2 + 1; y++) {
+    indexes.push(y * width + 1); // left inner column
+    indexes.push(y * width + (width - 2)); // right inner column
+  }
+
+  // bottom edge (inner)
+  for (let x = 1; x < width - 1; x++) {
+    indexes.push((height - 2) * width + x);
+  }
+
+  return indexes;
 }
 
 export function getEnemiesToSpawn(level: number): number {
@@ -52,4 +78,12 @@ export function formatDuration(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return `Time: ${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
+
+export function saveHighScore(score: number) {
+  localStorage.setItem("Axe&ArrowHighscore", score.toString());
+}
+
+export function getHighScore() {
+  return localStorage.getItem("Axe&ArrowHighscore");
 }
