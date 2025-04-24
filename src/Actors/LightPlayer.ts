@@ -240,7 +240,7 @@ export class LightPlayer extends Actor {
   fire() {
     if (!this.isWaveActive) return;
     //get enemies
-    let enemies = this.scene?.entities.filter(entity => entity instanceof Enemy);
+    let enemies = this.scene?.entities.filter(entity => entity instanceof Enemy && entity.state == "default");
 
     let closestEnemy: Enemy | undefined = undefined;
     let closestDistance = Infinity;

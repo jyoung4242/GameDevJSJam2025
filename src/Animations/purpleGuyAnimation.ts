@@ -79,27 +79,53 @@ export const purpleGuyArrowDeathAnimation = new Animation({
   ],
 });
 
-export const purpleGuySpawnAnimation = new Animation({
+export const purpleGuyDarkSpawnAnimation = new Animation({
   strategy: AnimationStrategy.End,
   frames: [
     {
-      graphic: purpleGuySS.getSprite(0, 3),
+      graphic: purpleGuyDarkSS.getSprite(0, 3),
       duration: 100,
     },
     {
-      graphic: purpleGuySS.getSprite(1, 3),
+      graphic: purpleGuyDarkSS.getSprite(1, 3),
       duration: 100,
     },
     {
-      graphic: purpleGuySS.getSprite(2, 3),
+      graphic: purpleGuyDarkSS.getSprite(2, 3),
       duration: 100,
     },
     {
-      graphic: purpleGuySS.getSprite(3, 3),
+      graphic: purpleGuyDarkSS.getSprite(3, 3),
       duration: 100,
     },
     {
-      graphic: purpleGuySS.getSprite(4, 3),
+      graphic: purpleGuyDarkSS.getSprite(4, 3),
+      duration: 100,
+    },
+  ],
+});
+
+export const purpleGuyLightSpawnAnimation = new Animation({
+  strategy: AnimationStrategy.End,
+  frames: [
+    {
+      graphic: purpleGuyLightSS.getSprite(0, 3),
+      duration: 100,
+    },
+    {
+      graphic: purpleGuyLightSS.getSprite(1, 3),
+      duration: 100,
+    },
+    {
+      graphic: purpleGuyLightSS.getSprite(2, 3),
+      duration: 100,
+    },
+    {
+      graphic: purpleGuyLightSS.getSprite(3, 3),
+      duration: 100,
+    },
+    {
+      graphic: purpleGuyLightSS.getSprite(4, 3),
       duration: 100,
     },
   ],
