@@ -32,7 +32,7 @@ export class DarkPlayer extends Actor {
   name = "DarkPlayer";
   //properties that change with progression
   //constitution
-  currentHP: number = 25;
+  currentHP: number = 1;
   maxHP: number = 25;
   regenRate: number = 1000;
 

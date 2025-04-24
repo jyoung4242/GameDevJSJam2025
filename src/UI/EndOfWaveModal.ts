@@ -24,15 +24,17 @@ import { bowSS, cancelPurpledudeSS, pickupSS, purpleGuySS, Resources, scaleSS, S
 import { GameScene } from "../Scenes/game";
 import { Signal } from "../Lib/Signals";
 import { c } from "vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P";
+import { getHighScore, saveHighScore } from "../Lib/Util";
 
 type ProgressionType = "constitution" | "strength" | "speed";
 
 export class EndOFWaveModal extends ScreenElement {
   progressionStates: any;
-  overallScore: number = 0;
+  overallScore: number = 642;
   engine: Engine;
   scaleAnimation: ScreenElement;
   resetSignal: Signal = new Signal("waveReset");
+  highScore: string = "0";
 
   lightEnemiesScore: Label;
   darkEnemiesScore: Label;
@@ -49,6 +51,7 @@ export class EndOFWaveModal extends ScreenElement {
   myWidth: number;
   waveScoreLabel: Label;
   overallScoreLabel: Label;
+  highscoreLabel: Label;
 
   heartButton: ProgressionButtons | undefined;
   flexButton: ProgressionButtons | undefined;
@@ -128,8 +131,9 @@ export class EndOFWaveModal extends ScreenElement {
     this.balancePickups = LabelFactory.create(vec(225, 88), "0");
     this.balancePlayerKills = LabelFactory.create(vec(225, 125), "0");
     this.balanceEnemyDefeatRate = LabelFactory.create(vec(231, 165), "0");
-    this.waveScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 97), "0", true);
-    this.overallScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 149), "0", true);
+    this.waveScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 97), "0", 32);
+    this.overallScoreLabel = LabelFactory.create(vec(myWidth / 2 + 75, 149), "0", 32);
+    this.highscoreLabel = LabelFactory.create(vec(50, myHeight - 20), `Highscore: ${this.highScore} `, 12);
 
     this.addChild(this.lightEnemiesScore);
     this.addChild(this.darkEnemiesScore);
@@ -145,6 +149,7 @@ export class EndOFWaveModal extends ScreenElement {
     this.addChild(this.balanceEnemyDefeatRate);
     this.addChild(this.waveScoreLabel);
     this.addChild(this.overallScoreLabel);
+    this.addChild(this.highscoreLabel);
 
     this.addChild(ScreenElementFactory.create(vec(110, 45), cancelPurpledudeSS.getSprite(1, 0), vec(0.75, 0.75)));
     this.addChild(ScreenElementFactory.create(vec(40, 45), cancelPurpledudeSS.getSprite(0, 0), vec(0.75, 0.75)));
@@ -166,6 +171,7 @@ export class EndOFWaveModal extends ScreenElement {
 
   show(scene: Scene, data: any, getPlayerData: any, progressionstates: any, balance: number) {
     this.progressionStates = progressionstates;
+    this.highScore = getHighScore() ?? "0";
 
     if (!this.clockButton) {
       this.clockButton = new ProgressionButtons(Resources.clock.toSprite(), vec(this.myWidth - 75, 155), "speed");
@@ -237,6 +243,7 @@ export class EndOFWaveModal extends ScreenElement {
     const thisRoundScore = baseScore + enemyAffinityBalanceBonus + pickupsAffinityBalanceBonus + playerAffinityBalanceBonus;
     this.waveScoreLabel.text = `${thisRoundScore}`;
     this.showScoreTransfer(thisRoundScore);
+
     scene.add(this);
 
     this.resetSignal.send([]);
@@ -257,6 +264,16 @@ export class EndOFWaveModal extends ScreenElement {
           (this.heartButton as ProgressionButtons).updateEnable(true);
           if (this.progressionStates.strength < 2) (this.flexButton as ProgressionButtons).updateEnable(true);
           if (this.progressionStates.speed < 2) (this.clockButton as ProgressionButtons).updateEnable(true);
+
+          console.log(this.overallScore, parseInt(this.highScore));
+
+          if (this.overallScore > parseInt(this.highScore)) {
+            console.log("new high score");
+
+            this.highScore = this.overallScore.toString();
+            saveHighScore(this.overallScore);
+            this.highscoreLabel.text = `Highscore: ${this.highScore} `;
+          }
         }
       }, 25);
     }, 1000);
@@ -313,21 +330,21 @@ class ScreenElementFactory extends ScreenElement {
 
 class LabelFactory extends Label {
   name = "LabelFactory";
-  constructor(pos: Vector, text: string, makeBig: boolean = false) {
+  constructor(pos: Vector, text: string, fontsize: number = 20) {
     super({
       pos,
       text,
       font: new Font({
         family: "Arial",
-        size: makeBig == true ? 32 : 20,
+        size: fontsize,
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
     });
   }
 
-  static create(pos: Vector, text: string, makeBig: boolean = false) {
-    return new LabelFactory(pos, text, makeBig);
+  static create(pos: Vector, text: string, fontsize: number = 20) {
+    return new LabelFactory(pos, text, fontsize);
   }
 }
 

@@ -49,7 +49,7 @@ import deathSfx from "./Assets/Sfx/sfx-death.mp3";
 import playerSwitchSfx from "./Assets/Sfx/sfx-player-switch.mp3";
 import uptickScoreSfx from "./Assets/Sfx/sfx-uptick-score.mp3";
 import finalScoreUptickSfx from "./Assets/Sfx/sfx-final-score-uptick.mp3";
-
+import goldstar from "./Assets/goldstar.png";
 
 import spectrum from "./Assets/spectrum2.png";
 import cursor from "./Assets/cursor.png";
@@ -102,6 +102,7 @@ export const Resources = {
   silvermedal: new ImageSource(silvermedal),
   purpleGuyDark: new ImageSource(purpleGuyDark),
   purpleGuyLight: new ImageSource(purpleGuyLight),
+  goldstar: new ImageSource(goldstar),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),
