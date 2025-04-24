@@ -180,7 +180,7 @@ export const overlaySS = SpriteSheet.fromImageSource({
 export const purpleGuySS = SpriteSheet.fromImageSource({
   image: Resources.purpleGuy,
   grid: {
-    rows: 3,
+    rows: 4,
     columns: 5,
     spriteHeight: 32,
     spriteWidth: 32,
@@ -189,7 +189,7 @@ export const purpleGuySS = SpriteSheet.fromImageSource({
 export const purpleGuyDarkSS = SpriteSheet.fromImageSource({
   image: Resources.purpleGuyDark,
   grid: {
-    rows: 3,
+    rows: 4,
     columns: 5,
     spriteHeight: 32,
     spriteWidth: 32,
@@ -198,7 +198,7 @@ export const purpleGuyDarkSS = SpriteSheet.fromImageSource({
 export const purpleGuyLightSS = SpriteSheet.fromImageSource({
   image: Resources.purpleGuyLight,
   grid: {
-    rows: 3,
+    rows: 4,
     columns: 5,
     spriteHeight: 32,
     spriteWidth: 32,
