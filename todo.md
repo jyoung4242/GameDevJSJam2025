@@ -36,3 +36,4 @@
 - [] lockout upgrade buttons till score completed
 - [] check if current total score is higher than recorded highscore
 - [] pass score and highscore to gameover scene
+- [] on EOW modal, the cursor needs adjusted
