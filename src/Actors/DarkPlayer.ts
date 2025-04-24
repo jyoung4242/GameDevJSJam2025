@@ -91,6 +91,7 @@ export class DarkPlayer extends Actor {
   isWaveActive: boolean = false;
   waveResetSignal: Signal = new Signal("waveReset");
   numenemies: number = 0;
+  numEnemiesWhileActive: number = 0;
 
   isAlive: boolean = true;
 

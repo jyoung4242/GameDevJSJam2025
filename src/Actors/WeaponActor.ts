@@ -93,8 +93,9 @@ export class WeaponActor extends Actor {
     if (this.isColliding && this.ac?.currentFrame == 2) {
       this.others.forEach((enemy: Enemy) => {
         if (enemy.state == "death") return;
-        this.enemyDefeatedSignal.send(["enemyDefeated", enemy.affinity, "axe"]);
         (this.parent as DarkPlayer).numenemies++;
+        if ((this.parent as DarkPlayer).isPlayerActive) (this.parent as DarkPlayer).numEnemiesWhileActive++;
+        this.enemyDefeatedSignal.send(["enemyDefeated", enemy.affinity, "axe"]);
         enemy.pain("sword");
       });
     }

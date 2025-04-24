@@ -81,6 +81,7 @@ export class LightPlayer extends Actor {
   progressionSignal: Signal = new Signal("progressionUpdate");
   waveResetSignal: Signal = new Signal("waveReset");
   numenemies: number = 0;
+  numEnemiesWhileActive: number = 0;
   directionFacing: "Left" | "Right" = "Right";
   isWalking: boolean = false;
   oldXVelocity: number = 0;
