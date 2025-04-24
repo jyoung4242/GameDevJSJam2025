@@ -46,6 +46,7 @@ import {
 import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
 
 export class LightPlayer extends Actor {
+  name = "LightPlayer";
   //properties that change with progression
   //constitution
   currentHP: number = 15;

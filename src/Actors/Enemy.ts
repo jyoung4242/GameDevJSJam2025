@@ -31,6 +31,7 @@ import { actorFlashWhite } from "../Effects/createWhiteMaterial";
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
 
 export class Enemy extends Actor {
+  name = "Enemy";
   lightGG: GraphicsGroup;
   darkGG: GraphicsGroup;
   currentGraphic: GraphicsGroup;

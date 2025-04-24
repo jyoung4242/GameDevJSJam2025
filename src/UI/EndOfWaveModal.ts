@@ -301,6 +301,7 @@ export class EndOFWaveModal extends ScreenElement {
 }
 
 class ScreenElementFactory extends ScreenElement {
+  name = "ScreenElementFactory";
   constructor(pos: Vector, graphic: Graphic, scale?: Vector) {
     super({
       pos,
@@ -315,6 +316,7 @@ class ScreenElementFactory extends ScreenElement {
 }
 
 class LabelFactory extends Label {
+  name = "LabelFactory";
   constructor(pos: Vector, text: string, makeBig: boolean = false) {
     super({
       pos,
@@ -334,6 +336,7 @@ class LabelFactory extends Label {
 }
 
 class ProgressionButtons extends ScreenElement {
+  name = "ProgressionButtons";
   upGraphic: NineSlice;
   downGraphic: NineSlice;
   icon: Graphic;

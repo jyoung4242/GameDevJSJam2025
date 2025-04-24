@@ -8,6 +8,7 @@ import { Resources, SFX_VOLUME } from "../resources";
 import { DarkPlayer } from "./DarkPlayer";
 
 export class WeaponActor extends Actor {
+  name = "WeaponActor";
   ac: AnimationComponent<"attackLeft" | "attackRight"> | undefined;
   directionfacing: "Left" | "Right" = "Right";
   state: "idle" | "attack" = "attack";
