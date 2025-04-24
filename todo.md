@@ -19,7 +19,7 @@
 # features
 
 - [x] Scoring system
-- [] save high score
+- [x] save high score
 - [] phantom touch joystick on screen
 
 # juice
@@ -36,6 +36,6 @@
 - [x] update end of wave modal graphics
 - [x] fix spawning batch sizes
 - [x] lockout upgrade buttons till score completed
-- [] check if current total score is higher than recorded highscore
-- [] pass score and highscore to gameover scene
+- [x] check if current total score is higher than recorded highscore
+- [x] pass score and highscore to gameover scene
 - [x] on EOW modal, the cursor needs adjusted
