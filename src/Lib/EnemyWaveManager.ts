@@ -19,19 +19,17 @@ let SPAWN_FREQUENCY = 10000; // Frequency in milliseconds
 let START_OF_WAVE_TIME = 3;
 
 const SpawnStrategy = {
-  RANDOM: "RANDOM",
-  CIRCLE: "CIRCLE",
+  //RANDOM: "RANDOM",
+  //CIRCLE: "CIRCLE",
   EDGES: "EDGES",
-  CLUSTER: "CLUSTER",
-  //RANDOM_OFFSCREEN: "RANDOM_OFFSCREEN",
+  //CLUSTER: "CLUSTER",
 } as const;
 
 const spawnStrategyMap: Record<keyof typeof SpawnStrategy, SpawnPositionStrategy> = {
-  RANDOM: new RandomSpawnStrategy(),
-  CIRCLE: new CircleSpawnStrategy(),
+  //RANDOM: new RandomSpawnStrategy(),
+  //CIRCLE: new CircleSpawnStrategy(),
   EDGES: new EdgesSpawnStrategy(),
-  CLUSTER: new ClusterSpawnStrategy(),
-  //RANDOM_OFFSCREEN: new RandomOffscreenSpawnStrategy(),
+  //CLUSTER: new ClusterSpawnStrategy(),
 };
 
 export class EnemyWaveManager {
@@ -50,7 +48,7 @@ export class EnemyWaveManager {
   waveNumber: number = 0; // Current wave number
   batchSize: number[] = []; // Number of enemies to spawn in each batch
   batchIndex: number = 0; // Index for the current batch
-  spawnStrategy: keyof typeof SpawnStrategy = SpawnStrategy.RANDOM; // Strategy for spawning enemies
+  spawnStrategy: keyof typeof SpawnStrategy = SpawnStrategy.EDGES; // Strategy for spawning enemies
   lastBatchSpawnedFlag: boolean = false;
 
   endOfWaveInterval: any;
@@ -191,17 +189,6 @@ export class EnemyWaveManager {
         nextEnemy.setAffinity("dark");
       } else if (!this.darkPlayer.isAlive) {
         nextEnemy.setAffinity("light");
-      }
-
-      if (
-        tile.pos.x < 0 ||
-        tile.pos.x > this.map!.columns * this.map!.tileWidth ||
-        tile.pos.y < 0 ||
-        tile.pos.y > this.map!.rows * this.map!.tileHeight
-      ) {
-        console.log("tile position: ", tile.pos.x, tile.pos.y);
-        console.log("map size: ", this.map!.columns * this.map!.tileWidth, this.map!.rows * this.map!.tileHeight);
-        console.error("TILE POSITION OUT OF BOUNDS", tile, nextEnemy);
       }
 
       nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy

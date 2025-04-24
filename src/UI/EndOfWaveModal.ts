@@ -176,6 +176,8 @@ export class EndOFWaveModal extends ScreenElement {
     // (progressionstates.health >= 2) (this.heartButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.strength >= 2) (this.flexButton as ProgressionButtons).updateEnable(false);
     if (progressionstates.speed >= 2) (this.clockButton as ProgressionButtons).updateEnable(false);
+    console.log(this.balance);
+
     this.balance = balance;
     this.balanceCursor!.pos = vec(this.balanceCursorStartingPos + this.balance * 2, 240);
 
