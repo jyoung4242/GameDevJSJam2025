@@ -257,12 +257,13 @@ export class EndOFWaveModal extends ScreenElement {
   showScoreTransfer(roundscore: number) {
     setTimeout(() => {
       let scoreInterval = setInterval(() => {
-        roundscore -= 1;
-        this.overallScore += 1;
+        roundscore -= 2;
+        this.overallScore += 2;
+        if (roundscore < 0) roundscore = 0;
         this.waveScoreLabel.text = `${roundscore}`;
         this.overallScoreLabel.text = `${this.overallScore}`;
         Resources.sfxUptickScore.play(SFX_VOLUME);
-        if (roundscore == 0) {
+        if (roundscore <= 0) {
           clearInterval(scoreInterval);
           Resources.sfxFinalScoreUptick.play(SFX_VOLUME);
 

@@ -31,7 +31,7 @@ import {
 } from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
-import {SoundStagger} from "../Lib/SoundStagger";
+import { SoundStagger } from "../Lib/SoundStagger";
 
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
 
@@ -158,13 +158,13 @@ export class Enemy extends Actor {
 
   checkDrop() {
     let drop = enemyRNG.integer(0, 100); // Generate a random number between 0 and 100
-    if (drop < 40) {
+    if (drop < 50) {
       //spawn drop
       if (!this.scene) return;
-      if (this.affinity == "dark") {
+      if (this.affinity == "dark" && this.darkTarget?.isPlayerActive) {
         //spawn dark drop
         this.scene.add(new SoulDrop(this.pos));
-      } else {
+      } else if (this.affinity == "light" && this.lightTarget?.isPlayerActive) {
         //spawn light drop
         this.scene.add(new BlessingDrop(this.pos));
       }
@@ -221,6 +221,14 @@ export class Enemy extends Actor {
 
     // Death Animation State
     if (this.state === "death") {
+      if (this.isOffScreen == true) {
+        this.checkDrop();
+        this.UISignal.send(["enemyDefeated", this.affinity]);
+        this.actions.clearActions();
+        this.scene?.remove(this); // Remove the enemy from the scene
+        (this.scene as GameScene).enemyWaveManager?.enemyPool?.return(this); // Return the enemy to the pool
+      }
+
       if (
         (this.affinity == "dark" && this.darkDeathSwordAnimation.done) ||
         (this.affinity == "light" && this.lightDeathSwordAnimation.done)

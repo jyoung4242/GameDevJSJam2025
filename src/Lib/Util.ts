@@ -40,7 +40,7 @@ export function getInnerRingIndexes(width: number, height: number): number[] {
 
 export function getEnemiesToSpawn(level: number): number {
   // Basic formula: base amount + (scaling factor * level)
-  const baseEnemies = 75;
+  const baseEnemies = 25;
   const scalingFactor = 25;
   const randomBonus = Math.floor(Math.random() * 25) + 1; // Random bonus between 1 and 10
 
