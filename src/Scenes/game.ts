@@ -14,6 +14,7 @@ import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
 import { Balance } from "../UI/Balance";
 import { BalanceWarning, SceneLevelWarning } from "../UI/BalanceWarning";
+import { ShockWavePostProcessor } from "../Effects/shockwave";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -66,6 +67,7 @@ export class GameScene extends Scene {
   }
 
   onActivate(context: SceneActivationContext<unknown>): void {
+    ((window as any).shockWavePP as ShockWavePostProcessor).init(this);
     this.isEndOfWaveModalEnabled = true;
     this.scheduleGameOver = false;
     this.scheculedGameOverTik = 0;
@@ -184,6 +186,7 @@ export class GameScene extends Scene {
   }
 
   onPreUpdate(engine: any, delta: number): void {
+    ((window as any).shockWavePP as ShockWavePostProcessor).onUpdate(delta);
     if (this.scheduleGameOver) this.scheculedGameOverTik++;
     if (this.scheculedGameOverTik > 300) {
       this.engine.goToScene("gameOver", { sceneActivationData: { score: this.endOfWaveModal?.getOverallScore() } });
@@ -273,12 +276,11 @@ export class GameScene extends Scene {
     this.engine.timescale = 0.1;
     this.camera.clearAllStrategies();
     this.camera.zoomOverTime(0.8, 100).then(() => {
-      console.log("triggering shockwave");
-
       this.camera.zoomOverTime(1.5, 100).then(() => {
         this.engine.timescale = 1;
+        console.log("triggering shockwave");
         //@ts-expect-error
-        window.shockWavePP.triggerShockWave({ x: 0.5, y: 0.5 }, 2000, 1, 0.8, 0.1);
+        window.shockWavePP.triggerShockWave({ x: 0.5, y: 0.5 }, 1000, 10, 0.8, 0.1);
         this.camera.strategy.lockToActor(nextActivePlayer!);
         this.lightPlayer!.switchLock = false;
         this.darkPlayer!.switchLock = false;
