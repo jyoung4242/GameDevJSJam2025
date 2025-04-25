@@ -13,6 +13,7 @@ import { NewStatusBar } from "../UI/newStatusBar";
 import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
 import { Balance } from "../UI/Balance";
+import { BalanceWarning, SceneLevelWarning } from "../UI/BalanceWarning";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -26,6 +27,7 @@ export class GameScene extends Scene {
   enemyDefeatedSignal = new Signal("enemyDefeated");
   UISignal = new Signal("stateUpdate");
   balanceUI: ScreenElement | undefined;
+  warning: ScreenElement | undefined;
 
   hudData = {
     lightkills: 0,
@@ -114,6 +116,10 @@ export class GameScene extends Scene {
 
     this.balanceUI = new Balance(this);
     this.add(this.balanceUI);
+
+    this.warning = new SceneLevelWarning();
+    this.add(this.warning);
+    (this.warning as SceneLevelWarning).show();
 
     this.enemyDefeatedSignal.listen((params: CustomEvent) => {
       const [event, affinity, weapon] = params.detail.params;

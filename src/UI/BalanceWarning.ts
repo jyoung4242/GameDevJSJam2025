@@ -1,4 +1,4 @@
-import { Graphic, ScreenElement, vec, Vector } from "excalibur";
+import { Engine, Graphic, ScreenElement, vec, Vector } from "excalibur";
 import { SpaceBarAnimation } from "../Animations/spacebar";
 import { Resources, spaceBarSS } from "../resources";
 
@@ -26,6 +26,26 @@ export class BalanceWarning extends ScreenElement {
     this.message.hide();
     this.leftButton.hide();
     this.rightButton.hide();
+  }
+}
+
+export class SceneLevelWarning extends BalanceWarning {
+  constructor() {
+    super();
+  }
+
+  onInitialize(engine: Engine): void {
+    this.pos = engine.screen.contentArea.center.sub(vec(18, 28));
+    this.z = 1001;
+  }
+
+  onAdd(engine: Engine): void {
+    setTimeout(() => {
+      this.actions
+        .fade(0.0, 1000)
+        .toPromise()
+        .then(() => this.hide());
+    }, 2000);
   }
 }
 
