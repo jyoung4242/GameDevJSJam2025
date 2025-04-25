@@ -12,9 +12,7 @@ import { EndOFWaveModal } from "../UI/EndOfWaveModal";
 import { NewStatusBar } from "../UI/newStatusBar";
 import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
-import { BowWeaponActor } from "../Actors/nonCollidingWeapon";
 import { Balance } from "../UI/Balance";
-import { Billboard } from "../UI/BillBoard";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
