@@ -1,4 +1,4 @@
-import { Actor, Collider, CollisionContact, CollisionType, Engine, Scene, Side, vec, Vector } from "excalibur";
+import {Actor, Collider, CollisionContact, CollisionType, Engine, Scene, Side, vec, Vector} from "excalibur";
 import { AnimationComponent } from "../Components/AnimationComponent";
 import { weaponCollisionGroup } from "../Lib/colliderGroups";
 import { Enemy } from "./Enemy";

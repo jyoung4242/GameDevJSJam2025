@@ -31,8 +31,13 @@ import {
 } from "../Animations/purpleGuyAnimation";
 import { Signal } from "../Lib/Signals";
 import { actorFlashWhite } from "../Effects/createWhiteMaterial";
+import {SoundStagger} from "../Lib/SoundStagger";
 
 const enemyRNG = new Random(Date.now()); // Random number generator for enemy behavior
+
+const enemySwordDeathSoundStagger = new SoundStagger({
+  volume: SFX_VOLUME,
+});
 
 export class Enemy extends Actor {
   name = "Enemy";
@@ -173,7 +178,12 @@ export class Enemy extends Actor {
     this.collider.clear();
     this.body.collisionType = CollisionType.Passive;
 
-    Resources.sfxEnemyKilled.play(SFX_VOLUME);
+    if (deathBy === "sword") {
+      enemySwordDeathSoundStagger.play(Resources.sfxEnemyKilled);
+    } else {
+      Resources.sfxEnemyKilled.play(SFX_VOLUME);
+    }
+
     const engine = this.scene?.engine;
     if (engine) {
       actorFlashWhite(engine, this, 300, () => {
@@ -215,7 +225,6 @@ export class Enemy extends Actor {
         (this.affinity == "dark" && this.darkDeathSwordAnimation.done) ||
         (this.affinity == "light" && this.lightDeathSwordAnimation.done)
       ) {
-        if (this.affinity == "dark") debugger;
         this.checkDrop();
         this.UISignal.send(["enemyDefeated", this.affinity]);
         this.actions.clearActions();
