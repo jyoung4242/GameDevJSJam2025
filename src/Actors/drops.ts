@@ -65,7 +65,7 @@ export class SoulDrop extends Actor {
   lifeTik() {
     this.lifetime -= 1000;
     if (this.lifetime <= 4000) {
-      this.actions.blink(400, 400);
+      this.actions.fade(0.1, 4000);
     }
     if (this.lifetime <= 0) {
       this.kill();

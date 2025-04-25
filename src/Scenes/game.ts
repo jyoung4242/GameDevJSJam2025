@@ -261,7 +261,7 @@ export class GameScene extends Scene {
     return blessingsBalance + axeBalance;
   }
 
-  switchPlayerFocus() {
+  switchPlayerFocus = () => {
     let nextActivePlayer: DarkPlayer | LightPlayer | undefined = undefined;
     //console.trace("switchPlayerFocus");
 
@@ -289,14 +289,16 @@ export class GameScene extends Scene {
         if (nextActivePlayer instanceof DarkPlayer) {
           this.darkPlayer!.isPlayerActive = true;
           this.lightPlayer!.isPlayerActive = false;
+          //@ts-expect-error
           this.sceneTouchManger!.activeTouchReceiver = "darkPlayer" as keyof typeof this.touchMap;
         } else {
           this.darkPlayer!.isPlayerActive = false;
           this.lightPlayer!.isPlayerActive = true;
+          //@ts-expect-error
           this.sceneTouchManger!.activeTouchReceiver = "lightPlayer" as keyof typeof this.touchMap;
         }
       });
     });
     this.camera.move(nextActivePlayer!.pos, 200);
-  }
+  };
 }
