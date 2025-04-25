@@ -1,75 +1,51 @@
 import { Color, Rectangle, ScreenElement, Vector } from "excalibur";
-import { Resources } from "../resources";
-
-const greenHighlight = Color.fromHex("#99e550");
-const greenLowLight = Color.fromHex("#6cd705");
-const yellowHighlight = Color.fromHex("#ffe105");
-const yellowLowLight = Color.fromHex("#f5c100");
-const redHighlight = Color.fromHex("#ff2b05");
-const redLowLight = Color.fromHex("#d41c00");
+import { Resources, lifeBarSSL1, lifeBarSSL2, lifeBarSSL3 } from "../resources";
 
 export class HealthBar extends ScreenElement {
   percent: number;
-  child1: ScreenElement;
-  child2: ScreenElement;
+  level: number = 1;
+  oldLevel: number = 1;
+  level1Pos = new Vector(-16, -27);
+  level2Pos = new Vector(-24, -27);
+  level3Pos = new Vector(-28.5, -27);
 
-  greenRectHighlight = new Rectangle({ width: 26, height: 1, color: greenHighlight });
-  greenRectLowLight = new Rectangle({ width: 26, height: 1, color: greenLowLight });
-
-  yellowRectHighlight = new Rectangle({ width: 26, height: 1, color: yellowHighlight });
-  yellowRectLowLight = new Rectangle({ width: 26, height: 1, color: yellowLowLight });
-
-  redRectHighlight = new Rectangle({ width: 26, height: 1, color: redHighlight });
-  redRectLowLight = new Rectangle({ width: 26, height: 1, color: redLowLight });
-
-  constructor(public dims: Vector, public position: Vector, public maxVal: number) {
-    const topBar = new Rectangle({ width: 26, height: 1, color: greenHighlight });
-    const bottomBar = new Rectangle({ width: 26, height: 1, color: greenLowLight });
+  constructor(public position: Vector, public maxVal: number) {
     super({
       name: "outerHealthBar",
-      width: dims.x,
-      height: dims.y,
-      pos: position,
       z: 1,
     });
-
-    this.graphics.use(Resources.lifebar.toSprite());
+    this.pos = this.level1Pos;
+    this.graphics.use(lifeBarSSL1.getSprite(0, 26));
     this.percent = 100;
+  }
 
-    this.child1 = new ScreenElement({ name: "innerHealthBar", width: 10, height: dims.y, pos: new Vector(3, 7), z: 1 });
-    this.child2 = new ScreenElement({ name: "innerHealthBar2", width: 10, height: dims.y, pos: new Vector(3, 8), z: 1 });
+  setLevel(level: number) {
+    this.level = level;
 
-    this.child1.graphics.use(topBar);
-    this.child2.graphics.use(bottomBar);
-    this.addChild(this.child1);
-    this.addChild(this.child2);
+    if (level === 1) this.pos = this.level1Pos;
+    else if (level === 2) this.pos = this.level2Pos;
+    else if (level === 3) this.pos = this.level3Pos;
+  }
+
+  getLevel() {
+    return this.level;
   }
 
   setPercent(percent: number): void {
     this.percent = percent;
-    if (this.percent < 0) {
-      this.percent = 0;
-    }
-    if (this.percent > 100) {
-      this.percent = 100;
-    }
 
-    if (this.percent > 40) {
-      this.child1.graphics.use(this.greenRectHighlight);
-      this.child2.graphics.use(this.greenRectLowLight);
+    if (this.level === 1) {
+      let spriteY = Math.floor((percent / 100) * 26);
+      if (percent == 100) spriteY = 26;
+      this.graphics.use(lifeBarSSL1.getSprite(0, spriteY));
+    } else if (this.level === 2) {
+      let spriteY = Math.floor((percent / 100) * 42);
+      if (percent == 100) spriteY = 42;
+      this.graphics.use(lifeBarSSL2.getSprite(0, spriteY));
+    } else if (this.level === 3) {
+      let spriteY = Math.floor((percent / 100) * 50);
+      if (percent == 100) spriteY = 50;
+      this.graphics.use(lifeBarSSL3.getSprite(0, spriteY));
     }
-    if (this.percent <= 40) {
-      this.child1.graphics.use(this.yellowRectHighlight);
-      this.child2.graphics.use(this.yellowRectLowLight);
-    }
-    if (this.percent <= 15) {
-      this.child1.graphics.use(this.redRectHighlight);
-      this.child2.graphics.use(this.redRectLowLight);
-    }
-
-    this.child1.scale.x = this.percent / 100;
-    this.child1.scale.y = 1;
-    this.child2.scale.x = this.percent / 100;
-    this.child2.scale.y = 1;
   }
 }

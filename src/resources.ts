@@ -58,6 +58,9 @@ import overworldMusic from "./Assets/Music/axe-and-arrow-export3-hello-world.mp3
 import { CustomLoader } from "./Loader/CustomLoader";
 import keepBalance from "./Assets/Hud/keep-balance.png";
 import spaceBar from "./Assets/Hud/spacebar-sheet-32x16.png";
+import lifebarL1 from "./Assets/lifebar-level1-sheet.png";
+import lifebarL2 from "./Assets/lifebar-level2-sheet.png";
+import lifebarL3 from "./Assets/lifebar-level3-sheet.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -107,6 +110,9 @@ export const Resources = {
   goldstar: new ImageSource(goldstar),
   keepBalance: new ImageSource(keepBalance),
   spaceBar: new ImageSource(spaceBar),
+  lifebarL1: new ImageSource(lifebarL1),
+  lifebarL2: new ImageSource(lifebarL2),
+  lifebarL3: new ImageSource(lifebarL3),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),
@@ -123,6 +129,35 @@ export const Resources = {
 
 export const SFX_VOLUME = 0.4;
 export const BGM_VOLUME = 0.3;
+
+export const lifeBarSSL1 = SpriteSheet.fromImageSource({
+  image: Resources.lifebarL1,
+  grid: {
+    rows: 27,
+    columns: 1,
+    spriteHeight: 8,
+    spriteWidth: 32,
+  },
+});
+export const lifeBarSSL2 = SpriteSheet.fromImageSource({
+  image: Resources.lifebarL2,
+  grid: {
+    rows: 43,
+    columns: 1,
+    spriteHeight: 8,
+    spriteWidth: 48,
+  },
+});
+
+export const lifeBarSSL3 = SpriteSheet.fromImageSource({
+  image: Resources.lifebarL3,
+  grid: {
+    rows: 51,
+    columns: 1,
+    spriteHeight: 8,
+    spriteWidth: 56,
+  },
+});
 
 export const spaceBarSS = SpriteSheet.fromImageSource({
   image: Resources.spaceBar,

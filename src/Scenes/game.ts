@@ -154,6 +154,8 @@ export class GameScene extends Scene {
         case "constitution":
           this.progressionStates.health++;
           if (this.progressionStates.health > 2) this.progressionStates.health = 2;
+          if (this.darkPlayer?.isAlive) this.darkPlayer.HealthBar?.setLevel(this.progressionStates.health);
+          if (this.lightPlayer?.isAlive) this.lightPlayer.HealthBar?.setLevel(this.progressionStates.health);
           break;
         case "strength":
           this.progressionStates.strength++;

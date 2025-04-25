@@ -100,7 +100,6 @@ export class DarkPlayer extends Actor {
     super({
       width: 19,
       height: 30,
-      //color: Color.Black,
       pos: vec(0, 0),
       anchor: Vector.Half,
       z: 1001,
@@ -108,12 +107,10 @@ export class DarkPlayer extends Actor {
       collisionGroup: playerCollisionGroup,
     });
 
-    //this.addComponent(this.jc);
     this.addComponent(this.ac);
     this.ac.set("idleRight");
-    this.HealthBar = new HealthBar(new Vector(32, 16), new Vector(-16, -32), 20);
+    this.HealthBar = new HealthBar(new Vector(-16, -27), 20);
     this.addChild(this.HealthBar);
-    //this.fireIntervalHandler = setInterval(this.fire.bind(this), this.fireInterval);
 
     this.handChild.walkState = "idle";
     this.handChild.attackState = "Normal";
