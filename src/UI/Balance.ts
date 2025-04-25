@@ -2,12 +2,14 @@ import { Engine, Scene, ScreenElement, vec, Vector } from "excalibur";
 import { Resources } from "../resources";
 import { Billboard } from "./BillBoard";
 import { Signal } from "../Lib/Signals";
+import { BalanceWarning } from "./BalanceWarning";
 
 export class Balance extends ScreenElement {
   cursor: ScreenElement | undefined;
   balance: number = 0;
   startingPosX = 0;
   balanceUISignal: Signal = new Signal("balanceUpdate");
+  warning: ScreenElement | undefined;
 
   constructor(scene: Scene) {
     super();
@@ -20,13 +22,15 @@ export class Balance extends ScreenElement {
       if (data == "light") this.generateBillboard("light");
       else if (data == "dark") this.generateBillboard("dark");
     });
+
+    this.warning = new BalanceWarning();
+    this.addChild(this.warning);
   }
 
   onInitialize(engine: Engine): void {
     this.graphics.use(Resources.spectrum.toSprite());
     const screen = engine.currentScene.engine.screen.contentArea;
     this.pos = vec(screen.width / 2 - 144, screen.height - 34);
-    console.log("balance pos", this.pos);
   }
 
   generateBillboard(type: "light" | "dark", delay: number = 0) {
@@ -44,6 +48,11 @@ export class Balance extends ScreenElement {
     let currentCursorPos = this.cursor!.pos.x;
 
     this.cursor!.pos = vec(this.startingPosX + this.balance * 6, 8);
+
+    if (Math.abs(this.balance) > 12) {
+      //show warning
+      (this.warning! as BalanceWarning).show();
+    } else (this.warning! as BalanceWarning).hide();
   }
 
   getWorldPosition(): Vector {
