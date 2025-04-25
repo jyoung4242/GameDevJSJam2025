@@ -40,6 +40,11 @@ import bluetik from "./Assets/TimeBar/time-bar-blue-tick.png";
 import redtik from "./Assets/TimeBar/time-bar-red-tick.png";
 import whitetik from "./Assets/TimeBar/time-bar-white-tick.png";
 import activePlayerTik from "./Assets/active-arrow.png";
+import goldstar from "./Assets/goldstar.png";
+import spectrum from "./Assets/spectrum2.png";
+import cursor from "./Assets/cursor.png";
+import goldmedal from "./Assets/goldmedal.png";
+import silvermedal from "./Assets/silvermedal.png";
 import enemyKilledSfx from "./Assets/Sfx/sfx-enemy-kill.mp3";
 import swordSwingSfx from "./Assets/Sfx/sfx-sword-swing.mp3";
 import shootArrowSfx from "./Assets/Sfx/sfx-shoot-arrow.mp3";
@@ -49,12 +54,7 @@ import deathSfx from "./Assets/Sfx/sfx-death.mp3";
 import playerSwitchSfx from "./Assets/Sfx/sfx-player-switch.mp3";
 import uptickScoreSfx from "./Assets/Sfx/sfx-uptick-score.mp3";
 import finalScoreUptickSfx from "./Assets/Sfx/sfx-final-score-uptick.mp3";
-import goldstar from "./Assets/goldstar.png";
-
-import spectrum from "./Assets/spectrum2.png";
-import cursor from "./Assets/cursor.png";
-import goldmedal from "./Assets/goldmedal.png";
-import silvermedal from "./Assets/silvermedal.png";
+import overworldMusic from "./Assets/Music/axe-and-arrow-export3-hello-world.mp3";
 import { CustomLoader } from "./Loader/CustomLoader";
 
 export const Resources = {
@@ -113,9 +113,12 @@ export const Resources = {
   sfxPlayerSwitch: new Sound(playerSwitchSfx),
   sfxUptickScore: new Sound(uptickScoreSfx),
   sfxFinalScoreUptick: new Sound(finalScoreUptickSfx),
+
+  musicOverworld: new Sound(overworldMusic)
 };
 
-export const SFX_VOLUME = 0.3;
+export const SFX_VOLUME = 0.4;
+export const BGM_VOLUME = 0.3;
 
 export const pickupSS = SpriteSheet.fromImageSource({
   image: Resources.pickupSS,
