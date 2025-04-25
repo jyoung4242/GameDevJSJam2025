@@ -32,13 +32,17 @@ export class Balance extends ScreenElement {
     this.graphics.use(Resources.spectrum.toSprite());
     const screen = engine.currentScene.engine.screen.contentArea;
     this.pos = vec(screen.width / 2 - 144, screen.height - 34);
-    setTimeout(() => {
-      this.warning!.actions.fade(0.0, 1000)
-        .toPromise()
-        .then(() => {
-          this.initialFlag = false;
-        });
-    }, 2000);
+    setTimeout(() => this.clearInitialFlag(), 2000);
+  }
+
+  clearInitialFlag() {
+    this.warning!.actions.fade(0.0, 1000)
+      .toPromise()
+      .then(() => {
+        this.warning!.actions.clearActions();
+        this.warning!.graphics.opacity = 1;
+        this.initialFlag = false;
+      });
   }
 
   generateBillboard(type: "light" | "dark", delay: number = 0) {
@@ -57,7 +61,10 @@ export class Balance extends ScreenElement {
 
     this.cursor!.pos = vec(this.startingPosX + this.balance * 6, 8);
     if (!this.initialFlag) {
+      console.log("flag cleared");
+
       if (Math.abs(this.balance) > 12) {
+        console.log("warning");
         //show warning
         (this.warning! as BalanceWarning).show();
       } else (this.warning! as BalanceWarning).hide();

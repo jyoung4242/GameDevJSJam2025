@@ -1,9 +1,8 @@
 import { Engine, Graphic, ScreenElement, vec, Vector } from "excalibur";
 import { SpaceBarAnimation } from "../Animations/spacebar";
-import { Resources, spaceBarSS } from "../resources";
+import { Resources } from "../resources";
 
 export class BalanceWarning extends ScreenElement {
-  leftButton = ScreenElementFactory.create(vec(-50, -5), SpaceBarAnimation.clone());
   rightButton = ScreenElementFactory.create(vec(50, -5), SpaceBarAnimation.clone());
   message = ScreenElementFactory.create(vec(-15, -2), Resources.keepBalance.toSprite());
 
@@ -11,20 +10,16 @@ export class BalanceWarning extends ScreenElement {
     super({ pos: vec(130, 0) });
 
     this.addChild(this.message);
-    this.addChild(this.leftButton);
     this.addChild(this.rightButton);
   }
 
   show() {
     this.message.show();
-    this.leftButton.show();
     this.rightButton.show();
   }
 
   hide() {
-    this.graphics.hide();
     this.message.hide();
-    this.leftButton.hide();
     this.rightButton.hide();
   }
 }
@@ -44,7 +39,11 @@ export class SceneLevelWarning extends BalanceWarning {
       this.actions
         .fade(0.0, 1000)
         .toPromise()
-        .then(() => this.hide());
+        .then(() => {
+          this.graphics.opacity = 1;
+          this.actions.clearActions();
+          this.hide();
+        });
     }, 2000);
   }
 }

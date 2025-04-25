@@ -3,8 +3,8 @@ import { Resources, lifeBarSSL1, lifeBarSSL2, lifeBarSSL3 } from "../resources";
 
 export class HealthBar extends ScreenElement {
   percent: number;
-  level: number = 1;
-  oldLevel: number = 1;
+  level: number = 0;
+
   level1Pos = new Vector(-16, -27);
   level2Pos = new Vector(-24, -27);
   level3Pos = new Vector(-28.5, -27);
@@ -22,9 +22,9 @@ export class HealthBar extends ScreenElement {
   setLevel(level: number) {
     this.level = level;
 
-    if (level === 1) this.pos = this.level1Pos;
-    else if (level === 2) this.pos = this.level2Pos;
-    else if (level === 3) this.pos = this.level3Pos;
+    if (level === 0) this.pos = this.level1Pos;
+    else if (level === 1) this.pos = this.level2Pos;
+    else if (level === 2) this.pos = this.level3Pos;
   }
 
   getLevel() {
@@ -37,15 +37,15 @@ export class HealthBar extends ScreenElement {
     if (percent > 100) percent = 100;
 
     this.percent = percent;
-    if (this.level === 1) {
+    if (this.level === 0) {
       let spriteY = Math.floor((percent / 100) * 26);
       if (percent == 100) spriteY = 26;
       this.graphics.use(lifeBarSSL1.getSprite(0, spriteY));
-    } else if (this.level === 2) {
+    } else if (this.level === 1) {
       let spriteY = Math.floor((percent / 100) * 42);
       if (percent == 100) spriteY = 42;
       this.graphics.use(lifeBarSSL2.getSprite(0, spriteY));
-    } else if (this.level === 3) {
+    } else if (this.level === 2) {
       let spriteY = Math.floor((percent / 100) * 50);
       if (percent == 100) spriteY = 50;
       this.graphics.use(lifeBarSSL3.getSprite(0, spriteY));

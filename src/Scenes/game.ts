@@ -279,8 +279,7 @@ export class GameScene extends Scene {
       this.camera.zoomOverTime(1.5, 100).then(() => {
         this.engine.timescale = 1;
         console.log("triggering shockwave");
-        //@ts-expect-error
-        window.shockWavePP.triggerShockWave({ x: 0.5, y: 0.5 }, 1000, 10, 0.8, 0.1);
+        //window.shockWavePP.triggerShockWave({ x: 0.5, y: 0.5 }, 1000, 10, 0.8, 0.1);
         this.camera.strategy.lockToActor(nextActivePlayer!);
         this.lightPlayer!.switchLock = false;
         this.darkPlayer!.switchLock = false;
