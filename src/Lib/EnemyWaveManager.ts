@@ -177,19 +177,12 @@ export class EnemyWaveManager {
 
       let tile = this.map?.tiles.find(tile => tile.pos.x === nextTile.x && tile.pos.y === nextTile.y);
       if (!tile) continue; // Skip if the tile is not found
+
       let nextEnemy = this.enemyPool?.rent(true); // Rent an enemy from the pool
 
+      if (nextEnemy instanceof Enemy == false) continue;
+
       nextEnemy.waveLevel = this.waveNumber;
-
-      // For managing if one of the players are dead,
-      // logic here is that that the opposite affinity
-      // will only produce drops for the alive player
-      if (!this.lightPlayer.isAlive) {
-        nextEnemy.setAffinity("dark");
-      } else if (!this.darkPlayer.isAlive) {
-        nextEnemy.setAffinity("light");
-      }
-
       nextEnemy.pos = tile.pos.clone(); // Set the position of the enemy
 
       this.scene.add(nextEnemy);

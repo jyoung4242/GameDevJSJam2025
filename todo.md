@@ -41,6 +41,6 @@
 - [x] on EOW modal, the cursor needs adjusted
 
 - [] updated lifebars
-- [] spawning animation
-- [] scoring clarity
-- [] balance impact
+- [x] spawning animation
+- [x] scoring clarity
+- [x] balance impact
