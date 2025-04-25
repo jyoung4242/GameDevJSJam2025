@@ -8,6 +8,7 @@ import { GameScene } from "./Scenes/game";
 import { BGM_VOLUME, loader, Resources } from "./resources";
 import { IntroScene } from "./Scenes/Intro";
 import { GameOver } from "./Scenes/gameOver";
+import { ShockWavePostProcessor } from "./Effects/shockwave";
 
 await UI.create(document.body, model, template).attached;
 let resizeTimeout: number | undefined;
@@ -37,7 +38,9 @@ const game = new Engine({
 
 await game.start(loader);
 //game.toggleDebug();
-
+export const shockWavePP = new ShockWavePostProcessor();
+(window as any).shockWavePP = shockWavePP;
+game.graphicsContext.addPostProcessor(shockWavePP);
 game.goToScene("game");
 
 Resources.musicOverworld.loop = true;
