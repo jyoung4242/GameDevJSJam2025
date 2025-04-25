@@ -110,18 +110,16 @@ export class GameScene extends Scene {
     const screenWidth = this.engine.screen.contentArea.width;
     const screenHeight = this.engine.screen.contentArea.height;
     this.statusBar = new NewStatusBar(vec(screenWidth, screenHeight));
-    //this.statusBar = new StatusBar(vec(screenWidth, screenHeight));
+
     this.add(this.statusBar);
     this.stateSignal.listen(this.stateUpdate.bind(this));
-    /* this.burnDown = new Burndown(vec(1, screenHeight - 12), 25, this);
-    this.add(this.burnDown); */
 
     this.balanceUI = new Balance(this);
     this.add(this.balanceUI);
 
-    this.warning = new SceneLevelWarning();
-    this.add(this.warning);
-    (this.warning as SceneLevelWarning).show();
+    //  this.warning = new SceneLevelWarning();
+    // this.add(this.warning);
+    // (this.warning as SceneLevelWarning).show();
 
     this.enemyDefeatedSignal.listen((params: CustomEvent) => {
       const [event, affinity, weapon] = params.detail.params;
