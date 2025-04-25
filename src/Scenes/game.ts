@@ -98,6 +98,7 @@ export class GameScene extends Scene {
     this.touchMap.set("UImodal", (data: any) => {
       this.endOfWaveModal?.handleTouchControls(data);
     });
+    this.touchMap.set("none", (data: any) => {});
     this.sceneTouchManger = new TouchSystem(this);
     this.sceneTouchManger.initialize(this.touchMap);
     this.sceneTouchManger.activeTouchReceiver = "darkPlayer" as keyof typeof this.touchMap;
@@ -214,20 +215,18 @@ export class GameScene extends Scene {
     if (!this.isEndOfWaveModalEnabled) return;
     (this.darkPlayer as DarkPlayer).vel = vec(0, 0);
     (this.lightPlayer as LightPlayer).vel = vec(0, 0);
-
-    (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
-    (this.sceneTouchManger as TouchSystem).modalShowing = true;
-    setTimeout(
-      () =>
-        this.endOfWaveModal?.show(
-          this,
-          this.statusBar!.getUIState(),
-          this.getPlayerData(),
-          this.progressionStates,
-          this.getBalanceValue()
-        ),
-      500
-    );
+    (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "none" as keyof typeof this.touchMap;
+    setTimeout(() => {
+      (this.sceneTouchManger as TouchSystem).activeTouchReceiver = "UImodal" as keyof typeof this.touchMap;
+      (this.sceneTouchManger as TouchSystem).modalShowing = true;
+      this.endOfWaveModal?.show(
+        this,
+        this.statusBar!.getUIState(),
+        this.getPlayerData(),
+        this.progressionStates,
+        this.getBalanceValue()
+      );
+    }, 500);
   }
 
   getPlayerData() {

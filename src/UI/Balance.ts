@@ -61,10 +61,7 @@ export class Balance extends ScreenElement {
 
     this.cursor!.pos = vec(this.startingPosX + this.balance * 6, 8);
     if (!this.initialFlag) {
-      console.log("flag cleared");
-
       if (Math.abs(this.balance) > 12) {
-        console.log("warning");
         //show warning
         (this.warning! as BalanceWarning).show();
       } else (this.warning! as BalanceWarning).hide();
