@@ -56,6 +56,8 @@ import uptickScoreSfx from "./Assets/Sfx/sfx-uptick-score.mp3";
 import finalScoreUptickSfx from "./Assets/Sfx/sfx-final-score-uptick.mp3";
 import overworldMusic from "./Assets/Music/axe-and-arrow-export3-hello-world.mp3";
 import { CustomLoader } from "./Loader/CustomLoader";
+import keepBalance from "./Assets/Hud/keep-balance.png";
+import spaceBar from "./Assets/Hud/spacebar-sheet-32x16.png";
 
 export const Resources = {
   tsetD1: new ImageSource(tilesetDay1),
@@ -103,6 +105,8 @@ export const Resources = {
   purpleGuyDark: new ImageSource(purpleGuyDark),
   purpleGuyLight: new ImageSource(purpleGuyLight),
   goldstar: new ImageSource(goldstar),
+  keepBalance: new ImageSource(keepBalance),
+  spaceBar: new ImageSource(spaceBar),
 
   sfxEnemyKilled: new Sound(enemyKilledSfx),
   sfxSwordSwing: new Sound(swordSwingSfx),
@@ -114,11 +118,21 @@ export const Resources = {
   sfxUptickScore: new Sound(uptickScoreSfx),
   sfxFinalScoreUptick: new Sound(finalScoreUptickSfx),
 
-  musicOverworld: new Sound(overworldMusic)
+  musicOverworld: new Sound(overworldMusic),
 };
 
 export const SFX_VOLUME = 0.4;
 export const BGM_VOLUME = 0.3;
+
+export const spaceBarSS = SpriteSheet.fromImageSource({
+  image: Resources.spaceBar,
+  grid: {
+    rows: 1,
+    columns: 2,
+    spriteHeight: 16,
+    spriteWidth: 32,
+  },
+});
 
 export const pickupSS = SpriteSheet.fromImageSource({
   image: Resources.pickupSS,
