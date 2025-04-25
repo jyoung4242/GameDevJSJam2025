@@ -80,6 +80,7 @@ export class LightPlayer extends Actor {
   gamePausedSignal: Signal = new Signal("pauseGame");
   progressionSignal: Signal = new Signal("progressionUpdate");
   waveResetSignal: Signal = new Signal("waveReset");
+  balanceUISignal: Signal = new Signal("balanceUpdate");
   numenemies: number = 0;
   numEnemiesWhileActive: number = 0;
   directionFacing: "Left" | "Right" = "Right";
@@ -225,6 +226,7 @@ export class LightPlayer extends Actor {
       this.UISignal.send(["blessing"]);
       this.exp += 1; // Increase the player's experience
       Resources.sfxGeneralPickup.play(SFX_VOLUME);
+      this.balanceUISignal.send(["balanceUpdate", "light"]);
     }
   }
 

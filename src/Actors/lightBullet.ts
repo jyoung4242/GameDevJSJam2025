@@ -13,6 +13,7 @@ export class LightBullet extends Actor {
   damage: number;
   owner: LightPlayer;
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
+  balanceUISignal: Signal = new Signal("balanceUpdate");
   enemyDefeatedSignal: Signal = new Signal("enemyDefeated");
   constructor(startingpos: Vector, enemyVector: Vector, damage: number, player: LightPlayer, public playSFX: boolean) {
     super({
@@ -46,7 +47,10 @@ export class LightBullet extends Actor {
       if (enemy.state == "death") return;
       enemy.pain("arrow");
       (this.owner as LightPlayer).numenemies++;
-      if ((this.owner as LightPlayer).isPlayerActive) (this.owner as LightPlayer).numEnemiesWhileActive++;
+      if ((this.owner as LightPlayer).isPlayerActive) {
+        (this.owner as LightPlayer).numEnemiesWhileActive++;
+        this.balanceUISignal.send(["balanceUpdate", "light"]);
+      }
       this.enemyDefeatedSignal.send(["enemyDefeatedSignal", enemy.affinity, "bow"]);
     }
   }

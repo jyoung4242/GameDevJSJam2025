@@ -87,6 +87,7 @@ export class DarkPlayer extends Actor {
   UISignal: Signal = new Signal("stateUpdate"); // Signal to update UI
   gamePausedSignal: Signal = new Signal("pauseGame");
   progressionSignal: Signal = new Signal("progressionUpdate");
+  balanceUISignal: Signal = new Signal("balanceUpdate");
   oldDirectionFacing: "Left" | "Right" = "Right";
   isWaveActive: boolean = false;
   waveResetSignal: Signal = new Signal("waveReset");
@@ -213,6 +214,7 @@ export class DarkPlayer extends Actor {
       this.UISignal.send(["soul"]);
       other.owner.kill();
       Resources.sfxGeneralPickup.play(SFX_VOLUME);
+      this.balanceUISignal.send(["balanceUpdate", "dark"]);
     }
   }
 
