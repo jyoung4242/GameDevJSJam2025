@@ -184,4 +184,3 @@ export const swordSlashAnimationRight = new Animation({
 
 export const swordSlashAnimationLeft = swordSlashAnimationRight.clone();
 swordSlashAnimationLeft.flipHorizontal = true;
-swordSlashAnimationRight;

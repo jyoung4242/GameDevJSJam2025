@@ -334,7 +334,9 @@ export class DarkPlayer extends Actor {
       if (dirtyFlag) {
         if (this.isWalking) {
           this.ac.set(`walk${this.directionFacing}`);
+          this.handChild.walkState = "walk";
         } else {
+          this.handChild.walkState = "idle";
           this.ac.set(`idle${this.directionFacing}`);
         }
       }
@@ -391,6 +393,7 @@ export class DarkPlayer extends Actor {
           if (this.vel.x > 0) this.directionFacing = "Right";
           else if (this.vel.x < 0) this.directionFacing = "Left";
           this.handChild.direction = this.directionFacing;
+          this.handChild.walkState = "walk";
           this.oldXVelocity = this.vel.x;
           this.isWalking = true;
           this.ac.set(`walk${this.directionFacing}`);
@@ -403,9 +406,11 @@ export class DarkPlayer extends Actor {
             this.handChild.direction = this.directionFacing;
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
+            this.handChild.walkState = "walk";
           } else if (this.oldXVelocity >= 0 && this.vel.x < 0) {
             this.directionFacing = "Left";
             this.handChild.direction = this.directionFacing;
+            this.handChild.walkState = "walk";
             this.oldXVelocity = this.vel.x;
             this.ac.set(`walk${this.directionFacing}`);
           }
@@ -414,6 +419,8 @@ export class DarkPlayer extends Actor {
         if (this.isWalking === true) {
           this.isWalking = false;
           this.ac.set(`idle${this.directionFacing}`);
+          this.handChild.walkState = "idle";
+          this.handChild.direction = this.directionFacing;
         }
       }
     }
