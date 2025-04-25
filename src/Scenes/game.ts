@@ -273,6 +273,8 @@ export class GameScene extends Scene {
       nextActivePlayer = this.darkPlayer;
     }
 
+    if (!nextActivePlayer?.isAlive) return;
+
     this.engine.timescale = 0.1;
     this.camera.clearAllStrategies();
     this.camera.zoomOverTime(0.8, 100).then(() => {

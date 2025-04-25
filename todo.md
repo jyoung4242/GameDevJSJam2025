@@ -37,7 +37,7 @@ Priority List
 2. PostProcessor
 3. Joystic onscreen
 
-- [] PP for switching effect
+- [x] PP for switching effect
 - [] phantom touch joystick on screen
 - [x] update UI format
 - [x] added balance component at beginning of game
