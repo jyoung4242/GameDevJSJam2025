@@ -34,11 +34,9 @@
 
 Priority List
 
-1. Death bug
-2. Balance component
-3. UI format
-4. PostProcessor
-5. Joystic onscreen
+1. UI format
+2. PostProcessor
+3. Joystic onscreen
 
 - [] PP for switching effect
 - [] phantom touch joystick on screen

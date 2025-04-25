@@ -1,6 +1,6 @@
 import { Color, Font, Label, ScreenElement, TextAlign, Vector, Engine, Graphic, GraphicsGroup, vec } from "excalibur";
 import { Signal } from "../Lib/Signals";
-import { purpleGuySS, Resources, cancelPurpledudeSS } from "../resources";
+import { purpleGuySS, Resources, cancelPurpledudeSS, pickupSS } from "../resources";
 
 export class NewStatusBar extends ScreenElement {
   totalEnemiesDefeated: number = 0;
@@ -13,6 +13,7 @@ export class NewStatusBar extends ScreenElement {
   updateSignal: Signal = new Signal("stateUpdate");
   enemiesInWave: number = 0;
   resetSignal: Signal = new Signal("waveReset");
+  totalKills: number = 0;
 
   enemiesRemainingLabel: Label;
   lightKillsLabel: Label;
@@ -59,15 +60,15 @@ export class NewStatusBar extends ScreenElement {
 
     this.enemiesRemainingLabel = new Label({
       anchor: Vector.Zero,
-      text: `0`,
+      text: `0/${this.enemiesInWave}`,
       font: new Font({
         size: 8,
         family: "Arial",
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
-      x: dims.x - 110,
-      y: 1,
+      x: dims.x - 90,
+      y: 3,
     });
 
     this.soulsCollectedLabel = new Label({
@@ -79,8 +80,8 @@ export class NewStatusBar extends ScreenElement {
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
-      x: dims.x - 36,
-      y: 1,
+      x: dims.x - 12,
+      y: 3,
     });
 
     this.blessingsCollectedLabel = new Label({
@@ -92,14 +93,14 @@ export class NewStatusBar extends ScreenElement {
         color: Color.White,
         textAlign: TextAlign.Center,
       }),
-      x: dims.x - 12,
-      y: 1,
+      x: dims.x - 40,
+      y: 3,
     });
 
     //#endregion
 
-    this.addChild(this.lightKillsLabel);
-    this.addChild(this.darkKillsLabel);
+    //this.addChild(this.lightKillsLabel);
+    //this.addChild(this.darkKillsLabel);
     this.addChild(this.enemiesRemainingLabel);
     this.addChild(this.soulsCollectedLabel);
     this.addChild(this.blessingsCollectedLabel);
@@ -112,17 +113,18 @@ export class NewStatusBar extends ScreenElement {
       }
     }
 
-    this.addChild(new UIGraphic(new Vector(dims.x - 25, 0), Resources.blessing.toSprite()));
-    this.addChild(new UIGraphic(new Vector(dims.x - 50, 0), Resources.soul.toSprite()));
-    this.addChild(new UIGraphic(new Vector(dims.x - 125, 0), purpleGuySS.getSprite(0, 0), new Vector(0.4, 0.4)));
-    this.addChild(new UIGraphic(new Vector(dims.x - 75, 0), cancelPurpledudeSS.getSprite(0, 0), new Vector(0.4, 0.4)));
-    this.addChild(new UIGraphic(new Vector(dims.x - 100, 0), cancelPurpledudeSS.getSprite(1, 0), new Vector(0.4, 0.4)));
+    this.addChild(new UIGraphic(new Vector(dims.x - 30, 0), pickupSS.getSprite(0, 0)));
+    this.addChild(new UIGraphic(new Vector(dims.x - 60, 0), pickupSS.getSprite(1, 0)));
+    this.addChild(new UIGraphic(new Vector(dims.x - 124, -1), purpleGuySS.getSprite(0, 0), new Vector(0.6, 0.6)));
+    //this.addChild(new UIGraphic(new Vector(dims.x - 75, 0), cancelPurpledudeSS.getSprite(0, 0), new Vector(0.4, 0.4)));
+    //this.addChild(new UIGraphic(new Vector(dims.x - 100, 0), cancelPurpledudeSS.getSprite(1, 0), new Vector(0.4, 0.4)));
 
     this.resetSignal.listen(() => this.reset());
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
-    this.enemiesRemainingLabel.text = `${this.totalEnemiesRemaining}`;
+    this.totalKills = this.lightEnemiesDefeated + this.darkEnemiesDefeated + this.totalEnemiesRemoved;
+    this.enemiesRemainingLabel.text = `${this.totalKills}/${this.enemiesInWave}`;
     this.lightKillsLabel.text = `${this.lightEnemiesDefeated}`;
     this.darkKillsLabel.text = `${this.darkEnemiesDefeated}`;
     this.soulsCollectedLabel.text = `${this.soulsCollected}`;
