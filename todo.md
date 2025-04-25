@@ -34,11 +34,10 @@
 
 Priority List
 
-1. UI format
 2. PostProcessor
 3. Joystic onscreen
 
 - [] PP for switching effect
 - [] phantom touch joystick on screen
-- [] update UI format
-- [] added balance component at beginning of game
+- [x] update UI format
+- [x] added balance component at beginning of game
