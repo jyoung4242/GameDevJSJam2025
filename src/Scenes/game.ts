@@ -14,6 +14,7 @@ import { TouchSystem } from "../Lib/TouchSystem";
 import { Resources, SFX_VOLUME } from "../resources";
 import { BowWeaponActor } from "../Actors/nonCollidingWeapon";
 import { Balance } from "../UI/Balance";
+import { Billboard } from "../UI/BillBoard";
 
 export class GameScene extends Scene {
   arena: IsometricMap | undefined;
@@ -119,8 +120,20 @@ export class GameScene extends Scene {
     this.enemyDefeatedSignal.listen((params: CustomEvent) => {
       const [event, affinity, weapon] = params.detail.params;
       //console.log("enemyDefeatedSignal", affinity, weapon);
-      if (affinity === "light" && weapon === "axe") this.hudData.lightkills += 1;
-      else if (affinity === "dark" && weapon === "bow") this.hudData.darkkills += 1;
+      if (affinity === "light" && weapon === "axe") {
+        this.hudData.lightkills += 1;
+        //spawn a billboard on the right side of the balance UI
+        let bb = new Billboard(vec(this.balanceUI!.pos.x + this.balanceUI!.width, this.balanceUI!.pos.y), "light");
+        console.log("adding billboard");
+
+        this.add(bb);
+      } else if (affinity === "dark" && weapon === "bow") {
+        this.hudData.darkkills += 1;
+        console.log("adding billboard");
+        let bb = new Billboard(vec(this.balanceUI!.pos.x, this.balanceUI!.pos.y), "dark");
+        this.add(bb);
+        //spawn a billboard on the left side of the balance UI
+      }
 
       this.hudData.axeKills = this.darkPlayer?.numEnemiesWhileActive as number;
       this.hudData.bowkills = this.lightPlayer?.numEnemiesWhileActive as number;

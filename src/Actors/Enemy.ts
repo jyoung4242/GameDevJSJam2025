@@ -215,7 +215,6 @@ export class Enemy extends Actor {
         (this.affinity == "dark" && this.darkDeathSwordAnimation.done) ||
         (this.affinity == "light" && this.lightDeathSwordAnimation.done)
       ) {
-        if (this.affinity == "dark") debugger;
         this.checkDrop();
         this.UISignal.send(["enemyDefeated", this.affinity]);
         this.actions.clearActions();
