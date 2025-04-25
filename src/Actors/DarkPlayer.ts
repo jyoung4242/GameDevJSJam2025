@@ -27,8 +27,12 @@ import { HandsActor } from "./HandsActor";
 import { WeaponActor } from "./WeaponActor";
 import { LightPlayer } from "./LightPlayer";
 import { bodyShadowSS, Resources, SFX_VOLUME } from "../resources";
+import { GameScreenShot } from "../Lib/ScreenShot";
 
 export class DarkPlayer extends Actor {
+  screenshotLockout: boolean = false;
+  screenshotCooloff: number = 2500;
+
   name = "DarkPlayer";
   //properties that change with progression
   //constitution
@@ -364,6 +368,14 @@ export class DarkPlayer extends Actor {
       if (keys.includes("Space") && !this.switchLock && this.isPlayerActive) {
         this.switchLock = true;
         (this.scene as GameScene).switchPlayerFocus();
+      }
+
+      if (keys.includes("Backslash")) {
+        if (this.screenshotLockout === false) {
+          this.screenshotLockout = true;
+          GameScreenShot.getScreenShot(this.scene!.engine as Engine);
+          setTimeout(() => (this.screenshotLockout = false), this.screenshotCooloff);
+        }
       }
 
       if (!keys.includes("ArrowLeft") && !keys.includes("KeyA") && !keys.includes("ArrowRight") && !keys.includes("KeyD")) {
