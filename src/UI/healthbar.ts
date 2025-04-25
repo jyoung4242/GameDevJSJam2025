@@ -32,8 +32,11 @@ export class HealthBar extends ScreenElement {
   }
 
   setPercent(percent: number): void {
-    this.percent = percent;
+    //sanitize data
+    if (percent < 0) percent = 0;
+    if (percent > 100) percent = 100;
 
+    this.percent = percent;
     if (this.level === 1) {
       let spriteY = Math.floor((percent / 100) * 26);
       if (percent == 100) spriteY = 26;

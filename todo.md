@@ -15,21 +15,9 @@
 - [x] lose intro scene
 - [x] lose camera elastic
 - [x] balance UI widget in realtime on HUD
-
-# features
-
 - [x] Scoring system
 - [x] save high score
-- [] phantom touch joystick on screen
-
-# juice
-
-- [] PP for switching effect
-
-# bug todo
-
 - [x] Move starting button
-- [] window resizing
 - [x] spawing off of map
 - [x] fixed keys
 - [x] fixed arrow dude death
@@ -39,8 +27,20 @@
 - [x] check if current total score is higher than recorded highscore
 - [x] pass score and highscore to gameover scene
 - [x] on EOW modal, the cursor needs adjusted
-
-- [] updated lifebars
+- [x] updated lifebars
 - [x] spawning animation
 - [x] scoring clarity
 - [x] balance impact
+
+Priority List
+
+1. Death bug
+2. Balance component
+3. UI format
+4. PostProcessor
+5. Joystic onscreen
+
+- [] PP for switching effect
+- [] phantom touch joystick on screen
+- [] update UI format
+- [] added balance component at beginning of game
