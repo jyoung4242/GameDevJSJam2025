@@ -9,7 +9,7 @@ import {
   GraphicsGroup,
   Meet,
   Random,
-  Side, Sound,
+  Side,
   vec,
   Vector,
 } from "excalibur";
