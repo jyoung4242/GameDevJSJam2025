@@ -19,6 +19,7 @@ export class WeaponActor extends Actor {
   UISignal: Signal = new Signal("stateUpdate");
   enemyDefeatedSignal: Signal = new Signal("enemyDefeated");
   waveResetSignal: Signal = new Signal("waveReset");
+  balanceUISignal: Signal = new Signal("balanceUpdate");
   isColliding: boolean = false;
   others: Enemy[] = [];
   numenemies: number = 0;
@@ -94,7 +95,10 @@ export class WeaponActor extends Actor {
       this.others.forEach((enemy: Enemy) => {
         if (enemy.state == "death") return;
         (this.parent as DarkPlayer).numenemies++;
-        if ((this.parent as DarkPlayer).isPlayerActive) (this.parent as DarkPlayer).numEnemiesWhileActive++;
+        if ((this.parent as DarkPlayer).isPlayerActive) {
+          this.balanceUISignal.send(["balanceUpdate", "dark"]);
+          (this.parent as DarkPlayer).numEnemiesWhileActive++;
+        }
         this.enemyDefeatedSignal.send(["enemyDefeated", enemy.affinity, "axe"]);
         enemy.pain("sword");
       });

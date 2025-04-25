@@ -5,7 +5,7 @@ import { UI } from "@peasy-lib/peasy-ui";
 import { Engine, DisplayMode, Color } from "excalibur";
 import { model, template } from "./UI/UI";
 import { GameScene } from "./Scenes/game";
-import {BGM_VOLUME, loader, Resources} from "./resources";
+import { BGM_VOLUME, loader, Resources } from "./resources";
 import { IntroScene } from "./Scenes/Intro";
 import { GameOver } from "./Scenes/gameOver";
 
@@ -36,6 +36,7 @@ const game = new Engine({
 });
 
 await game.start(loader);
+//game.toggleDebug();
 
 game.goToScene("game");
 

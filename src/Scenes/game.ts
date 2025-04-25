@@ -121,18 +121,17 @@ export class GameScene extends Scene {
       const [event, affinity, weapon] = params.detail.params;
       //console.log("enemyDefeatedSignal", affinity, weapon);
       if (affinity === "light" && weapon === "axe") {
-        this.hudData.lightkills += 1;
-        //spawn a billboard on the right side of the balance UI
-        let bb = new Billboard(vec(this.balanceUI!.pos.x + this.balanceUI!.width, this.balanceUI!.pos.y), "light");
-        console.log("adding billboard");
-
-        this.add(bb);
+        if (this.darkPlayer?.isPlayerActive) {
+          this.hudData.lightkills += 1;
+          //spawn a billboard on the right side of the balance UI
+          (this.balanceUI as Balance).generateBillboard("dark", 100);
+        }
       } else if (affinity === "dark" && weapon === "bow") {
-        this.hudData.darkkills += 1;
-        console.log("adding billboard");
-        let bb = new Billboard(vec(this.balanceUI!.pos.x, this.balanceUI!.pos.y), "dark");
-        this.add(bb);
-        //spawn a billboard on the left side of the balance UI
+        if (this.lightPlayer?.isPlayerActive) {
+          this.hudData.darkkills += 1;
+          (this.balanceUI as Balance).generateBillboard("light", 100);
+          //spawn a billboard on the left side of the balance UI
+        }
       }
 
       this.hudData.axeKills = this.darkPlayer?.numEnemiesWhileActive as number;

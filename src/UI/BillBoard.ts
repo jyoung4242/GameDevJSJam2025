@@ -1,43 +1,39 @@
-import { Color, Engine, Font, Label, ScreenElement, TextAlign, vec, Vector } from "excalibur";
+import { Color, Engine, Font, Label, TextAlign, vec, Vector } from "excalibur";
 
-export class Billboard extends ScreenElement {
+export class Billboard extends Label {
   lightColor: Color = Color.fromHex("#797694");
   darkColor: Color = Color.fromHex("#3f61a8");
-  floatingSpeed: number = 1;
-  title: Label;
-  lifetime: number = 2000;
+  floatingSpeed: number = 0.5;
+  lifetime: number = 1500;
 
-  constructor(startingPos: Vector, type: "light" | "dark") {
+  constructor(type: "light" | "dark") {
+    let startingPos: Vector;
+    if (type === "light") {
+      startingPos = vec(288, 0);
+    } else {
+      startingPos = vec(0, 0);
+    }
     super({
-      name: "billboard",
-      width: 8,
-      height: 8,
+      z: 9001,
       pos: startingPos,
-      z: 9000,
-    });
-
-    this.title = new Label({
-      pos: vec(0, 0),
       text: `+1`,
       font: new Font({
         family: "Arial",
-        size: 8,
-        color: type === "light" ? this.lightColor : this.darkColor,
+        size: 10,
+        color: type === "light" ? Color.fromHex("#797694") : Color.fromHex("#3f61a8"),
         textAlign: TextAlign.Center,
       }),
     });
-    this.addChild(this.title);
+    this.addTag("billboard");
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
     // i want this entity to float upward from starting position but move a bit random in x direction
-    this.pos.y -= elapsed * this.floatingSpeed;
+    this.pos.y -= this.floatingSpeed;
     this.pos.x += Math.random() * 2 - 1;
 
     this.lifetime -= elapsed;
     if (this.lifetime <= 0) {
-      console.log("billboard expired");
-
       this.kill();
     }
   }
