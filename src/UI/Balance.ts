@@ -36,16 +36,14 @@ export class Balance extends ScreenElement {
 
   updateBalance(newBalance: number) {
     this.balance = newBalance;
-    if (this.balance < -71) this.balance = -71;
-    else if (this.balance > 71) this.balance = 71;
+    if (this.balance < -24) this.balance = -24;
+    else if (this.balance > 24) this.balance = 24;
   }
 
   onPreUpdate(engine: Engine, elapsed: number): void {
     let currentCursorPos = this.cursor!.pos.x;
-    /* console.log("balance", this.balance);
-    console.log("currentCursorPos", currentCursorPos); */
 
-    this.cursor!.pos = vec(this.startingPosX + this.balance * 2, 8);
+    this.cursor!.pos = vec(this.startingPosX + this.balance * 6, 8);
   }
 
   getWorldPosition(): Vector {
