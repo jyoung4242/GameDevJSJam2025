@@ -73,7 +73,7 @@ export class EndOFWaveModal extends ScreenElement {
   constructor(engine: Engine) {
     let contentArea = engine.screen.contentArea;
     let myWidth = contentArea.right - contentArea.left - 20;
-    let myHeight = contentArea.bottom - contentArea.top - 80;
+    let myHeight = contentArea.bottom - contentArea.top - 60;
     let position = new Vector(10, 10);
 
     super({
