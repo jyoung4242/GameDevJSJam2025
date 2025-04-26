@@ -13,13 +13,13 @@ import { ShockWavePostProcessor } from "./Effects/shockwave";
 await UI.create(document.body, model, template).attached;
 let resizeTimeout: number | undefined;
 
-window.addEventListener("resize", () => {
+/* window.addEventListener("resize", () => {
   clearTimeout(resizeTimeout);
   resizeTimeout = window.setTimeout(() => {
     const inIframe = window.self !== window.top;
     location.reload();
   }, 500);
-});
+}); */
 
 const game = new Engine({
   resolution: { width: 640, height: 360 }, // the resolution of the game
